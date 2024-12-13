@@ -103,7 +103,7 @@ if (emetis.lt.6)then    !> Choose a grid partitioning property if emetis<6 use s
 ! 	  Call Partitioner5(n,IMAXE,imaxn,XMPIE,ieshape)
 ! 	end if
     end if
-    call MPI_BCAST(XMPIE,IMAXE,MPI_INTEGER,0,MPI_COMM_WORLD,IERROR)
+    CALL MPI_BCAST(XMPIE,IMAXE,MPI_INTEGER,0,MPI_COMM_WORLD,IERROR)
 else
     if (emetis.eq.6)then !> When emetis=6 use ParMETIS (default)
         Call Partitioner6(n,IMAXE,imaxn,XMPIE,ieshape)
@@ -113,7 +113,7 @@ end if
 CALL MPI_BARRIER(MPI_COMM_WORLD, IERROR)
 
 CALL XMPIFIND(XMPIE,XMPIN,XMPIELRANK,XMPINRANK,IMAXE,IMAXN,NPROC) !> Determine the number of elements in this process
-call ELALLOCATION(N,XMPIE,XMPIELRANK,IELEM,IMAXE,IESHAPE,ITESTCASE,IMAXB,IBOUND,XMIN,XMAX,YMIN,YMAX,ZMIN,ZMAX) !> Allocate the appropriate memory for each elements
+CALL ELALLOCATION(N,XMPIE,XMPIELRANK,IELEM,IMAXE,IESHAPE,ITESTCASE,IMAXB,IBOUND,XMIN,XMAX,YMIN,YMAX,ZMIN,ZMAX) !> Allocate the appropriate memory for each elements
 
 CALL READ_INPUT(N,XMPIELRANK,XMPINRANK,XMPIE,XMPIN,IELEM,INODE,IMAXN,IMAXE,IBOUND,IMAXB,XMPINNUMBER,SCALER,INODER) !> Read the grid files and populate the allocated memory values for vertex coordinates and numbering
 
@@ -127,7 +127,7 @@ END IF
 CALL GAUSSIANPOINTS(IGQRULES,NUMBEROFPOINTS,NUMBEROFPOINTS2)   !> Establish the number of Gausian quadrature points for each element and face
 CALL VERTALLOCATION(N,VEXT,LEFTV,RIGHTV,VISCL,LAML)           !> Allocate the memory for the left and right state variables
 CALL ALLOCATE1(N)                                            !> Additional allocations
-call QUADALLOC(QPOINTS,QPOINTS2D,WEQUA2D,WEQUA3D,NUMBEROFPOINTS,NUMBEROFPOINTS2) !>Allocate the memory required for the Gaussian integration rules
+CALL QUADALLOC(QPOINTS,QPOINTS2D,WEQUA2D,WEQUA3D,NUMBEROFPOINTS,NUMBEROFPOINTS2) !>Allocate the memory required for the Gaussian integration rules
 CALL allocate6_1                                           !> Additional allocations
 CALL allocate7_1                                            !> Additional allocations
 
@@ -143,9 +143,9 @@ if (n.eq.0) then
     WRITE(100+N,*)"TIMEI_1",CPUX3(1)-CPUX1(1)     !> Write in file the total wall clock time taken so far
 end if
 
-call ALLOCATE2
+CALL ALLOCATE2
 CALL NEIGHBOURSS(N,IELEM,IMAXE,IMAXN,XMPIE,XMPIN,XMPIELRANK,RESTART,INODEr) !> Find neighbours of each element
-call ALLOCATE3
+CALL ALLOCATE3
 CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
 
 if (n.eq.0) then
@@ -202,7 +202,7 @@ END IF
 !$OMP END MASTER
 CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
 CALL XMPILOCAL
-call COUNT_WALLS
+CALL COUNT_WALLS
 !$OMP BARRIER
 ! CALL GLOBALIST(N,XMPIE,XMPIL,XMPIELRANK,IMAXE,ISIZE,CENTERR,GLNEIGH,IELEM)
 !$OMP MASTER
@@ -373,7 +373,7 @@ CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
 CALL EXCH_CORDS(N)
 CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
 if ((rungekutta.GE.10).AND.(rungekutta.LT.12))then
-    call EXCH_CORDS2(N,ISIZE,IEXBOUNDHIRi,IEXBOUNDHISi,ITESTCASE,NUMBEROFPOINTS2,IEXCHANGER,IEXCHANGES)
+    CALL EXCH_CORDS2(N,ISIZE,IEXBOUNDHIRi,IEXBOUNDHISi,ITESTCASE,NUMBEROFPOINTS2,IEXCHANGER,IEXCHANGES)
 end if
 
 if ((fastest.ne.1).and.(ischeme.ge.2))then
@@ -390,10 +390,10 @@ if (n.eq.0)  then
 end if
 
 IF (STENCIL_IO.EQ.1)THEN
-    call stenprint(n)
+    CALL stenprint(n)
 END IF
 
-call SOLEX_ALLOC(N)
+CALL SOLEX_ALLOC(N)
 if (rungekutta.ge.2)then
     if (dimensiona.eq.3)then
         CALL direct_side(n)
@@ -411,7 +411,7 @@ deallocate(inoder2)
 
 CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
 if ((fastest.ne.1).and.(ischeme.ge.2))then
-    call walls_higher(n)
+    CALL walls_higher(n)
 end if
 
 CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
@@ -438,7 +438,7 @@ END IF
 !$OMP END MASTER
 
 if ((fastest.ne.1).and.(ischeme.ge.2))
-    call PRESTORE_1(N)
+    CALL PRESTORE_1(N)
 
 !$OMP MASTER
 IF (N.EQ.0)THEN
@@ -454,7 +454,7 @@ CALL DEALCORDINATES2
 CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
 
 if ((fastest.ne.1).and.(ischeme.ge.2))then
-    !    call check_fs
+    !    CALL check_fs
     CALL MEMORY11
     CALL LOCALSDEALLOCATION(N,XMPIELRANK,ILOCALSTENCIL,ILOCALSTENCILPER,TYPESTEN,NUMNEIGHBOURS)
     CALL DEALLOCATEMPI2(N)
@@ -469,15 +469,15 @@ END IF
 
 IF (TURBULENCE.EQ.1)THEN
     if (dimensiona.eq.3)then
-        call WallDistance(N,ielem,imaxe,XMPIELRANK)
+        CALL WallDistance(N,ielem,imaxe,XMPIELRANK)
     else
-        call WallDistance2d(N,ielem,imaxe,XMPIELRANK)
+        CALL WallDistance2d(N,ielem,imaxe,XMPIELRANK)
     end if
 END IF
 
 !$OMP PARALLEL DEFAULT(SHARED)
 CALL share_ALLOCATION(N)
-call local_reconallocation5(n)
+CALL local_reconallocation5(n)
 !$OMP END PARALLEL
 CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
 
@@ -500,13 +500,13 @@ end if
 if (ischeme.lt.2)then
     IF (DIMENSIONA.EQ.3)THEN
         do iconsi=1,xmpielrank(n)
-            call CHECKGRADS(N,ICONSI)
-            call FIND_ROT_ANGLES(N,ICONSI)
+            CALL CHECKGRADS(N,ICONSI)
+            CALL FIND_ROT_ANGLES(N,ICONSI)
         end do
     ELSE
         do iconsi=1,xmpielrank(n)
-            call CHECKGRADS2D(N,ICONSI)
-            call FIND_ROT_ANGLES2D(N,ICONSI)
+            CALL CHECKGRADS2D(N,ICONSI)
+            CALL FIND_ROT_ANGLES2D(N,ICONSI)
         end do
     END IF
 end if
@@ -559,7 +559,7 @@ END IF
 
 CALL SUMFLUX_ALLOCATION(N)
 if (rungekutta.GE.10)then
-    call IMPALLOCATE(N)
+    CALL IMPALLOCATE(N)
 end if
 
 ! ! !----------------------------------------------------------------!
@@ -599,7 +599,7 @@ END IF
 IF (FASTEST.NE.1)THEN
     CALL EXCHANGE_HIGHER_PRE(N)
 END IF
-call FIX_NODES_LOCAL
+CALL FIX_NODES_LOCAL
 CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
 CPUX3(1) = MPI_Wtime()
 !  CALL CPU_TIME(CPUX3(1))
