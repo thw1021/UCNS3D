@@ -37,3 +37,9 @@ tmp/
 .vscode/settings.json
 .vscode/targets.log
 .vscode/dryrun.log
+src/libmetis.a
+src/libparmetis_gnu_mpi.a
+src/libparmetis.a
+src/libtecio.a
+src/mpmetis
+src/ucns3d_p
