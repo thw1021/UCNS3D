@@ -1,1757 +1,926 @@
-MODULE SOURCE
-USE LIBRARY
-USE TRANSFORM
-USE LOCAL
-USE RIEMANN
-USE FLOW_OPERATIONS
-USE DECLARATION
-IMPLICIT NONE
+module source
+  use library
+  use transform
+  use local
+  use riemann
+  use flow_operations
+  use declaration
+  implicit none
 
 contains
-SUBROUTINE SOURCES_COMPUTATION(N)
-!> @brief
-!> Sources computation 
-	IMPLICIT NONE
-	INTEGER,INTENT(IN)::N
-	INTEGER::I,KMAXE,ICONSIDERED
-	REAL,DIMENSION(TURBULENCEEQUATIONS)::SOURCE_T
-	
-	
-	KMAXE=XMPIELRANK(N)
-	!$OMP DO
-	DO I=1,KMAXE
-		ICONSIDERED=I
-		CALL SOURCES(N,ICONSIDERED,SOURCE_T)
-		RHST(I)%VAL(1:turbulenceequations)=RHST(I)%VAL(1:turbulenceequations)-(SOURCE_T(1:turbulenceequations)*ielem(n,I)%totvolume)
-	END DO
-	!$OMP END DO 
-END SUBROUTINE SOURCES_COMPUTATION
+  subroutine sources_computation(n)
+    implicit none
+    integer, intent(in) :: n
+    integer :: i, kmaxe, iconsidered
+    real, dimension(turbulenceequations) :: source_t
+    kmaxe = xmpielrank(n)
+    do i = 1, kmaxe
+      iconsidered = i
+      call sources(n, iconsidered, source_t)
+      rhst(i)%val(1:turbulenceequations) = rhst(i)%val(1:turbulenceequations) - (source_t(1:turbulenceequations)*ielem(n, i)%totvolume)
+    end do
+  end subroutine sources_computation
 
-
-SUBROUTINE SOURCES_COMPUTATION_ROT(N)
-	IMPLICIT NONE
-	INTEGER,INTENT(IN)::N
-	INTEGER::I,KMAXE,SRF
-	REAL::OODENSITY
-	real,dimension(5)::source_t2
-	REAL,DIMENSION(1:DIMENSIONA)::POX,POY,POZ
-
-	
-	
-	KMAXE=XMPIELRANK(N)
-	IF(SRFG.EQ.1)THEN
-	!$OMP DO
-	DO I=1,KMAXE
-		
-		 OODENSITY=1.0D0/U_C(I)%VAL(1,1)
-        
-                SOURCE_T2(1)=ZERO
-                SOURCE_T2(2)=U_C(I)%VAL(1,2)*OODENSITY-UVEL
-                SOURCE_T2(3)=U_C(I)%VAL(1,3)*OODENSITY-VVEL
-                SOURCE_T2(4)=U_C(I)%VAL(1,4)*OODENSITY-WVEL
-                SOURCE_T2(5)=ZERO
-        
-                POX(1:3)= SOURCE_T2(2:4)  
-                POY(1:3)=SRF_VELOCITY(1:3)
-                SOURCE_T2(2:4)=U_C(I)%VAL(1,1)*VECT_FUNCTION(POX,POY)
-		RHS(I)%VAL(1:NOF_VARIABLES)=RHS(I)%VAL(1:NOF_VARIABLES)+(SOURCE_T2(1:NOF_VARIABLES)*ielem(n,I)%totvolume)
-		
-	END DO
-	!$OMP END DO
-	END IF
-	IF(MRF.EQ.1)THEN
-	!$OMP DO
-	DO I=1,KMAXE
-		SRF=ILOCAL_RECON3(I)%MRF
-		IF (ILOCAL_RECON3(I)%MRF.EQ.1)THEN
-            OODENSITY=1.0D0/U_C(I)%VAL(1,1)
-                SOURCE_T2(1)=ZERO
-                SOURCE_T2(2)=U_C(I)%VAL(1,2)*OODENSITY!-UVEL
-                SOURCE_T2(3)=U_C(I)%VAL(1,3)*OODENSITY!-VVEL
-                SOURCE_T2(4)=U_C(I)%VAL(1,4)*OODENSITY!-WVEL
-                SOURCE_T2(5)=ZERO
-        
-                POX(1:3)= SOURCE_T2(2:4)  
-                POY(1:3)=ILOCAL_RECON3(I)%MRF_VELOCITY(1:3)
-                SOURCE_T2(2:4)=U_C(I)%VAL(1,1)*VECT_FUNCTION(POX,POY)
-		RHS(I)%VAL(1:NOF_VARIABLES)=RHS(I)%VAL(1:NOF_VARIABLES)+(SOURCE_T2(1:NOF_VARIABLES)*ielem(n,I)%totvolume)
-		END IF
-	END DO
-	!$OMP END DO
-	END IF
-END SUBROUTINE SOURCES_COMPUTATION_ROT
-
-
-SUBROUTINE SOURCES_derivatives_COMPUTATION(N)
-!> @brief
-!> Sources derivative computation for implicit time stepping
-	IMPLICIT NONE
-	INTEGER,INTENT(IN)::N
-	INTEGER::I,KMAXE,ICONSIDERED
-	REAL,DIMENSION(TURBULENCEEQUATIONS)::SOURCE_T
-	
-	
-	KMAXE=XMPIELRANK(N)
-	!$OMP DO
-	DO I=1,KMAXE
-		ICONSIDERED=I
-		CALL SOURCES_derivatives(N,ICONSIDERED,SOURCE_T)
-		sht(I,1:turbulenceequations)=(SOURCE_T(1:turbulenceequations)*ielem(n,I)%totvolume)
-	END DO
-	!$OMP END DO 
-END SUBROUTINE SOURCES_derivatives_COMPUTATION
-
-
-
-SUBROUTINE SOURCES(N,ICONSIDERED,SOURCE_T)
-!> @brief
-!> Sources computation procedure
-implicit none
-INTEGER,INTENT(IN)::N,ICONSIDERED
-REAL,DIMENSION(TURBULENCEEQUATIONS),INTENT(INOUT)::SOURCE_T
-REAL::INTENERGY,R1,U1,V1,W1,ET1,S1,IE1,P1,SKIN1,E1,RS,US,VS,WS,KHX
-REAL::VHX,AMP,DVEL,OMEGA,SQUARET,TCH_X,TCH_X3,TCH_FV1,TCH_FV2
-REAL::TCH_RS,TCH_R,TCH_G,TCH_GLIM,TCH_FW,TCH_DIF,TCH_DEST,TCH_PROD
-INTEGER::I,K,J,L,IHGT,IHGJ,IEX, LOWRE
-REAL::SNORM,ONORM,DIVNORM,ax,ay,az,TCH_SHH,TCH_SAV,Verysmall,onesix,ProdTerm1,stild,rr
-REAL::gg,FW,destterm,fodt,srcfull,DBPR,DBDI,DBDE,DBY,DBX,ProdTermfinal
-REAL:: r_DES,f_DES, ddw,F_DES_SST,L_t_DES
-Real :: ux,uy,vx,vy,shear,sratio,prodmod,cvor,stildmod,ProdTerm2,sfac,sss,usss,ssss,S_bar,KRON
-real:: uz,vz,wx,wy,wz
-REAL:: uxx,uyy,uzz,vxx,vyy,vzz,wxx,wyy,wzz  !For SAS only
-REAL,DIMENSION(3,3)::VORTET,TVORT,SVORT,OVORT
-REAL,DIMENSION(3)::VORTEM,VERTF,vertex
-real,dimension(TURBULENCEEQUATIONS,1:3)::DERIVTURB
-!Declarations for k-omega
-REAL:: srcfull_k, srcfull_om, Prod_k, Prod_om, Ydest_k, Ydest_om, Diff_om, Q_sas
-REAL:: sigma_k, sigma_om, F_1, F_2,Phi_1,Phi_2, D_omplus !-------------- Those are for diffusion too!
-REAL:: alpha_raw,alpha_star, Re_t_SST,alpha_inf
-REAL:: beta_stari, beta_i, beta_raw, beta_star
-REAL:: k_0, om_0, wally
-REAL:: dervk_dervom, dervom2, dervk2, u_lapl !Generalization of the velocity Laplacian
-REAL:: L_sas, L_vk, Delta_cell, Cell_volume, Q_sas1, Q_sas2
-REAL:: kx,ky,kz,omx,omy,omz
-REAL,DIMENSION(1:NOF_VARIABLES)::LEFTV,RIGHTV
-REAL::MP_PINFl,GAMMAL
-REAL,DIMENSION(1:4)::VISCL,LAML
-REAL,DIMENSION(1:20)::EDDYFL,EDDYFR
-REAL,DIMENSION(1:2)::TURBMV
-    REAL,DIMENSION(1)::ETVM
-
-I=ICONSIDERED
-
-Verysmall = 10e-16
-	
-VORTET(1:3,1:3) = ILOCAL_RECON3(I)%GRADS(1:3,1:3)
-
-
-ux = Vortet(1,1);uy = Vortet(1,2);uz = Vortet(1,3)
-vx = Vortet(2,1);vy = Vortet(2,2);vz = Vortet(2,3)
-wx = Vortet(3,1);wy = Vortet(3,2);wz = Vortet(3,3)
-
-
-DO IHGT=1,3
-  DO IHGJ=1,3
-  TVORT(IHGT,IHGJ)=VORTET(IHGJ,IHGT)
-  END DO
-END DO
-
-sVORT=0.5*(VORTET+TVORT)
-OVORT=0.5*(VORTET-TVORT)
-
-
-
-
-
-SNORM=SQRT(2.0D0*((SVORT(1,1)*SVORT(1,1))+(SVORT(1,2)*SVORT(1,2))+(SVORT(1,3)*SVORT(1,3))+&
-	       (SVORT(2,1)*SVORT(2,1))+(SVORT(2,2)*SVORT(2,2))+(SVORT(2,3)*SVORT(2,3))+& 
-	       (SVORT(3,1)*SVORT(3,1))+(SVORT(3,2)*SVORT(3,2))+(SVORT(3,3)*SVORT(3,3))))
-!Quadratic mean of the strain tensor (defined as Svort). Also needed in SST
-ONORM=SQRT(2.0D0*((OVORT(1,1)*OVORT(1,1))+(OVORT(1,2)*OVORT(1,2))+(OVORT(1,3)*OVORT(1,3))+&
-	       (OVORT(2,1)*OVORT(2,1))+(OVORT(2,2)*OVORT(2,2))+(OVORT(2,3)*OVORT(2,3))+&
-	       (OVORT(3,1)*OVORT(3,1))+(OVORT(3,2)*OVORT(3,2))+(OVORT(3,3)*OVORT(3,3))))
-OMEGA=ONORM
-
-
-DIVNORM=ux+uy+uz  !Careful with the sign. If it becomes very big, it can produce negative production
-
-usss=sqrt((2.0*((ux*ux)+(vy*vy)+(wz*wz)))&
-	+((uy+vx)*(uy+vx)+(uz+wx)*(uz+wx)+(wy+vz)*(wy+vz))&
-	-(2.0/3.0*(ux+vy+wz)*(ux+vy+wz)))
-
-
-DERIVTURB(1,1:3) = ILOCAL_RECON3(I)%GRADS(5,1:3)
-SQUARET=(sqrt((DERIVTURB(1,1)**2)+(DERIVTURB(1,2)**2)+(DERIVTURB(1,3)**2)))**2
-
-
-LEFTV(1:nof_Variables)=U_C(I)%VAL(1,1:nof_Variables)
-
-CALL CONS2PRIM(N,leftv,MP_PINFl,gammal)
-RIGHTV(1:nof_Variables)=LEFTV(1:nof_Variables)
-CALL SUTHERLAND(N,LEFTV,RIGHTV,VISCL,LAML)
-
-
-
-
-TURBMV(1)=U_CT(I)%VAL(1,1)
-TURBMV(2)=TURBMV(1)
-
-
-
- SELECT CASE(TURBULENCEMODEL)
- 
- 
- 
- CASE(1) !!SPALART ALMARAS MODEL	
-        if (ROT_CORR.EQ.1) then
-        OMEGA = OMEGA + 2.0d0*min(0.0d0,SNORM-ONORM)
+  subroutine sources_computation_rot(n)
+    implicit none
+    integer, intent(in)::n
+    integer::i, kmaxe, srf
+    real::oodensity
+    real, dimension(5)::source_t2
+    real, dimension(1:dimensiona)::pox, poy, poz
+    kmaxe = xmpielrank(n)
+    if (srfg .eq. 1) then
+      do i = 1, kmaxe
+        oodensity = 1.0d0/u_c(i)%val(1, 1)
+        source_t2(1) = 0.0
+        source_t2(2) = u_c(i)%val(1, 2)*oodensity - uvel
+        source_t2(3) = u_c(i)%val(1, 3)*oodensity - vvel
+        source_t2(4) = u_c(i)%val(1, 4)*oodensity - wvel
+        source_t2(5) = 0.0
+        pox(1:3) = source_t2(2:4)
+        poy(1:3) = srf_velocity(1:3)
+        source_t2(2:4) = u_c(i)%val(1, 1)*vect_function(pox, poy)
+        rhs(i)%val(1:nof_variables) = rhs(i)%val(1:nof_variables) + (source_t2(1:nof_variables)*ielem(n, i)%totvolume)
+      end do
     end if
-    
-      if (ISPAL .eq.1) then
-		eddyfl(2)=turbmv(1)
-		eddyfr(2)=turbmv(2)
-			
-		onesix = 1.0D0/6.0D0
-
-	    CALL EDDYVISCO(N,VISCL,LAML,TURBMV,ETVM,EDDYFL,EDDYFR,LEFTV,RIGHTV)
-	      cw1 = cb1 / (kappa*kappa)
-	      cw1 = cw1 + (1.0 + cb2) /sigma
-	      TCH_X=   TURBMV(1) / VISCL(1) 
-	      
-			  if (TCH_X .lt. Verysmall) then
-						SOURCE_T(1) = ZERO
-
-			  else
-			      TCH_X3 = (TCH_X)*(TCH_X)*(TCH_X)
-			      TCH_FV1 = TCH_X3/(TCH_X3+(CV1*CV1*CV1))
-			      TCH_fv2   = 1.0D0 - (TCH_X/(1.0D0 + TCH_X*TCH_fv1)) 
-
-
-			ddw=IELEM(N,I)%WallDist
-			
-			if (DES_model .eq. 1) then
-			CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			Delta_cell=Cell_volume**0.333333333333333
-			ddw=min(ddw,C_DES_SA*Delta_cell)
-			end if
-			
-			if (DES_model .eq. 2) then
-			CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			Delta_cell=Cell_volume**0.333333333333333
-			r_DES=min(10.0, (viscl(1)+viscl(3))/(SNORM*(KAPPA*ddw)**2+1e-16)) 
-			!Previous limiter is just for numerical reasons regarding tanh
-			f_DES=1-tanh((8.0*r_DES)**3)
-			ddw=max(ddw-f_DES*max(ddw-C_DES_SA*Delta_cell,1e-16),10.0e-16)
-			end if
-
-			ProdTerm1 = (TURBMV(1))/(leftv(1)* KAPPA * KAPPA * ddw * ddw)
-			Stild = max ( OMEGA + (TCH_fv2*ProdTerm1), 0.3*OMEGA)
-			Prodtermfinal=Stild*turbmv(1)*cb1
-
-			RR=MIN((TURBMV(1)/(((LEFTV(1)*STILD*KAPPA * KAPPA * (ddw) * (ddw)))+0.000000001)),10.0)
-			gg	= rr +  ( CW2 * (rr**6 - rr) )
-			Fw    = gg * (((1.0 + cw3**6) / (gg**6 + cw3**6))**onesix)
-						!  Destruction term
-			      destterm  = cw1 * fw * ((( TURBMV(1) )/(leftv(1)*(ddw)))**2)
-			      ! ! 	!  First order diffusion term
-			      fodt  =   cb2 * SQUARET/ SIGMA
-			      
-			      if (D_CORR.EQ.0) then
-				SOURCE_T(1) = ProdTermfinal + fodt - destterm
-            else 
-				SOURCE_T(1) = ProdTermfinal + (fodt - destterm)*leftv(1)
-            end if
-			END IF
-	 eLSE
-		    CALL EDDYVISCO(N,VISCL,LAML,TURBMV,ETVM,EDDYFL,EDDYFR,LEFTV,RIGHTV)
-			  TCH_X=   TURBMV(1) / VISCL(1) 
-			    if (tch_x.gt.10.0D0)then
-						
-			      tch_x=tch_x
-						
-						
-			    ELSE
-						
-						
-				tch_x=0.05D0*log(1.0D0+exp(20.0D0*(tch_x)))
-						
-						
-			      end if
-			ddw=IELEM(N,I)%WallDist
-			  
-
-			  if (DES_model .eq. 1) then
-			  CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			  Delta_cell=Cell_volume**0.333333333333333
-			  ddw=min(ddw,C_DES_SA*Delta_cell)
-			  end if
-			  
-			  if (DES_model .eq. 2) then
-			  CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			  Delta_cell=Cell_volume**0.333333333333333
-			  r_DES=min(10.0D0, (viscl(1)+viscl(3))/(SNORM*(KAPPA*ddw)**2+1e-16)) 
-			  !Previous limiter is just for numerical reasons regarding tanh
-			  f_DES=1-tanh((8.0D0*r_DES)**3)
-			  ddw=max(ddw-f_DES*max(ddw-C_DES_SA*Delta_cell,1e-16),10.0e-16)
-			  end if
-
-		      
-
-
-		  TCH_X3 = (TCH_X)*(TCH_X)*(TCH_X)
-		      TCH_FV1 = TCH_X3/(TCH_X3+(CV1*CV1*CV1))
-		  TCH_fv2   = 1.0D0 - (TCH_X/(1.0D0 + TCH_X*TCH_fv1)) 
-		  ProdTerm1 = (TCH_fv2*tch_x*(TURBMV(1)))/( leftv(1)*KAPPA * KAPPA * (ddw) * (ddw))
-		    
-		  IF (PRODTERM1.GE.(-0.7D0*OMEGA))THEN
-		  Stild =  OMEGA + ProdTerm1
-		  END IF
-		  IF (PRODTERM1.LT.(-0.7D0*OMEGA))THEN
-		  Stild =  OMEGA + ((OMEGA*(((0.7D0*0.7D0)*(OMEGA))+(0.9*PRODTERM1)))/(((0.9-1.4)*OMEGA)-PRODTERM1))
-		  END IF
-
-
-
-		  Prodtermfinal=Stild*turbmv(1)*cb1*tch_x
-		  ! 
-		  RR=((TURBMV(1)*TCH_X/(LEFTV(1)*Stild*KAPPA * KAPPA * (ddw) * (ddw))))
-
-
-		  gg	= rr +  ( CW2 * (rr**6 - rr) )
-		  Fw    = gg * (((1.0 + cw3**6) / (gg**6 + cw3**6))**onesix)
-		  ! ! 				!  Destruction term
-
-		  destterm  = cw1 * fw *leftv(1)* (((turbmv(1)*tch_x/leftv(1))/(ddw))**2)
-		  ! ! 				!  First order diffusion term
-		  fodt  =   LEFTV(1)*cb2 * SQUARET / SIGMA
-		  SOURCE_T(1)= ProdTermfinal + fodt - destterm
-
-		  
-	 
-	 END IF
-
-
-  CASE(2)		!K OMEGA SST
-
-			      EDDYFL(1)=IELEM(N,I)%WALLDIST
-			      EDDYFL(2)=U_CT(I)%VAL(1,1)
-			      EDDYFL(3)=U_CT(I)%VAL(1,2)
-			      EDDYFL(4:6)=ILOCAL_RECON3(I)%GRADS(1,1:3)
-			      EDDYFL(7:9)=ILOCAL_RECON3(I)%GRADS(2,1:3)
-			      EDDYFL(10:12)=ILOCAL_RECON3(I)%GRADS(3,1:3)
-
-			      EDDYFL(13:15)=ILOCAL_RECON3(I)%GRADS(4,1:3)
-			      EDDYFL(16:18)=ILOCAL_RECON3(I)%GRADS(5,1:3)
-								    
-
-			      eddyfr=eddyfl
-
-			      CALL EDDYVISCO(N,VISCL,LAML,TURBMV,ETVM,EDDYFL,EDDYFR,LEFTV,RIGHTV)
-      k_0=(MAX(Verysmall,U_CT(I)%VAL(1,1)/LEFTV(1))) !First subindex makes reference to the time-stepping
-      om_0=MAX(1.0e-1*ufreestream/CharLength,U_CT(I)%VAL(1,2)/LEFTV(1))
-      wally=IELEM(N,I)%WallDist
-	
-
-	      !Calculate here k and omega gradients
-		  OMX=ILOCAL_RECON3(I)%GRADS(6,1)
-		  OMY=ILOCAL_RECON3(I)%GRADS(6,2)
-		  OMZ=ILOCAL_RECON3(I)%GRADS(6,3)
-		  KX=ILOCAL_RECON3(I)%GRADS(5,1)
-		  KY=ILOCAL_RECON3(I)%GRADS(5,2)
-		  KZ=ILOCAL_RECON3(I)%GRADS(5,3)
-
-		  dervk_dervom= kx*omx+ky*omy+kz*omz
-
-			!Parameters
-
-			!-----NEEDED IN DIFFUSION--------
-			D_omplus=max(2*LEFTV(1)/sigma_om2/om_0*dervk_dervom, 1e-10)
-			phi_2=max(sqrt(k_0)/(0.09*om_0*wally),500.0*VISCL(1)/(LEFTV(1)*wally*wally*om_0))
-			phi_1=min(phi_2, 4.0*LEFTV(1)*k_0/(sigma_om2*D_omplus*wally*wally)) 
-
-				F_1=tanh(phi_1**4)
-				F_2=tanh(phi_2**2)
-				!--------------------------------
-
-
-				alpha_inf=F_1*alpha_inf1+(1.0-F_1)*alpha_inf2
-				alpha_star=alpha_starinf
-				alpha_raw=alpha_inf
-
-
-				beta_i=F_1*beta_i1+(1.0-F_1)*beta_i2
-				alpha_star0=beta_i/3.0
-				beta_stari=beta_starinf
-
-
-
-
-				LOWRE=0
-				!LOW-RE correction------------------------------------------------------------------
-
-				if (lowre.eq.1) then
-				Re_t_SST=LEFTV(1)*k_0/(VISCL(1)*om_0)  !Limiters for this???
-
-				alpha_star=alpha_starinf*(alpha_star0+Re_t_SST/R_k_SST)/(1.0+Re_t_SST/R_k_SST)
-				alpha_raw=alpha_inf/alpha_star*(alpha_0+Re_t_SST/R_om_SST)/(1.0+Re_t_SST/R_om_SST)
-
-				beta_stari=beta_starinf*(4.0/15.0+(Re_t_SST/R_beta)**4)/(1.0+(Re_t_SST/R_beta)**4)
-
-				end if
-				      !--------------------------------------------------------------------------
-
-				      !No Mach number corrections for the beta
-				      beta_star=beta_stari
-				      beta_raw=beta_i
-
-
-				      !PRODUCTION TERMS
-					      !Production of k
-					      if (vort_model.eq.1) then
-						      Prod_k=VISCL(3)*ONORM*SNORM!-2.0/3.0*LEFTV(1)*k_0*DIVNORM
-						      Prod_om=alpha_raw*LEFTV(1)*SNORM*ONORM
-					      else
-						      !Prod_k=VISCL(3)*SNORM**2
-						      !Exact formulation: 
-						      Prod_k=VISCL(3)*(SNORM**2)!-2.0/3.0*DIVNORM*DIVNORM)-2.0/3.0*LEFTV(1)*k_0*DIVNORM
-						      Prod_k=min(Prod_k,10.0*LEFTV(1)*beta_star*k_0*om_0)
-
-						      !INTELLIGENT WAY OF LIMITING: 
-						      !Prod_k=min(Prod_k,max(10.0*LEFTV(1)*beta_star*k_0*om_0,&
-						      !	    VISCL(3)*ONORM*SNORM!-2.0/3.0*LEFTV(1)*k_0*DIVNORM))
-					      
-					      
-						      !Production of omega  (Menter does this before correcting Prod_k, 
-						      !but in  article of 2003 he applies the correction to both)	
-						      Prod_om=alpha_raw*LEFTV(1)*SNORM**2
-				      ! 		Prod_om=min(Prod_om,10.0*LEFTV(1)*beta_star*om_0*om_0)
-					      end if
-
-				      !DESTRUCTION TERMS
-					      !Destruction of k
-					      Ydest_k=LEFTV(1)*beta_star*k_0*om_0
-					      !Destruction of omega
-					      Ydest_om=LEFTV(1)*beta_raw*om_0*om_0
-					      
-				      !CROSSED-DIFFUSION TERM
-					      !Crossed diffusion of omega
-					      Diff_om=2.0*(1-F_1)*LEFTV(1)/(om_0*sigma_om2)*dervk_dervom
-	 
-	
-				!QSAS TERM: SCALE ADAPTIVE
-					if (QSAS_model.eq.1) then  !<------------!!!!!!!!!!!!!!!!!!!
-						!Calculate here second derivative of u 
-						!Declare all variables
-						      DO IEX=1,3
-							VORTET(IEX,1:3)=ILOCAL_RECON3(I)%GRADS(3+TURBULENCEEQUATIONS+IEX,1:3)
-							
-						      END DO
-						
-						uxx=VORTET(1,1) ; uyy=VORTET(1,2); uzz=VORTET(1,3)				
-						vxx=VORTET(2,1) ; vyy=VORTET(2,2); vzz=VORTET(2,3)	
-						wxx=VORTET(3,1) ; wyy=VORTET(3,2); wzz=VORTET(3,3)	
-						!Compute here cell volume
-						CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-						
-						u_lapl=sqrt((uxx+uyy+uzz)**2+(vxx+vyy+vzz)**2+(wxx+wyy+wzz)**2)
-						dervk2=kx*kx+ky*ky+kz*kz
-						dervom2=omx*omx+omy*omy+omz*omz
-						
-						Delta_cell=Cell_volume**0.333333333333333
-						
-						L_sas=sqrt(k_0)/(beta_star**0.25*om_0)
-						L_vk=max(kappa*SNORM/u_lapl, &       !This switch provides high wave-number damping
-							C_smg*Delta_cell*sqrt(kappa*eta2_SAS/(beta_raw/beta_star-alpha_raw)))
-						
-						Q_sas1=LEFTV(1)*eta2_SAS*kappa*SNORM**2*(L_sas/L_vk)**2
-						Q_sas2= -C_SAS*2*LEFTV(1)*k_0/sigma_phi*max(dervk2/k_0**2,dervom2/om_0**2)
-
-						Q_SAS=max(Q_sas1+Q_sas2,0.0)
-					else
-					Q_SAS=ZERO
-					end if
-
-				    !FINAL SOURCE TERMS
-
-
-					    !DES-SST MODEL (if QSAS_model=2)
-					    if (QSAS_model .eq.2) then
-					    CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-					    Delta_cell=Cell_volume**0.333333333333333
-					    L_t_DES=sqrt(k_0)/(beta_star*om_0)
-					    F_DES_SST=max(1.0, L_t_DES/(C_DES_SST*Delta_cell)*(1-F_2))
-					    !The (1-F_2) is meant to protect the boundary layer. Will result in same 
-					    !separation point that standard S-A
-					    Ydest_k=F_DES_SST*Ydest_k
-					    end if
-					    
-				    srcfull_k=Prod_k-Ydest_k
-				    srcfull_om=Prod_om-Ydest_om+Diff_om+Q_SAS
-
-
-				    !Filling the output vector
-				      SOURCE_T(1) = srcfull_k
-				      SOURCE_T(2) = srcfull_om
-
-				  
-	
-END SELECT
-
-END SUBROUTINE SOURCES
-
-
-SUBROUTINE SOURCES_DERIVATIVES(N,ICONSIDERED,SOURCE_t)
-!> @brief
-!> Sources derivative computation for implicit time stepping
-implicit none
-INTEGER,INTENT(IN)::N,ICONSIDERED
-REAL,DIMENSION(TURBULENCEEQUATIONS),INTENT(INOUT)::SOURCE_T
-REAL::INTENERGY,R1,U1,V1,W1,ET1,S1,IE1,P1,SKIN1,E1,RS,US,VS,WS,KHX
-REAL::VHX,AMP,DVEL,OMEGA,SQUARET,TCH_X,TCH_X3,TCH_FV1,TCH_FV2
-REAL::TCH_RS,TCH_R,TCH_G,TCH_GLIM,TCH_FW,TCH_DIF,TCH_DEST,TCH_PROD
-INTEGER::I,K,J,L,IHGT,IHGJ,IEX, LOWRE
-REAL::SNORM,ONORM,DIVNORM,ax,ay,az,TCH_SHH,TCH_SAV,Verysmall,onesix,ProdTerm1,stild,rr
-REAL::gg,FW,destterm,fodt,srcfull,DBPR,DBDI,DBDE,DBY,DBX,ProdTermfinal
-REAL:: r_DES,f_DES, ddw,F_DES_SST,L_t_DES
-Real :: ux,uy,vx,vy,shear,sratio,prodmod,cvor,stildmod,ProdTerm2,sfac,sss,usss,ssss,S_bar,KRON
-real:: uz,vz,wx,wy,wz
-REAL:: uxx,uyy,uzz,vxx,vyy,vzz,wxx,wyy,wzz  !For SAS only
-REAL,DIMENSION(3,3)::VORTET,TVORT,SVORT,OVORT
-REAL,DIMENSION(3)::VORTEM,VERTF,vertex
-real,dimension(TURBULENCEEQUATIONS,1:3)::DERIVTURB
-!Declarations for k-omega
-REAL:: srcfull_k, srcfull_om, Prod_k, Prod_om, Ydest_k, Ydest_om, Diff_om, Q_sas
-REAL:: sigma_k, sigma_om, F_1, F_2,Phi_1,Phi_2, D_omplus !-------------- Those are for diffusion too!
-REAL:: alpha_raw,alpha_star, Re_t_SST,alpha_inf
-REAL:: beta_stari, beta_i, beta_raw, beta_star
-REAL:: k_0, om_0, wally
-REAL:: dervk_dervom, dervom2, dervk2, u_lapl !Generalization of the velocity Laplacian
-REAL:: L_sas, L_vk, Delta_cell, Cell_volume, Q_sas1, Q_sas2
-REAL:: kx,ky,kz,omx,omy,omz
-REAL,DIMENSION(1:NOF_VARIABLES)::LEFTV,RIGHTV
-REAL::MP_PINFl,GAMMAL
-REAL,DIMENSION(1:4)::VISCL,LAML
-REAL,DIMENSION(1:20)::EDDYFL,EDDYFR
-REAL,DIMENSION(1:2)::TURBMV
-    REAL,DIMENSION(1)::ETVM
-
-
-I=ICONSIDERED
-
-Verysmall = 10e-16
-	
-VORTET(1:3,1:3) = ILOCAL_RECON3(I)%GRADS(1:3,1:3)
-
-
-ux = Vortet(1,1);uy = Vortet(1,2);uz = Vortet(1,3)
-vx = Vortet(2,1);vy = Vortet(2,2);vz = Vortet(2,3)
-wx = Vortet(3,1);wy = Vortet(3,2);wz = Vortet(3,3)
-
-
-DO IHGT=1,3
-  DO IHGJ=1,3
-  TVORT(IHGT,IHGJ)=VORTET(IHGJ,IHGT)
-  END DO
-END DO
-
-sVORT=0.5*(VORTET+TVORT)
-OVORT=0.5*(VORTET-TVORT)
-
-
-
-
-
-SNORM=SQRT(2.0D0*((SVORT(1,1)*SVORT(1,1))+(SVORT(1,2)*SVORT(1,2))+(SVORT(1,3)*SVORT(1,3))+&
-	       (SVORT(2,1)*SVORT(2,1))+(SVORT(2,2)*SVORT(2,2))+(SVORT(2,3)*SVORT(2,3))+& 
-	       (SVORT(3,1)*SVORT(3,1))+(SVORT(3,2)*SVORT(3,2))+(SVORT(3,3)*SVORT(3,3))))
-!Quadratic mean of the strain tensor (defined as Svort). Also needed in SST
-ONORM=SQRT(2.0D0*((OVORT(1,1)*OVORT(1,1))+(OVORT(1,2)*OVORT(1,2))+(OVORT(1,3)*OVORT(1,3))+&
-	       (OVORT(2,1)*OVORT(2,1))+(OVORT(2,2)*OVORT(2,2))+(OVORT(2,3)*OVORT(2,3))+&
-	       (OVORT(3,1)*OVORT(3,1))+(OVORT(3,2)*OVORT(3,2))+(OVORT(3,3)*OVORT(3,3))))
-OMEGA=ONORM
-
-
-DIVNORM=ux+uy+uz  !Careful with the sign. If it becomes very big, it can produce negative production
-
-usss=sqrt((2.0*((ux*ux)+(vy*vy)+(wz*wz)))&
-	+((uy+vx)*(uy+vx)+(uz+wx)*(uz+wx)+(wy+vz)*(wy+vz))&
-	-(2.0/3.0*(ux+vy+wz)*(ux+vy+wz)))
-
-
-DERIVTURB(1,1:3) = ILOCAL_RECON3(I)%GRADS(5,1:3)
-SQUARET=(sqrt((DERIVTURB(1,1)**2)+(DERIVTURB(1,2)**2)+(DERIVTURB(1,3)**2)))**2
-
-
-LEFTV(1:nof_Variables)=U_C(I)%VAL(1,1:nof_Variables)
-
-CALL CONS2PRIM(N,leftv,MP_PINFl,gammal)
-RIGHTV(1:nof_Variables)=LEFTV(1:nof_Variables)
-CALL SUTHERLAND(N,LEFTV,RIGHTV,VISCL,LAML)
-
-
-
-
-TURBMV(1)=U_CT(I)%VAL(1,1)
-TURBMV(2)=TURBMV(1)
-
-
-
- SELECT CASE(TURBULENCEMODEL)
- 
- 
- 
- CASE(1) !!SPALART ALMARAS MODEL	
-
-    
-      if (ISPAL .eq.1) then
-		eddyfl(2)=turbmv(1)
-		eddyfr(2)=turbmv(2)
-			
-		onesix = 1.0D0/6.0D0
-
-	    CALL EDDYVISCO(N,VISCL,LAML,TURBMV,ETVM,EDDYFL,EDDYFR,LEFTV,RIGHTV)
-	      cw1 = cb1 / (kappa*kappa)
-	      cw1 = cw1 + (1.0 + cb2) /sigma
-	      TCH_X=   TURBMV(1) / VISCL(1) 
-	      
-			  if (TCH_X .lt. Verysmall) then
-						SOURCE_T(1) = ZERO
-
-			  else
-			      TCH_X3 = (TCH_X)*(TCH_X)*(TCH_X)
-			      TCH_FV1 = TCH_X3/(TCH_X3+(CV1*CV1*CV1))
-			      TCH_fv2   = 1.0D0 - (TCH_X/(1.0D0 + TCH_X*TCH_fv1)) 
-
-
-			ddw=IELEM(N,I)%WallDist
-			
-			if (DES_model .eq. 1) then
-			CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			Delta_cell=Cell_volume**0.333333333333333
-			ddw=min(ddw,C_DES_SA*Delta_cell)
-			end if
-			
-			if (DES_model .eq. 2) then
-			CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			Delta_cell=Cell_volume**0.333333333333333
-			r_DES=min(10.0, (viscl(1)+viscl(3))/(SNORM*(KAPPA*ddw)**2+1e-16)) 
-			!Previous limiter is just for numerical reasons regarding tanh
-			f_DES=1-tanh((8.0*r_DES)**3)
-			ddw=max(ddw-f_DES*max(ddw-C_DES_SA*Delta_cell,1e-16),10.0e-16)
-			end if
-
-			ProdTerm1 = (TURBMV(1))/(leftv(1)* KAPPA * KAPPA * ddw * ddw)
-			Stild = max ( OMEGA + (TCH_fv2*ProdTerm1), 0.3*OMEGA)
-			Prodtermfinal=Stild*turbmv(1)*cb1/leftv(1)
-
-			RR=MIN((TURBMV(1)/(((LEFTV(1)*STILD*KAPPA * KAPPA * (ddw) * (ddw)))+0.000000001)),10.0)
-			gg	= rr +  ( CW2 * (rr**6 - rr) )
-			Fw    = gg * (((1.0 + cw3**6) / (gg**6 + cw3**6))**onesix)
-						!  Destruction term
-			      destterm  = cw1 * fw * ((( TURBMV(1) ) /( leftv(1)*(ddw)))**2)
-			      ! ! 	!  First order diffusion term
-			      fodt  =   cb2 * SQUARET / SIGMA
-			      
-			      
-			        Prodtermfinal=Stild*cb1
-			         
-			      destterm  = 2.0* cw1 * fw * (TURBMV(1)/(LEFTV(1)*DDW**2))
-			      fodt  =   2.0* cb2 * (SQRT(SQUARET)) / SIGMA
-			      		      
-			      
-			      SOURCE_T(1)=  min(ProdTermfinal + fodt - destterm,ZERO)
-			END IF
-	 eLSE
-		    CALL EDDYVISCO(N,VISCL,LAML,TURBMV,ETVM,EDDYFL,EDDYFR,LEFTV,RIGHTV)
-			  TCH_X=   TURBMV(1) / VISCL(1) 
-			    if (tch_x.gt.10.0D0)then
-						
-			      tch_x=tch_x
-						
-						
-			    ELSE
-						
-						
-				tch_x=0.05D0*log(1.0D0+exp(20.0D0*(tch_x)))
-						
-						
-			      end if
-			ddw=IELEM(N,I)%WallDist
-			  
-
-			  if (DES_model .eq. 1) then
-			  CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			  Delta_cell=Cell_volume**0.333333333333333
-			  ddw=min(ddw,C_DES_SA*Delta_cell)
-			  end if
-			  
-			  if (DES_model .eq. 2) then
-			  CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			  Delta_cell=Cell_volume**0.333333333333333
-			  r_DES=min(10.0D0, (viscl(1)+viscl(3))/(SNORM*(KAPPA*ddw)**2+1e-16)) 
-			  !Previous limiter is just for numerical reasons regarding tanh
-			  f_DES=1-tanh((8.0D0*r_DES)**3)
-			  ddw=max(ddw-f_DES*max(ddw-C_DES_SA*Delta_cell,1e-16),10.0e-16)
-			  end if
-
-		      
-
-
-		  TCH_X3 = (TCH_X)*(TCH_X)*(TCH_X)
-		      TCH_FV1 = TCH_X3/(TCH_X3+(CV1*CV1*CV1))
-		  TCH_fv2   = 1.0D0 - (TCH_X/(1.0D0 + TCH_X*TCH_fv1)) 
-		  ProdTerm1 = (TCH_fv2*tch_x*(TURBMV(1)))/( leftv(1)*KAPPA * KAPPA * (ddw) * (ddw))
-		    
-		  IF (PRODTERM1.GE.(-0.7D0*OMEGA))THEN
-		  Stild =  OMEGA + ProdTerm1
-		  END IF
-		  IF (PRODTERM1.LT.(-0.7D0*OMEGA))THEN
-		  Stild =  OMEGA + ((OMEGA*(((0.7D0*0.7D0)*(OMEGA))+(0.9*PRODTERM1)))/(((0.9-1.4)*OMEGA)-PRODTERM1))
-		  END IF
-
-
-
-		  Prodtermfinal=Stild*turbmv(1)*cb1*tch_x
-		  ! 
-		  ! 
-		  RR=((TURBMV(1)*TCH_X/(LEFTV(1)*Stild*KAPPA * KAPPA * (ddw) * (ddw))))
-
-
-		  gg	= rr +  ( CW2 * (rr**6 - rr) )
-		  Fw    = gg * (((1.0 + cw3**6) / (gg**6 + cw3**6))**onesix)
-		  ! ! 				!  Destruction term
-
-		  destterm  = cw1 * fw *leftv(1)* (((turbmv(1)*tch_x/leftv(1))/(ddw))**2)
-		  ! ! 				!  First order diffusion term
-		  fodt  =   LEFTV(1)*cb2 * SQUARET / SIGMA
-		  
-			      			      		      
-			   Prodtermfinal=Stild*cb1*tch_x
-			         
-			      destterm  = 2.0* cw1 * fw * (TURBMV(1)/(LEFTV(1)*DDW**2))
-			      fodt  =   2.0* cb2 * (SQRT(SQUARET)) / SIGMA
-			      		      
-			      
-			      SOURCE_T(1)=  min(ProdTermfinal + fodt - destterm,ZERO)
-		  
-	 
-	 END IF
-
-
-  CASE(2)		!K OMEGA SST
-
-			      EDDYFL(1)=IELEM(N,I)%WALLDIST
-			      EDDYFL(2)=U_CT(I)%VAL(1,1)
-			      EDDYFL(3)=U_CT(I)%VAL(1,2)
-			      EDDYFL(4:6)=ILOCAL_RECON3(I)%GRADS(1,1:3)
-			      EDDYFL(7:9)=ILOCAL_RECON3(I)%GRADS(2,1:3)
-			      EDDYFL(10:12)=ILOCAL_RECON3(I)%GRADS(3,1:3)
-
-			      EDDYFL(13:15)=ILOCAL_RECON3(I)%GRADS(4,1:3)
-			      EDDYFL(16:18)=ILOCAL_RECON3(I)%GRADS(5,1:3)
-								    
-
-			      eddyfr=eddyfl
-
-			      CALL EDDYVISCO(N,VISCL,LAML,TURBMV,ETVM,EDDYFL,EDDYFR,LEFTV,RIGHTV)
-      k_0=(MAX(Verysmall,U_CT(I)%VAL(1,1)/LEFTV(1))) !First subindex makes reference to the time-stepping
-      om_0=MAX(1.0e-1*ufreestream/CharLength,U_CT(I)%VAL(1,2)/LEFTV(1))
-!       wally=IELEM(N,I)%WallDist
-! 	
-! 
-! 	      !Calculate here k and omega gradients
-! 		  OMX=ILOCAL_RECON3(I)%GRADS(5,1)
-! 		  OMY=ILOCAL_RECON3(I)%GRADS(5,2)
-! 		  OMZ=ILOCAL_RECON3(I)%GRADS(5,3)
-! 		  KX=ILOCAL_RECON3(I)%GRADS(4,1)
-! 		  KY=ILOCAL_RECON3(I)%GRADS(4,2)
-! 		  KZ=ILOCAL_RECON3(I)%GRADS(4,3)
-! 
-! 		  dervk_dervom= kx*omx+ky*omy+kz*omz
-! 
-! 			!Parameters
-! 
-! 			!-----NEEDED IN DIFFUSION--------
-! 			D_omplus=max(2*LEFTV(1)/sigma_om2/om_0*dervk_dervom, 1e-10)
-! 			phi_2=max(sqrt(k_0)/(0.09*om_0*wally),500.0*VISCL(1)/(LEFTV(1)*wally*wally*om_0))
-! 			phi_1=min(phi_2, 4.0*LEFTV(1)*k_0/(sigma_om2*D_omplus*wally*wally)) 
-! 
-! 				F_1=tanh(phi_1**4)
-! 				F_2=tanh(phi_2**2)
-! 				!--------------------------------
-! 
-! 
-! 				alpha_inf=F_1*alpha_inf1+(1.0-F_1)*alpha_inf2
-! 				alpha_star=alpha_starinf
-! 				alpha_raw=alpha_inf
-! 
-! 
-! 				beta_i=F_1*beta_i1+(1.0-F_1)*beta_i2
-! 				alpha_star0=beta_i/3.0
-! 				beta_stari=beta_starinf
-! 
-! 
-! 
-! 
-! 				LOWRE=0
-! 				!LOW-RE correction------------------------------------------------------------------
-! 
-! 				if (lowre.eq.1) then
-! 				Re_t_SST=LEFTV(1)*k_0/(VISCL(1)*om_0)  !Limiters for this???
-! 
-! 				alpha_star=alpha_starinf*(alpha_star0+Re_t_SST/R_k_SST)/(1.0+Re_t_SST/R_k_SST)
-! 				alpha_raw=alpha_inf/alpha_star*(alpha_0+Re_t_SST/R_om_SST)/(1.0+Re_t_SST/R_om_SST)
-! 
-! 				beta_stari=beta_starinf*(4.0/15.0+(Re_t_SST/R_beta)**4)/(1.0+(Re_t_SST/R_beta)**4)
-! 
-! 				end if
-! 				      !--------------------------------------------------------------------------
-! 
-! 				      !No Mach number corrections for the beta
-! 				      beta_star=beta_stari
-! 				      beta_raw=beta_i
-! 
-! 
-! 				      !PRODUCTION TERMS
-! 					      !Production of k
-! 					      if (vort_model.eq.1) then
-! 						      Prod_k=VISCL(3)*ONORM*SNORM!-2.0/3.0*LEFTV(1)*k_0*DIVNORM
-! 						      Prod_om=alpha_raw*LEFTV(1)*SNORM*ONORM
-! 					      else
-! 						      !Prod_k=VISCL(3)*SNORM**2
-! 						      !Exact formulation: 
-! 						      Prod_k=VISCL(3)*(SNORM**2)!-2.0/3.0*DIVNORM*DIVNORM)-2.0/3.0*LEFTV(1)*k_0*DIVNORM
-! 						      Prod_k=min(Prod_k,10.0*LEFTV(1)*beta_star*k_0*om_0)
-! 
-! 						      !INTELLIGENT WAY OF LIMITING: 
-! 						      !Prod_k=min(Prod_k,max(10.0*LEFTV(1)*beta_star*k_0*om_0,&
-! 						      !	    VISCL(3)*ONORM*SNORM!-2.0/3.0*LEFTV(1)*k_0*DIVNORM))
-! 					      
-! 					      
-! 						      !Production of omega  (Menter does this before correcting Prod_k, 
-! 						      !but in  article of 2003 he applies the correction to both)	
-! 						      Prod_om=alpha_raw*LEFTV(1)*SNORM**2
-! 				      ! 		Prod_om=min(Prod_om,10.0*LEFTV(1)*beta_star*om_0*om_0)
-! 					      end if
-! 
-! 				      !DESTRUCTION TERMS
-! 					      !Destruction of k
-! 					      Ydest_k=LEFTV(1)*beta_star*k_0*om_0
-! 					      !Destruction of omega
-! 					      Ydest_om=LEFTV(1)*beta_raw*om_0*om_0
-! 					      
-! 				      !CROSSED-DIFFUSION TERM
-! 					      !Crossed diffusion of omega
-! 					      Diff_om=2.0*(1-F_1)*LEFTV(1)/(om_0*sigma_om2)*dervk_dervom
-! 	 
-! 	
-! 				!QSAS TERM: SCALE ADAPTIVE
-! 					if (QSAS_model.eq.1) then  !<------------!!!!!!!!!!!!!!!!!!!
-! 						!Calculate here second derivative of u 
-! 						!Declare all variables
-! 						      DO IEX=1,3
-! 							VORTET(IEX,1:3)=ILOCAL_RECON3(I)%GRADS(3+TURBULENCEEQUATIONS+IEX,1:3)
-! 							
-! 						      END DO
-! 						
-! 						uxx=VORTET(1,1) ; uyy=VORTET(1,2); uzz=VORTET(1,3)				
-! 						vxx=VORTET(2,1) ; vyy=VORTET(2,2); vzz=VORTET(2,3)	
-! 						wxx=VORTET(3,1) ; wyy=VORTET(3,2); wzz=VORTET(3,3)	
-! 						!Compute here cell volume
-! 						CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-! 						
-! 						u_lapl=sqrt((uxx+uyy+uzz)**2+(vxx+vyy+vzz)**2+(wxx+wyy+wzz)**2)
-! 						dervk2=kx*kx+ky*ky+kz*kz
-! 						dervom2=omx*omx+omy*omy+omz*omz
-! 						
-! 						Delta_cell=Cell_volume**0.333333333333333
-! 						
-! 						L_sas=sqrt(k_0)/(beta_star**0.25*om_0)
-! 						L_vk=max(kappa*SNORM/u_lapl, &       !This switch provides high wave-number damping
-! 							C_smg*Delta_cell*sqrt(kappa*eta2_SAS/(beta_raw/beta_star-alpha_raw)))
-! 						
-! 						Q_sas1=LEFTV(1)*eta2_SAS*kappa*SNORM**2*(L_sas/L_vk)**2
-! 						Q_sas2= -C_SAS*2*LEFTV(1)*k_0/sigma_phi*max(dervk2/k_0**2,dervom2/om_0**2)
-! 
-! 						Q_SAS=max(Q_sas1+Q_sas2,0.0)
-! 					else
-! 					Q_SAS=ZERO
-! 					end if
-! 
-! 				    !FINAL SOURCE TERMS
-! 
-! 
-! 					    !DES-SST MODEL (if QSAS_model=2)
-! 					    if (QSAS_model .eq.2) then
-! 					    CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-! 					    Delta_cell=Cell_volume**0.333333333333333
-! 					    L_t_DES=sqrt(k_0)/(beta_star*om_0)
-! 					    F_DES_SST=max(1.0, L_t_DES/(C_DES_SST*Delta_cell)*(1-F_2))
-! 					    !The (1-F_2) is meant to protect the boundary layer. Will result in same 
-! 					    !separation point that standard S-A
-! 					    Ydest_k=F_DES_SST*Ydest_k
-! 					    end if
-! 					    
-! 				    srcfull_k=Prod_k-Ydest_k
-! 				    srcfull_om=Prod_om-Ydest_om+Diff_om+Q_SAS
-
-
-				    !Filling the output vector
-				      SOURCE_T(1) = BETA_STARINF*om_0
-				      SOURCE_T(2) = BETA_STARINF*k_0
-
-				  
-	
-END SELECT
-
-END SUBROUTINE SOURCES_DERIVATIVES
-
-SUBROUTINE SOURCES_COMPUTATION2d(N)
-!> @brief
-!> Sources  computation in 2D
-	IMPLICIT NONE
-	INTEGER,INTENT(IN)::N
-	INTEGER::I,KMAXE,ICONSIDERED
-	REAL,DIMENSION(TURBULENCEEQUATIONS)::SOURCE_T
-	
-	
-	KMAXE=XMPIELRANK(N)
-	
-	
-	!$OMP DO
-	DO I=1,KMAXE
-		ICONSIDERED=I
-		CALL SOURCES2d(N,ICONSIDERED,SOURCE_T)
-		RHST(I)%VAL(1:turbulenceequations)=RHST(I)%VAL(1:turbulenceequations)-(SOURCE_T(1:turbulenceequations)*ielem(n,I)%totvolume)
-	END DO
-	!$OMP END DO 
-	
-	
-END SUBROUTINE SOURCES_COMPUTATION2d
-
-SUBROUTINE SOURCES_derivatives_COMPUTATION2d(N)
-!> @brief
-!> Sources  derivatives computation in 2D
-	IMPLICIT NONE
-	INTEGER,INTENT(IN)::N
-	INTEGER::I,KMAXE,ICONSIDERED
-	REAL,DIMENSION(TURBULENCEEQUATIONS)::SOURCE_T
-	
-	
-	KMAXE=XMPIELRANK(N)
-	!$OMP DO
-	DO I=1,KMAXE
-		ICONSIDERED=I
-		CALL SOURCES_derivatives2d(N,ICONSIDERED,SOURCE_T)
-		sht(I,1:turbulenceequations)=(SOURCE_T(1:turbulenceequations)*ielem(n,I)%totvolume)
-	END DO
-	!$OMP END DO 
-END SUBROUTINE SOURCES_derivatives_COMPUTATION2d
-
-
-
-SUBROUTINE SOURCES2d(N,ICONSIDERED,SOURCE_T)
-!> @brief
-!> Sources  computation in 2D
-implicit none
-INTEGER,INTENT(IN)::N,ICONSIDERED
-REAL,DIMENSION(TURBULENCEEQUATIONS),INTENT(INOUT)::SOURCE_T
-REAL::INTENERGY,R1,U1,V1,W1,ET1,S1,IE1,P1,SKIN1,E1,RS,US,VS,WS,KHX
-REAL::VHX,AMP,DVEL,OMEGA,SQUARET,TCH_X,TCH_X3,TCH_FV1,TCH_FV2
-REAL::TCH_RS,TCH_R,TCH_G,TCH_GLIM,TCH_FW,TCH_DIF,TCH_DEST,TCH_PROD
-INTEGER::I,K,J,L,IHGT,IHGJ,IEX, LOWRE
-REAL::SNORM,ONORM,DIVNORM,ax,ay,az,TCH_SHH,TCH_SAV,Verysmall,onesix,ProdTerm1,stild,rr
-REAL::gg,FW,destterm,fodt,srcfull,DBPR,DBDI,DBDE,DBY,DBX,ProdTermfinal
-REAL:: r_DES,f_DES, ddw,F_DES_SST,L_t_DES
-Real :: ux,uy,vx,vy,shear,sratio,prodmod,cvor,stildmod,ProdTerm2,sfac,sss,usss,ssss,S_bar,KRON
-real:: uz,vz,wx,wy,wz
-REAL:: uxx,uyy,uzz,vxx,vyy,vzz,wxx,wyy,wzz  !For SAS only
-REAL,DIMENSION(2,2)::VORTET,TVORT,SVORT,OVORT
-REAL,DIMENSION(2)::VORTEM,VERTF,vertex
-real,dimension(TURBULENCEEQUATIONS,1:2)::DERIVTURB
-!Declarations for k-omega
-REAL:: srcfull_k, srcfull_om, Prod_k, Prod_om, Ydest_k, Ydest_om, Diff_om, Q_sas
-REAL:: sigma_k, sigma_om, F_1, F_2,Phi_1,Phi_2, D_omplus !-------------- Those are for diffusion too!
-REAL:: alpha_raw,alpha_star, Re_t_SST,alpha_inf
-REAL:: beta_stari, beta_i, beta_raw, beta_star
-REAL:: k_0, om_0, wally
-REAL:: dervk_dervom, dervom2, dervk2, u_lapl !Generalization of the velocity Laplacian
-REAL:: L_sas, L_vk, Delta_cell, Cell_volume, Q_sas1, Q_sas2
-REAL:: kx,ky,kz,omx,omy,omz
-REAL,DIMENSION(1:NOF_VARIABLES)::LEFTV,RIGHTV
-REAL::MP_PINFl,GAMMAL,MP_PINFR,GAMMAR
-REAL,DIMENSION(1:4)::VISCL,LAML
-REAL,DIMENSION(1:20)::EDDYFL,EDDYFR
-REAL,DIMENSION(1:2)::TURBMV
-    REAL,DIMENSION(1)::ETVM
-
-I=ICONSIDERED
-
-Verysmall = 10e-16
-
-
-
-	
-VORTET(1:2,1:2) = ILOCAL_RECON3(I)%GRADS(1:2,1:2)
-
-
-ux = Vortet(1,1);uy = Vortet(1,2)
-vx = Vortet(2,1);vy = Vortet(2,2)
-
-
-
-
-
-
-
-DO IHGT=1,2
-  DO IHGJ=1,2
-  TVORT(IHGT,IHGJ)=VORTET(IHGJ,IHGT)
-  END DO
-END DO
-
-sVORT=0.5*(VORTET+TVORT)
-OVORT=0.5*(VORTET-TVORT)
-
-
-
-
-
-SNORM=SQRT(2.0D0*((SVORT(1,1)*SVORT(1,1))+(SVORT(1,2)*SVORT(1,2))+&
-	       (SVORT(2,1)*SVORT(2,1))+(SVORT(2,2)*SVORT(2,2))))
-!Quadratic mean of the strain tensor (defined as Svort). Also needed in SST
-ONORM=SQRT(2.0D0*((OVORT(1,1)*OVORT(1,1))+(OVORT(1,2)*OVORT(1,2))+&
-	       (OVORT(2,1)*OVORT(2,1))+(OVORT(2,2)*OVORT(2,2))))
-OMEGA=ONORM
-
-
-DIVNORM=ux+uy+uz  !Careful with the sign. If it becomes very big, it can produce negative production
-
-usss=sqrt((2.0*((ux*ux)+(vy*vy)))&
-	+((uy+vx)*(uy+vx))&
-	-(2.0/3.0*(ux+vy)*(ux+vy)))
-
-
-DERIVTURB(1,1:2) = ILOCAL_RECON3(I)%GRADS(4,1:2)
-SQUARET=(sqrt((DERIVTURB(1,1)**2)+(DERIVTURB(1,2)**2)))**2
-
-
-LEFTV(1:nof_Variables)=U_C(I)%VAL(1,1:nof_Variables)
-RIGHTV(1:nof_Variables)=LEFTV(1:nof_Variables)
-CALL cons2prim2(N,LEFTV,RIGHTV,MP_PINFL,MP_PINFR,GAMMAL,GAMMAR)
-
-CALL SUTHERLAND2D(N,LEFTV,RIGHTV,VISCL,LAML)
-
-
-
-
-TURBMV(1)=U_CT(I)%VAL(1,1)
-TURBMV(2)=TURBMV(1)
-
-
-
- SELECT CASE(TURBULENCEMODEL)
- 
- 
- 
- CASE(1) !!SPALART ALMARAS MODEL	
-
-    
-      if (ISPAL .eq.1) then
-		eddyfl(2)=turbmv(1)
-		eddyfr(2)=turbmv(2)
-			
-		onesix = 1.0D0/6.0D0
-
-	    CALL EDDYVISCO2D(N,VISCL,LAML,TURBMV,ETVM,EDDYFL,EDDYFR,LEFTV,RIGHTV)
-	      cw1 = cb1 / (kappa*kappa)
-	      cw1 = cw1 + (1.0 + cb2) /sigma
-	      TCH_X=   TURBMV(1) / VISCL(1) 
-	      
-			  if (TCH_X .lt. Verysmall) then
-						SOURCE_T(1) = ZERO
-
-			  else
-			      TCH_X3 = (TCH_X)*(TCH_X)*(TCH_X)
-			      TCH_FV1 = TCH_X3/(TCH_X3+(CV1*CV1*CV1))
-			      TCH_fv2   = 1.0D0 - (TCH_X/(1.0D0 + TCH_X*TCH_fv1)) 
-
-
-			ddw=IELEM(N,I)%WallDist
-			
-			if (DES_model .eq. 1) then
-			CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			Delta_cell=Cell_volume**0.333333333333333
-			ddw=min(ddw,C_DES_SA*Delta_cell)
-			end if
-			
-			if (DES_model .eq. 2) then
-			CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			Delta_cell=Cell_volume**0.333333333333333
-			r_DES=min(10.0, (viscl(1)+viscl(3))/(SNORM*(KAPPA*ddw)**2+1e-16)) 
-			!Previous limiter is just for numerical reasons regarding tanh
-			f_DES=1-tanh((8.0*r_DES)**3)
-			ddw=max(ddw-f_DES*max(ddw-C_DES_SA*Delta_cell,1e-16),10.0e-16)
-			end if
-
-			ProdTerm1 = (TURBMV(1))/(leftv(1)* KAPPA * KAPPA * ddw * ddw)
-			Stild = max ( OMEGA + (TCH_fv2*ProdTerm1), 0.3*OMEGA)
-			Prodtermfinal=Stild*turbmv(1)*cb1
-
-			RR=MIN((TURBMV(1)/(((LEFTV(1)*STILD*KAPPA * KAPPA * (ddw) * (ddw)))+0.000000001)),10.0)
-			gg	= rr +  ( CW2 * (rr**6 - rr) )
-			Fw    = gg * (((1.0 + cw3**6) / (gg**6 + cw3**6))**onesix)
-						!  Destruction term
-			      destterm  = cw1 * fw * ((( TURBMV(1) )/(leftv(1)*(ddw)))**2)
-			      ! ! 	!  First order diffusion term
-			      fodt  =   cb2 * SQUARET/ SIGMA
-			      SOURCE_T(1) = ProdTermfinal + fodt - destterm
-			     
-			     
-			END IF
-	 eLSE
-		    CALL EDDYVISCO2D(N,VISCL,LAML,TURBMV,ETVM,EDDYFL,EDDYFR,LEFTV,RIGHTV)
-			  TCH_X=   TURBMV(1) / VISCL(1) 
-			    if (tch_x.gt.10.0D0)then
-						
-			      tch_x=tch_x
-						
-						
-			    ELSE
-						
-						
-				tch_x=0.05D0*log(1.0D0+exp(20.0D0*(tch_x)))
-						
-						
-			      end if
-			ddw=IELEM(N,I)%WallDist
-			  
-
-			  if (DES_model .eq. 1) then
-			  CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			  Delta_cell=Cell_volume**0.333333333333333
-			  ddw=min(ddw,C_DES_SA*Delta_cell)
-			  end if
-			  
-			  if (DES_model .eq. 2) then
-			  CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			  Delta_cell=Cell_volume**0.333333333333333
-			  r_DES=min(10.0D0, (viscl(1)+viscl(3))/(SNORM*(KAPPA*ddw)**2+1e-16)) 
-			  !Previous limiter is just for numerical reasons regarding tanh
-			  f_DES=1-tanh((8.0D0*r_DES)**3)
-			  ddw=max(ddw-f_DES*max(ddw-C_DES_SA*Delta_cell,1e-16),10.0e-16)
-			  end if
-
-		      
-
-
-		  TCH_X3 = (TCH_X)*(TCH_X)*(TCH_X)
-		      TCH_FV1 = TCH_X3/(TCH_X3+(CV1*CV1*CV1))
-		  TCH_fv2   = 1.0D0 - (TCH_X/(1.0D0 + TCH_X*TCH_fv1)) 
-		  ProdTerm1 = (TCH_fv2*tch_x*(TURBMV(1)))/( leftv(1)*KAPPA * KAPPA * (ddw) * (ddw))
-		    
-		  IF (PRODTERM1.GE.(-0.7D0*OMEGA))THEN
-		  Stild =  OMEGA + ProdTerm1
-		  END IF
-		  IF (PRODTERM1.LT.(-0.7D0*OMEGA))THEN
-		  Stild =  OMEGA + ((OMEGA*(((0.7D0*0.7D0)*(OMEGA))+(0.9*PRODTERM1)))/(((0.9-1.4)*OMEGA)-PRODTERM1))
-		  END IF
-
-
-
-		  Prodtermfinal=Stild*turbmv(1)*cb1*tch_x
-		  ! 
-		  RR=((TURBMV(1)*TCH_X/(LEFTV(1)*Stild*KAPPA * KAPPA * (ddw) * (ddw))))
-
-
-		  gg	= rr +  ( CW2 * (rr**6 - rr) )
-		  Fw    = gg * (((1.0 + cw3**6) / (gg**6 + cw3**6))**onesix)
-		  ! ! 				!  Destruction term
-
-		  destterm  = cw1 * fw *leftv(1)* (((turbmv(1)*tch_x/leftv(1))/(ddw))**2)
-		  ! ! 				!  First order diffusion term
-		  fodt  =   LEFTV(1)*cb2 * SQUARET / SIGMA
-		  SOURCE_T(1)= ProdTermfinal + fodt - destterm
-
-		  
-	 
-	 END IF
-
-
-  CASE(2)		!K OMEGA SST
-
-			      EDDYFL(1)=IELEM(N,I)%WALLDIST
-			      EDDYFL(2)=U_CT(I)%VAL(1,1)
-			      EDDYFL(3)=U_CT(I)%VAL(1,2)
-			      EDDYFL(4:5)=ILOCAL_RECON3(I)%GRADS(1,1:2)
-			      EDDYFL(6:7)=ILOCAL_RECON3(I)%GRADS(2,1:2)
-			      EDDYFL(8:9)=ILOCAL_RECON3(I)%GRADS(4,1:2)
-			      EDDYFL(10:11)=ILOCAL_RECON3(I)%GRADS(5,1:2)
-								    
-
-			      eddyfr=eddyfl
-
-			      CALL EDDYVISCO2D(N,VISCL,LAML,TURBMV,ETVM,EDDYFL,EDDYFR,LEFTV,RIGHTV)
-      k_0=(MAX(Verysmall,U_CT(I)%VAL(1,1)/LEFTV(1))) !First subindex makes reference to the time-stepping
-      om_0=MAX(1.0e-1*ufreestream/CharLength,U_CT(I)%VAL(1,2)/LEFTV(1))
-      wally=IELEM(N,I)%WallDist
-	
-
-	      !Calculate here k and omega gradients
-		  OMX=ILOCAL_RECON3(I)%GRADS(5,1)
-		  OMY=ILOCAL_RECON3(I)%GRADS(5,2)
-		  
-		  KX=ILOCAL_RECON3(I)%GRADS(4,1)
-		  KY=ILOCAL_RECON3(I)%GRADS(4,2)
-		
-
-		  dervk_dervom= kx*omx+ky*omy
-
-			!Parameters
-
-			!-----NEEDED IN DIFFUSION--------
-			D_omplus=max(2*LEFTV(1)/sigma_om2/om_0*dervk_dervom, 1e-10)
-			phi_2=max(sqrt(k_0)/(0.09*om_0*wally),500.0*VISCL(1)/(LEFTV(1)*wally*wally*om_0))
-			phi_1=min(phi_2, 4.0*LEFTV(1)*k_0/(sigma_om2*D_omplus*wally*wally)) 
-
-				F_1=tanh(phi_1**4)
-				F_2=tanh(phi_2**2)
-				!--------------------------------
-
-
-				alpha_inf=F_1*alpha_inf1+(1.0-F_1)*alpha_inf2
-				alpha_star=alpha_starinf
-				alpha_raw=alpha_inf
-
-
-				beta_i=F_1*beta_i1+(1.0-F_1)*beta_i2
-				alpha_star0=beta_i/3.0
-				beta_stari=beta_starinf
-
-
-
-
-				LOWRE=0
-				!LOW-RE correction------------------------------------------------------------------
-
-				if (lowre.eq.1) then
-				Re_t_SST=LEFTV(1)*k_0/(VISCL(1)*om_0)  !Limiters for this???
-
-				alpha_star=alpha_starinf*(alpha_star0+Re_t_SST/R_k_SST)/(1.0+Re_t_SST/R_k_SST)
-				alpha_raw=alpha_inf/alpha_star*(alpha_0+Re_t_SST/R_om_SST)/(1.0+Re_t_SST/R_om_SST)
-
-				beta_stari=beta_starinf*(4.0/15.0+(Re_t_SST/R_beta)**4)/(1.0+(Re_t_SST/R_beta)**4)
-
-				end if
-				      !--------------------------------------------------------------------------
-
-				      !No Mach number corrections for the beta
-				      beta_star=beta_stari
-				      beta_raw=beta_i
-
-
-				      !PRODUCTION TERMS
-					      !Production of k
-					      if (vort_model.eq.1) then
-						      Prod_k=VISCL(3)*ONORM*SNORM!-2.0/3.0*LEFTV(1)*k_0*DIVNORM
-						      Prod_om=alpha_raw*LEFTV(1)*SNORM*ONORM
-					      else
-						      !Prod_k=VISCL(3)*SNORM**2
-						      !Exact formulation: 
-						      Prod_k=VISCL(3)*(SNORM**2)!-2.0/3.0*DIVNORM*DIVNORM)-2.0/3.0*LEFTV(1)*k_0*DIVNORM
-						      Prod_k=min(Prod_k,10.0*LEFTV(1)*beta_star*k_0*om_0)
-
-						      !INTELLIGENT WAY OF LIMITING: 
-						      !Prod_k=min(Prod_k,max(10.0*LEFTV(1)*beta_star*k_0*om_0,&
-						      !	    VISCL(3)*ONORM*SNORM!-2.0/3.0*LEFTV(1)*k_0*DIVNORM))
-					      
-					      
-						      !Production of omega  (Menter does this before correcting Prod_k, 
-						      !but in  article of 2003 he applies the correction to both)	
-						      Prod_om=alpha_raw*LEFTV(1)*SNORM**2
-				      ! 		Prod_om=min(Prod_om,10.0*LEFTV(1)*beta_star*om_0*om_0)
-					      end if
-
-				      !DESTRUCTION TERMS
-					      !Destruction of k
-					      Ydest_k=LEFTV(1)*beta_star*k_0*om_0
-					      !Destruction of omega
-					      Ydest_om=LEFTV(1)*beta_raw*om_0*om_0
-					      
-				      !CROSSED-DIFFUSION TERM
-					      !Crossed diffusion of omega
-					      Diff_om=2.0*(1-F_1)*LEFTV(1)/(om_0*sigma_om2)*dervk_dervom
-	 
-	
-				!QSAS TERM: SCALE ADAPTIVE
-					if (QSAS_model.eq.1) then  !<------------!!!!!!!!!!!!!!!!!!!
-						!Calculate here second derivative of u 
-						!Declare all variables
-						      DO IEX=1,2
-							VORTET(IEX,1:2)=ILOCAL_RECON3(I)%GRADS(3+TURBULENCEEQUATIONS+IEX,1:2)
-							
-						      END DO
-						
-						uxx=VORTET(1,1) ; uyy=VORTET(1,2); 				
-						vxx=VORTET(2,1) ; vyy=VORTET(2,2); 	
-						!Compute here cell volume
-						CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-						
-						u_lapl=sqrt((uxx+uyy+uzz)**2+(vxx+vyy+vzz)**2+(wxx+wyy+wzz)**2)
-						dervk2=kx*kx+ky*ky+kz*kz
-						dervom2=omx*omx+omy*omy+omz*omz
-						
-						Delta_cell=Cell_volume**0.333333333333333
-						
-						L_sas=sqrt(k_0)/(beta_star**0.25*om_0)
-						L_vk=max(kappa*SNORM/u_lapl, &       !This switch provides high wave-number damping
-							C_smg*Delta_cell*sqrt(kappa*eta2_SAS/(beta_raw/beta_star-alpha_raw)))
-						
-						Q_sas1=LEFTV(1)*eta2_SAS*kappa*SNORM**2*(L_sas/L_vk)**2
-						Q_sas2= -C_SAS*2*LEFTV(1)*k_0/sigma_phi*max(dervk2/k_0**2,dervom2/om_0**2)
-
-						Q_SAS=max(Q_sas1+Q_sas2,0.0)
-					else
-					Q_SAS=ZERO
-					end if
-
-				    !FINAL SOURCE TERMS
-
-
-					    !DES-SST MODEL (if QSAS_model=2)
-					    if (QSAS_model .eq.2) then
-					    CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-					    Delta_cell=Cell_volume**0.333333333333333
-					    L_t_DES=sqrt(k_0)/(beta_star*om_0)
-					    F_DES_SST=max(1.0, L_t_DES/(C_DES_SST*Delta_cell)*(1-F_2))
-					    !The (1-F_2) is meant to protect the boundary layer. Will result in same 
-					    !separation point that standard S-A
-					    Ydest_k=F_DES_SST*Ydest_k
-					    end if
-					    
-				    srcfull_k=Prod_k-Ydest_k
-				    srcfull_om=Prod_om-Ydest_om+Diff_om+Q_SAS
-
-
-				    !Filling the output vector
-				      SOURCE_T(1) = srcfull_k
-				      SOURCE_T(2) = srcfull_om
-
-				  
-	
-END SELECT
-
-
-
-
-
-END SUBROUTINE SOURCES2d
-
-
-SUBROUTINE SOURCES_DERIVATIVES2d(N,ICONSIDERED,SOURCE_t)
-!> @brief
-!> Sources derivatives computation in 2D
-implicit none
-INTEGER,INTENT(IN)::N,ICONSIDERED
-REAL,DIMENSION(TURBULENCEEQUATIONS),INTENT(INOUT)::SOURCE_T
-REAL::INTENERGY,R1,U1,V1,W1,ET1,S1,IE1,P1,SKIN1,E1,RS,US,VS,WS,KHX
-REAL::VHX,AMP,DVEL,OMEGA,SQUARET,TCH_X,TCH_X3,TCH_FV1,TCH_FV2
-REAL::TCH_RS,TCH_R,TCH_G,TCH_GLIM,TCH_FW,TCH_DIF,TCH_DEST,TCH_PROD
-INTEGER::I,K,J,L,IHGT,IHGJ,IEX, LOWRE
-REAL::SNORM,ONORM,DIVNORM,ax,ay,az,TCH_SHH,TCH_SAV,Verysmall,onesix,ProdTerm1,stild,rr
-REAL::gg,FW,destterm,fodt,srcfull,DBPR,DBDI,DBDE,DBY,DBX,ProdTermfinal
-REAL:: r_DES,f_DES, ddw,F_DES_SST,L_t_DES
-Real :: ux,uy,vx,vy,shear,sratio,prodmod,cvor,stildmod,ProdTerm2,sfac,sss,usss,ssss,S_bar,KRON
-real:: uz,vz,wx,wy,wz
-REAL:: uxx,uyy,uzz,vxx,vyy,vzz,wxx,wyy,wzz  !For SAS only
-REAL,DIMENSION(2,2)::VORTET,TVORT,SVORT,OVORT
-REAL,DIMENSION(2)::VORTEM,VERTF,vertex
-real,dimension(TURBULENCEEQUATIONS,1:2)::DERIVTURB
-!Declarations for k-omega
-REAL:: srcfull_k, srcfull_om, Prod_k, Prod_om, Ydest_k, Ydest_om, Diff_om, Q_sas
-REAL:: sigma_k, sigma_om, F_1, F_2,Phi_1,Phi_2, D_omplus !-------------- Those are for diffusion too!
-REAL:: alpha_raw,alpha_star, Re_t_SST,alpha_inf
-REAL:: beta_stari, beta_i, beta_raw, beta_star
-REAL:: k_0, om_0, wally
-REAL:: dervk_dervom, dervom2, dervk2, u_lapl !Generalization of the velocity Laplacian
-REAL:: L_sas, L_vk, Delta_cell, Cell_volume, Q_sas1, Q_sas2
-REAL:: kx,ky,kz,omx,omy,omz
-REAL,DIMENSION(1:NOF_VARIABLES)::LEFTV,RIGHTV
-REAL::MP_PINFl,GAMMAL
-REAL,DIMENSION(1:4)::VISCL,LAML
-REAL,DIMENSION(1:20)::EDDYFL,EDDYFR
-REAL,DIMENSION(1:2)::TURBMV
-    REAL,DIMENSION(1)::ETVM
-
-I=ICONSIDERED
-
-Verysmall = 10e-16
-	
-VORTET(1:2,1:2) = ILOCAL_RECON3(I)%GRADS(1:2,1:2)
-
-
-ux = Vortet(1,1);uy = Vortet(1,2)
-vx = Vortet(2,1);vy = Vortet(2,2)
-
-
-DO IHGT=1,2
-  DO IHGJ=1,2
-  TVORT(IHGT,IHGJ)=VORTET(IHGJ,IHGT)
-  END DO
-END DO
-
-sVORT=0.5*(VORTET+TVORT)
-OVORT=0.5*(VORTET-TVORT)
-
-
-
-
-
-SNORM=SQRT(2.0D0*((SVORT(1,1)*SVORT(1,1))+(SVORT(1,2)*SVORT(1,2))+&
-	       (SVORT(2,1)*SVORT(2,1))+(SVORT(2,2)*SVORT(2,2))))
-!Quadratic mean of the strain tensor (defined as Svort). Also needed in SST
-ONORM=SQRT(2.0D0*((OVORT(1,1)*OVORT(1,1))+(OVORT(1,2)*OVORT(1,2))+&
-	       (OVORT(2,1)*OVORT(2,1))+(OVORT(2,2)*OVORT(2,2))))
-OMEGA=ONORM
-
-
-DIVNORM=ux+uy !Careful with the sign. If it becomes very big, it can produce negative production
-
-usss=sqrt((2.0*((ux*ux)+(vy*vy)))&
-	+((uy+vx)*(uy+vx))&
-	-(2.0/3.0*(ux+vy)*(ux+vy)))
-
-
-DERIVTURB(1,1:2) = ILOCAL_RECON3(I)%GRADS(4,1:2)
-SQUARET=(sqrt((DERIVTURB(1,1)**2)+(DERIVTURB(1,2)**2)))**2
-
-
-LEFTV(1:nof_Variables)=U_C(I)%VAL(1,1:nof_Variables)
-
-CALL cons2prim(N,leftv,MP_PINFl,gammal)
-RIGHTV(1:nof_Variables)=LEFTV(1:nof_Variables)
-CALL SUTHERLAND2D(N,LEFTV,RIGHTV,VISCL,LAML)
-
-
-
-
-TURBMV(1)=U_CT(I)%VAL(1,1)
-TURBMV(2)=TURBMV(1)
-
-
- SELECT CASE(TURBULENCEMODEL)
- 
- 
- 
- CASE(1) !!SPALART ALMARAS MODEL	
-
-    
-      if (ISPAL .eq.1) then
-		eddyfl(2)=turbmv(1)
-		eddyfr(2)=turbmv(2)
-			
-		onesix = 1.0D0/6.0D0
-
-	    CALL EDDYVISCO2D(N,VISCL,LAML,TURBMV,ETVM,EDDYFL,EDDYFR,LEFTV,RIGHTV)
-	      cw1 = cb1 / (kappa*kappa)
-	      cw1 = cw1 + (1.0 + cb2) /sigma
-	      TCH_X=   TURBMV(1) / VISCL(1) 
-	      
-			  if (TCH_X .lt. Verysmall) then
-						SOURCE_T(1) = ZERO
-
-			  else
-			      TCH_X3 = (TCH_X)*(TCH_X)*(TCH_X)
-			      TCH_FV1 = TCH_X3/(TCH_X3+(CV1*CV1*CV1))
-			      TCH_fv2   = 1.0D0 - (TCH_X/(1.0D0 + TCH_X*TCH_fv1)) 
-
-
-			ddw=IELEM(N,I)%WallDist
-			
-			if (DES_model .eq. 1) then
-			CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			Delta_cell=Cell_volume**0.333333333333333
-			ddw=min(ddw,C_DES_SA*Delta_cell)
-			end if
-			
-			if (DES_model .eq. 2) then
-			CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			Delta_cell=Cell_volume**0.333333333333333
-			r_DES=min(10.0, (viscl(1)+viscl(3))/(SNORM*(KAPPA*ddw)**2+1e-16)) 
-			!Previous limiter is just for numerical reasons regarding tanh
-			f_DES=1-tanh((8.0*r_DES)**3)
-			ddw=max(ddw-f_DES*max(ddw-C_DES_SA*Delta_cell,1e-16),10.0e-16)
-			end if
-
-			ProdTerm1 = (TURBMV(1))/(leftv(1)* KAPPA * KAPPA * ddw * ddw)
-			Stild = max ( OMEGA + (TCH_fv2*ProdTerm1), 0.3*OMEGA)
-			Prodtermfinal=Stild*turbmv(1)*cb1/leftv(1)
-
-			RR=MIN((TURBMV(1)/(((LEFTV(1)*STILD*KAPPA * KAPPA * (ddw) * (ddw)))+0.000000001)),10.0)
-			gg	= rr +  ( CW2 * (rr**6 - rr) )
-			Fw    = gg * (((1.0 + cw3**6) / (gg**6 + cw3**6))**onesix)
-						!  Destruction term
-			      destterm  = cw1 * fw * ((( TURBMV(1) ) /( leftv(1)*(ddw)))**2)
-			      ! ! 	!  First order diffusion term
-			      fodt  =   cb2 * SQUARET / SIGMA
-			      
-			      
-			        Prodtermfinal=Stild*cb1
-			         
-			      destterm  = 2.0* cw1 * fw * (TURBMV(1)/(LEFTV(1)*(kappa**2)*(DDW**2)))
-			      fodt  =   -2.0* cb2 * (SQRT(SQUARET))
-			      		      
-			      
-			      
-			      
-! 			      IF (LAMZ.GT.0)THEN
-!  			      SOURCE_T(1)=  min(ProdTermfinal + fodt - destterm,ZERO)
-! 			      ELSE
-			      SOURCE_T(1)=  min(zero,- destterm +min(fodt,ZERO))
-! 			      END IF
-			      
-			      
-			END IF
-	 eLSE
-		    CALL EDDYVISCO2D(N,VISCL,LAML,TURBMV,ETVM,EDDYFL,EDDYFR,LEFTV,RIGHTV)
-			  TCH_X=   TURBMV(1) / VISCL(1) 
-			    if (tch_x.gt.10.0D0)then
-						
-			      tch_x=tch_x
-						
-						
-			    ELSE
-						
-						
-				tch_x=0.05D0*log(1.0D0+exp(20.0D0*(tch_x)))
-						
-						
-			      end if
-			ddw=IELEM(N,I)%WallDist
-			  
-
-			  if (DES_model .eq. 1) then
-			  CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			  Delta_cell=Cell_volume**0.333333333333333
-			  ddw=min(ddw,C_DES_SA*Delta_cell)
-			  end if
-			  
-			  if (DES_model .eq. 2) then
-			  CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-			  Delta_cell=Cell_volume**0.333333333333333
-			  r_DES=min(10.0D0, (viscl(1)+viscl(3))/(SNORM*(KAPPA*ddw)**2+1e-16)) 
-			  !Previous limiter is just for numerical reasons regarding tanh
-			  f_DES=1-tanh((8.0D0*r_DES)**3)
-			  ddw=max(ddw-f_DES*max(ddw-C_DES_SA*Delta_cell,1e-16),10.0e-16)
-			  end if
-
-		      
-
-
-		  TCH_X3 = (TCH_X)*(TCH_X)*(TCH_X)
-		      TCH_FV1 = TCH_X3/(TCH_X3+(CV1*CV1*CV1))
-		  TCH_fv2   = 1.0D0 - (TCH_X/(1.0D0 + TCH_X*TCH_fv1)) 
-		  ProdTerm1 = (TCH_fv2*tch_x*(TURBMV(1)))/( leftv(1)*KAPPA * KAPPA * (ddw) * (ddw))
-		    
-		  IF (PRODTERM1.GE.(-0.7D0*OMEGA))THEN
-		  Stild =  OMEGA + ProdTerm1
-		  END IF
-		  IF (PRODTERM1.LT.(-0.7D0*OMEGA))THEN
-		  Stild =  OMEGA + ((OMEGA*(((0.7D0*0.7D0)*(OMEGA))+(0.9*PRODTERM1)))/(((0.9-1.4)*OMEGA)-PRODTERM1))
-		  END IF
-
-
-
-		  Prodtermfinal=Stild*turbmv(1)*cb1*tch_x
-		  ! 
-		  RR=((TURBMV(1)*TCH_X/(LEFTV(1)*Stild*KAPPA * KAPPA * (ddw) * (ddw))))
-
-
-		  gg	= rr +  ( CW2 * (rr**6 - rr) )
-		  Fw    = gg * (((1.0 + cw3**6) / (gg**6 + cw3**6))**onesix)
-		  ! ! 				!  Destruction term
-
-		  destterm  = cw1 * fw *leftv(1)* (((turbmv(1)*tch_x/leftv(1))/(ddw))**2)
-		  ! ! 				!  First order diffusion term
-		  fodt  =   LEFTV(1)*cb2 * SQUARET / SIGMA
-		  
-			      			      		      
-			   Prodtermfinal=Stild*cb1*tch_x
-			         
-			      destterm  = 2.0* cw1 * fw * (TURBMV(1)/(LEFTV(1)*DDW**2))
-			      fodt  =   2.0* cb2 * (SQRT(SQUARET)) / SIGMA
-			      		      
-			      
-			      SOURCE_T(1)=  min(ProdTermfinal + fodt - destterm,ZERO)
-		  
-	 
-	 END IF
-
-
-  CASE(2)		!K OMEGA SST
-
-			   EDDYFL(1)=IELEM(N,I)%WALLDIST
-			      EDDYFL(2)=U_CT(I)%VAL(1,1)
-			      EDDYFL(3)=U_CT(I)%VAL(1,2)
-			      EDDYFL(4:5)=ILOCAL_RECON3(I)%GRADS(1,1:2)
-			      EDDYFL(6:7)=ILOCAL_RECON3(I)%GRADS(2,1:2)
-			      EDDYFL(8:9)=ILOCAL_RECON3(I)%GRADS(4,1:2)
-			      EDDYFL(10:11)=ILOCAL_RECON3(I)%GRADS(5,1:2)
-								    
-
-			      eddyfr=eddyfl
-
-			      CALL EDDYVISCO2D(N,VISCL,LAML,TURBMV,ETVM,EDDYFL,EDDYFR,LEFTV,RIGHTV)
-      k_0=(MAX(Verysmall,U_CT(I)%VAL(1,1)/LEFTV(1))) !First subindex makes reference to the time-stepping
-      om_0=MAX(1.0e-1*ufreestream/CharLength,U_CT(I)%VAL(1,2)/LEFTV(1))
-!       wally=IELEM(N,I)%WallDist
-! 	
-! 
-! 	      !Calculate here k and omega gradients
-! 		  OMX=ILOCAL_RECON3(I)%GRADS(5,1)
-! 		  OMY=ILOCAL_RECON3(I)%GRADS(5,2)
-! 		  OMZ=ILOCAL_RECON3(I)%GRADS(5,3)
-! 		  KX=ILOCAL_RECON3(I)%GRADS(4,1)
-! 		  KY=ILOCAL_RECON3(I)%GRADS(4,2)
-! 		  KZ=ILOCAL_RECON3(I)%GRADS(4,3)
-! 
-! 		  dervk_dervom= kx*omx+ky*omy+kz*omz
-! 
-! 			!Parameters
-! 
-! 			!-----NEEDED IN DIFFUSION--------
-! 			D_omplus=max(2*LEFTV(1)/sigma_om2/om_0*dervk_dervom, 1e-10)
-! 			phi_2=max(sqrt(k_0)/(0.09*om_0*wally),500.0*VISCL(1)/(LEFTV(1)*wally*wally*om_0))
-! 			phi_1=min(phi_2, 4.0*LEFTV(1)*k_0/(sigma_om2*D_omplus*wally*wally)) 
-! 
-! 				F_1=tanh(phi_1**4)
-! 				F_2=tanh(phi_2**2)
-! 				!--------------------------------
-! 
-! 
-! 				alpha_inf=F_1*alpha_inf1+(1.0-F_1)*alpha_inf2
-! 				alpha_star=alpha_starinf
-! 				alpha_raw=alpha_inf
-! 
-! 
-! 				beta_i=F_1*beta_i1+(1.0-F_1)*beta_i2
-! 				alpha_star0=beta_i/3.0
-! 				beta_stari=beta_starinf
-! 
-! 
-! 
-! 
-! 				LOWRE=0
-! 				!LOW-RE correction------------------------------------------------------------------
-! 
-! 				if (lowre.eq.1) then
-! 				Re_t_SST=LEFTV(1)*k_0/(VISCL(1)*om_0)  !Limiters for this???
-! 
-! 				alpha_star=alpha_starinf*(alpha_star0+Re_t_SST/R_k_SST)/(1.0+Re_t_SST/R_k_SST)
-! 				alpha_raw=alpha_inf/alpha_star*(alpha_0+Re_t_SST/R_om_SST)/(1.0+Re_t_SST/R_om_SST)
-! 
-! 				beta_stari=beta_starinf*(4.0/15.0+(Re_t_SST/R_beta)**4)/(1.0+(Re_t_SST/R_beta)**4)
-! 
-! 				end if
-! 				      !--------------------------------------------------------------------------
-! 
-! 				      !No Mach number corrections for the beta
-! 				      beta_star=beta_stari
-! 				      beta_raw=beta_i
-! 
-! 
-! 				      !PRODUCTION TERMS
-! 					      !Production of k
-! 					      if (vort_model.eq.1) then
-! 						      Prod_k=VISCL(3)*ONORM*SNORM!-2.0/3.0*LEFTV(1)*k_0*DIVNORM
-! 						      Prod_om=alpha_raw*LEFTV(1)*SNORM*ONORM
-! 					      else
-! 						      !Prod_k=VISCL(3)*SNORM**2
-! 						      !Exact formulation: 
-! 						      Prod_k=VISCL(3)*(SNORM**2)!-2.0/3.0*DIVNORM*DIVNORM)-2.0/3.0*LEFTV(1)*k_0*DIVNORM
-! 						      Prod_k=min(Prod_k,10.0*LEFTV(1)*beta_star*k_0*om_0)
-! 
-! 						      !INTELLIGENT WAY OF LIMITING: 
-! 						      !Prod_k=min(Prod_k,max(10.0*LEFTV(1)*beta_star*k_0*om_0,&
-! 						      !	    VISCL(3)*ONORM*SNORM!-2.0/3.0*LEFTV(1)*k_0*DIVNORM))
-! 					      
-! 					      
-! 						      !Production of omega  (Menter does this before correcting Prod_k, 
-! 						      !but in  article of 2003 he applies the correction to both)	
-! 						      Prod_om=alpha_raw*LEFTV(1)*SNORM**2
-! 				      ! 		Prod_om=min(Prod_om,10.0*LEFTV(1)*beta_star*om_0*om_0)
-! 					      end if
-! 
-! 				      !DESTRUCTION TERMS
-! 					      !Destruction of k
-! 					      Ydest_k=LEFTV(1)*beta_star*k_0*om_0
-! 					      !Destruction of omega
-! 					      Ydest_om=LEFTV(1)*beta_raw*om_0*om_0
-! 					      
-! 				      !CROSSED-DIFFUSION TERM
-! 					      !Crossed diffusion of omega
-! 					      Diff_om=2.0*(1-F_1)*LEFTV(1)/(om_0*sigma_om2)*dervk_dervom
-! 	 
-! 	
-! 				!QSAS TERM: SCALE ADAPTIVE
-! 					if (QSAS_model.eq.1) then  !<------------!!!!!!!!!!!!!!!!!!!
-! 						!Calculate here second derivative of u 
-! 						!Declare all variables
-! 						      DO IEX=1,3
-! 							VORTET(IEX,1:3)=ILOCAL_RECON3(I)%GRADS(3+TURBULENCEEQUATIONS+IEX,1:3)
-! 							
-! 						      END DO
-! 						
-! 						uxx=VORTET(1,1) ; uyy=VORTET(1,2); uzz=VORTET(1,3)				
-! 						vxx=VORTET(2,1) ; vyy=VORTET(2,2); vzz=VORTET(2,3)	
-! 						wxx=VORTET(3,1) ; wyy=VORTET(3,2); wzz=VORTET(3,3)	
-! 						!Compute here cell volume
-! 						CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-! 						
-! 						u_lapl=sqrt((uxx+uyy+uzz)**2+(vxx+vyy+vzz)**2+(wxx+wyy+wzz)**2)
-! 						dervk2=kx*kx+ky*ky+kz*kz
-! 						dervom2=omx*omx+omy*omy+omz*omz
-! 						
-! 						Delta_cell=Cell_volume**0.333333333333333
-! 						
-! 						L_sas=sqrt(k_0)/(beta_star**0.25*om_0)
-! 						L_vk=max(kappa*SNORM/u_lapl, &       !This switch provides high wave-number damping
-! 							C_smg*Delta_cell*sqrt(kappa*eta2_SAS/(beta_raw/beta_star-alpha_raw)))
-! 						
-! 						Q_sas1=LEFTV(1)*eta2_SAS*kappa*SNORM**2*(L_sas/L_vk)**2
-! 						Q_sas2= -C_SAS*2*LEFTV(1)*k_0/sigma_phi*max(dervk2/k_0**2,dervom2/om_0**2)
-! 
-! 						Q_SAS=max(Q_sas1+Q_sas2,0.0)
-! 					else
-! 					Q_SAS=ZERO
-! 					end if
-! 
-! 				    !FINAL SOURCE TERMS
-! 
-! 
-! 					    !DES-SST MODEL (if QSAS_model=2)
-! 					    if (QSAS_model .eq.2) then
-! 					    CELL_VOLUME=IELEM(N,I)%TOTVOLUME
-! 					    Delta_cell=Cell_volume**0.333333333333333
-! 					    L_t_DES=sqrt(k_0)/(beta_star*om_0)
-! 					    F_DES_SST=max(1.0, L_t_DES/(C_DES_SST*Delta_cell)*(1-F_2))
-! 					    !The (1-F_2) is meant to protect the boundary layer. Will result in same 
-! 					    !separation point that standard S-A
-! 					    Ydest_k=F_DES_SST*Ydest_k
-! 					    end if
-! 					    
-! 				    srcfull_k=Prod_k-Ydest_k
-! 				    srcfull_om=Prod_om-Ydest_om+Diff_om+Q_SAS
-
-
-				    !Filling the output vector
-				      SOURCE_T(1) = BETA_STARINF*om_0
-				      SOURCE_T(2) = BETA_STARINF*k_0
-
-				  
-	
-END SELECT
-
-END SUBROUTINE SOURCES_DERIVATIVES2d
-
+    if (mrf .eq. 1) then
+      do i = 1, kmaxe
+        srf = ilocal_recon3(i)%mrf
+        if (ilocal_recon3(i)%mrf .eq. 1) then
+          oodensity = 1.0d0/u_c(i)%val(1, 1)
+          source_t2(1) = 0.0
+          source_t2(2) = u_c(i)%val(1, 2)*oodensity
+          source_t2(3) = u_c(i)%val(1, 3)*oodensity
+          source_t2(4) = u_c(i)%val(1, 4)*oodensity
+          source_t2(5) = 0.0
+          pox(1:3) = source_t2(2:4)
+          poy(1:3) = ilocal_recon3(i)%mrf_velocity(1:3)
+          source_t2(2:4) = u_c(i)%val(1, 1)*vect_function(pox, poy)
+          rhs(i)%val(1:nof_variables) = rhs(i)%val(1:nof_variables) + (source_t2(1:nof_variables)*ielem(n, i)%totvolume)
+        end if
+      end do
+    end if
+  end subroutine sources_computation_rot
+
+  subroutine sources_derivatives_computation(n)
+    implicit none
+    integer, intent(in)::n
+    integer::i, kmaxe, iconsidered
+    real, dimension(turbulenceequations)::source_t
+    kmaxe = xmpielrank(n)
+    do i = 1, kmaxe
+      iconsidered = i
+      call sources_derivatives(n, iconsidered, source_t)
+      sht(i, 1:turbulenceequations) = (source_t(1:turbulenceequations)*ielem(n, i)%totvolume)
+    end do
+  end subroutine sources_derivatives_computation
+
+  subroutine sources(n, iconsidered, source_t)
+    implicit none
+    integer, intent(in)::n, iconsidered
+    real, dimension(turbulenceequations), intent(inout)::source_t
+    real::intenergy, r1, u1, v1, w1, et1, s1, ie1, p1, skin1, e1, rs, us, vs, ws, khx
+    real::vhx, amp, dvel, omega, squaret, tch_x, tch_x3, tch_fv1, tch_fv2
+    real::tch_rs, tch_r, tch_g, tch_glim, tch_fw, tch_dif, tch_dest, tch_prod
+    integer::i, k, j, l, ihgt, ihgj, iex, lowre
+    real::snorm, onorm, divnorm, ax, ay, az, tch_shh, tch_sav, verysmall, onesix, prodterm1, stild, rr
+    real::gg, fw, destterm, fodt, srcfull, dbpr, dbdi, dbde, dby, dbx, prodtermfinal
+    real:: r_des, f_des, ddw, f_des_sst, l_t_des
+    real :: ux, uy, vx, vy, shear, sratio, prodmod, cvor, stildmod, prodterm2, sfac, sss, usss, ssss, s_bar, kron
+    real:: uz, vz, wx, wy, wz
+    real:: uxx, uyy, uzz, vxx, vyy, vzz, wxx, wyy, wzz  !for sas only
+    real, dimension(3, 3)::vortet, tvort, svort, ovort
+    real, dimension(3)::vortem, vertf, vertex
+    real, dimension(turbulenceequations, 1:3)::derivturb
+    real:: srcfull_k, srcfull_om, prod_k, prod_om, ydest_k, ydest_om, diff_om, q_sas
+    real:: sigma_k, sigma_om, f_1, f_2, phi_1, phi_2, d_omplus !-------------- those are for diffusion too!
+    real:: alpha_raw, alpha_star, re_t_sst, alpha_inf
+    real:: beta_stari, beta_i, beta_raw, beta_star
+    real:: k_0, om_0, wally
+    real:: dervk_dervom, dervom2, dervk2, u_lapl !generalization of the velocity laplacian
+    real:: l_sas, l_vk, delta_cell, cell_volume, q_sas1, q_sas2
+    real:: kx, ky, kz, omx, omy, omz
+    real, dimension(1:nof_variables)::leftv, rightv
+    real::mp_pinfl, gammal
+    real, dimension(1:4)::viscl, laml
+    real, dimension(1:20)::eddyfl, eddyfr
+    real, dimension(1:2)::turbmv
+    real, dimension(1)::etvm
+    i = iconsidered
+    verysmall = 10e-16
+    vortet(1:3, 1:3) = ilocal_recon3(i)%grads(1:3, 1:3)
+    ux = vortet(1, 1); uy = vortet(1, 2); uz = vortet(1, 3)
+    vx = vortet(2, 1); vy = vortet(2, 2); vz = vortet(2, 3)
+    wx = vortet(3, 1); wy = vortet(3, 2); wz = vortet(3, 3)
+    do ihgt = 1, 3
+      do ihgj = 1, 3
+        tvort(ihgt, ihgj) = vortet(ihgj, ihgt)
+      end do
+    end do
+    svort = 0.5*(vortet + tvort)
+    ovort = 0.5*(vortet - tvort)
+    snorm = sqrt(2.0d0*((svort(1, 1)*svort(1, 1)) + (svort(1, 2)*svort(1, 2)) + (svort(1, 3)*svort(1, 3)) + &
+                        (svort(2, 1)*svort(2, 1)) + (svort(2, 2)*svort(2, 2)) + (svort(2, 3)*svort(2, 3)) + &
+                        (svort(3, 1)*svort(3, 1)) + (svort(3, 2)*svort(3, 2)) + (svort(3, 3)*svort(3, 3))))
+    onorm = sqrt(2.0d0*((ovort(1, 1)*ovort(1, 1)) + (ovort(1, 2)*ovort(1, 2)) + (ovort(1, 3)*ovort(1, 3)) + &
+                        (ovort(2, 1)*ovort(2, 1)) + (ovort(2, 2)*ovort(2, 2)) + (ovort(2, 3)*ovort(2, 3)) + &
+                        (ovort(3, 1)*ovort(3, 1)) + (ovort(3, 2)*ovort(3, 2)) + (ovort(3, 3)*ovort(3, 3))))
+    omega = onorm
+    divnorm = ux + uy + uz
+    usss = sqrt((2.0*((ux*ux) + (vy*vy) + (wz*wz))) &
+                + ((uy + vx)*(uy + vx) + (uz + wx)*(uz + wx) + (wy + vz)*(wy + vz)) &
+                - (2.0/3.0*(ux + vy + wz)*(ux + vy + wz)))
+    derivturb(1, 1:3) = ilocal_recon3(i)%grads(5, 1:3)
+    squaret = (sqrt((derivturb(1, 1)**2) + (derivturb(1, 2)**2) + (derivturb(1, 3)**2)))**2
+    leftv(1:nof_variables) = u_c(i)%val(1, 1:nof_variables)
+    call cons2prim(n, leftv, mp_pinfl, gammal)
+    rightv(1:nof_variables) = leftv(1:nof_variables)
+    call sutherland(n, leftv, rightv, viscl, laml)
+    turbmv(1) = u_ct(i)%val(1, 1)
+    turbmv(2) = turbmv(1)
+    select case (turbulencemodel)
+
+    case (1)
+      if (rot_corr .eq. 1) then
+        omega = omega + 2.0d0*min(0.0d0, snorm - onorm)
+      end if
+      if (ispal .eq. 1) then
+        eddyfl(2) = turbmv(1)
+        eddyfr(2) = turbmv(2)
+        onesix = 1.0d0/6.0d0
+        call eddyvisco(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
+        cw1 = cb1/(kappa*kappa)
+        cw1 = cw1 + (1.0 + cb2)/sigma
+        tch_x = turbmv(1)/viscl(1)
+        if (tch_x .lt. verysmall) then
+          source_t(1) = 0.0
+        else
+          tch_x3 = (tch_x)*(tch_x)*(tch_x)
+          tch_fv1 = tch_x3/(tch_x3 + (cv1*cv1*cv1))
+          tch_fv2 = 1.0d0 - (tch_x/(1.0d0 + tch_x*tch_fv1))
+          ddw = ielem(n, i)%walldist
+          if (des_model .eq. 1) then
+            cell_volume = ielem(n, i)%totvolume
+            delta_cell = cell_volume**0.333333333333333
+            ddw = min(ddw, c_des_sa*delta_cell)
+          end if
+          if (des_model .eq. 2) then
+            cell_volume = ielem(n, i)%totvolume
+            delta_cell = cell_volume**0.333333333333333
+            r_des = min(10.0, (viscl(1) + viscl(3))/(snorm*(kappa*ddw)**2 + 1e-16))
+            f_des = 1 - tanh((8.0*r_des)**3)
+            ddw = max(ddw - f_des*max(ddw - c_des_sa*delta_cell, 1e-16), 10.0e-16)
+          end if
+          prodterm1 = (turbmv(1))/(leftv(1)*kappa*kappa*ddw*ddw)
+          stild = max(omega + (tch_fv2*prodterm1), 0.3*omega)
+          prodtermfinal = stild*turbmv(1)*cb1
+          rr = min((turbmv(1)/(((leftv(1)*stild*kappa*kappa*(ddw)*(ddw))) + 0.000000001)), 10.0)
+          gg = rr + (cw2*(rr**6 - rr))
+          fw = gg*(((1.0 + cw3**6)/(gg**6 + cw3**6))**onesix)
+          destterm = cw1*fw*(((turbmv(1))/(leftv(1)*(ddw)))**2)
+          fodt = cb2*squaret/sigma
+          if (d_corr .eq. 0) then
+            source_t(1) = prodtermfinal + fodt - destterm
+          else
+            source_t(1) = prodtermfinal + (fodt - destterm)*leftv(1)
+          end if
+        end if
+      else
+        call eddyvisco(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
+        tch_x = turbmv(1)/viscl(1)
+        if (tch_x .gt. 10.0d0) then
+          tch_x = tch_x
+        else
+          tch_x = 0.05d0*log(1.0d0 + exp(20.0d0*(tch_x)))
+        end if
+        ddw = ielem(n, i)%walldist
+        if (des_model .eq. 1) then
+          cell_volume = ielem(n, i)%totvolume
+          delta_cell = cell_volume**0.333333333333333
+          ddw = min(ddw, c_des_sa*delta_cell)
+        end if
+        if (des_model .eq. 2) then
+          cell_volume = ielem(n, i)%totvolume
+          delta_cell = cell_volume**0.333333333333333
+          r_des = min(10.0d0, (viscl(1) + viscl(3))/(snorm*(kappa*ddw)**2 + 1e-16))
+          f_des = 1 - tanh((8.0d0*r_des)**3)
+          ddw = max(ddw - f_des*max(ddw - c_des_sa*delta_cell, 1e-16), 10.0e-16)
+        end if
+        tch_x3 = (tch_x)*(tch_x)*(tch_x)
+        tch_fv1 = tch_x3/(tch_x3 + (cv1*cv1*cv1))
+        tch_fv2 = 1.0d0 - (tch_x/(1.0d0 + tch_x*tch_fv1))
+        prodterm1 = (tch_fv2*tch_x*(turbmv(1)))/(leftv(1)*kappa*kappa*(ddw)*(ddw))
+        if (prodterm1 .ge. (-0.7d0*omega)) then
+          stild = omega + prodterm1
+        end if
+        if (prodterm1 .lt. (-0.7d0*omega)) then
+          stild = omega + ((omega*(((0.7d0*0.7d0)*(omega)) + (0.9*prodterm1)))/(((0.9 - 1.4)*omega) - prodterm1))
+        end if
+        prodtermfinal = stild*turbmv(1)*cb1*tch_x
+        rr = ((turbmv(1)*tch_x/(leftv(1)*stild*kappa*kappa*(ddw)*(ddw))))
+        gg = rr + (cw2*(rr**6 - rr))
+        fw = gg*(((1.0 + cw3**6)/(gg**6 + cw3**6))**onesix)
+        destterm = cw1*fw*leftv(1)*(((turbmv(1)*tch_x/leftv(1))/(ddw))**2)
+        fodt = leftv(1)*cb2*squaret/sigma
+        source_t(1) = prodtermfinal + fodt - destterm
+      end if
+
+    case (2)                !k omega sst
+      eddyfl(1) = ielem(n, i)%walldist
+      eddyfl(2) = u_ct(i)%val(1, 1)
+      eddyfl(3) = u_ct(i)%val(1, 2)
+      eddyfl(4:6) = ilocal_recon3(i)%grads(1, 1:3)
+      eddyfl(7:9) = ilocal_recon3(i)%grads(2, 1:3)
+      eddyfl(10:12) = ilocal_recon3(i)%grads(3, 1:3)
+      eddyfl(13:15) = ilocal_recon3(i)%grads(4, 1:3)
+      eddyfl(16:18) = ilocal_recon3(i)%grads(5, 1:3)
+      eddyfr = eddyfl
+      call eddyvisco(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
+      k_0 = (max(verysmall, u_ct(i)%val(1, 1)/leftv(1))) !first subindex makes reference to the time-stepping
+      om_0 = max(1.0e-1*ufreestream/charlength, u_ct(i)%val(1, 2)/leftv(1))
+      wally = ielem(n, i)%walldist
+      omx = ilocal_recon3(i)%grads(6, 1)
+      omy = ilocal_recon3(i)%grads(6, 2)
+      omz = ilocal_recon3(i)%grads(6, 3)
+      kx = ilocal_recon3(i)%grads(5, 1)
+      ky = ilocal_recon3(i)%grads(5, 2)
+      kz = ilocal_recon3(i)%grads(5, 3)
+      dervk_dervom = kx*omx + ky*omy + kz*omz
+      d_omplus = max(2*leftv(1)/sigma_om2/om_0*dervk_dervom, 1e-10)
+      phi_2 = max(sqrt(k_0)/(0.09*om_0*wally), 500.0*viscl(1)/(leftv(1)*wally*wally*om_0))
+      phi_1 = min(phi_2, 4.0*leftv(1)*k_0/(sigma_om2*d_omplus*wally*wally)
+      f_1 = tanh(phi_1**4)
+      f_2 = tanh(phi_2**2)
+      alpha_inf = f_1*alpha_inf1 + (1.0 - f_1)*alpha_inf2
+      alpha_star = alpha_starinf
+      alpha_raw = alpha_inf
+      beta_i = f_1*beta_i1 + (1.0 - f_1)*beta_i2
+      alpha_star0 = beta_i/3.0
+      beta_stari = beta_starinf
+      lowre = 0
+      if (lowre .eq. 1) then
+        re_t_sst = leftv(1)*k_0/(viscl(1)*om_0)  !limiters for this???
+        alpha_star = alpha_starinf*(alpha_star0 + re_t_sst/r_k_sst)/(1.0 + re_t_sst/r_k_sst)
+        alpha_raw = alpha_inf/alpha_star*(alpha_0 + re_t_sst/r_om_sst)/(1.0 + re_t_sst/r_om_sst)
+        beta_stari = beta_starinf*(4.0/15.0 + (re_t_sst/r_beta)**4)/(1.0 + (re_t_sst/r_beta)**4)
+      end if
+      beta_star = beta_stari
+      beta_raw = beta_i
+      if (vort_model .eq. 1) then
+        prod_k = viscl(3)*onorm*snorm!-2.0/3.0*leftv(1)*k_0*divnorm
+        prod_om = alpha_raw*leftv(1)*snorm*onorm
+      else
+        prod_k = viscl(3)*(snorm**2)!-2.0/3.0*divnorm*divnorm)-2.0/3.0*leftv(1)*k_0*divnorm
+        prod_k = min(prod_k, 10.0*leftv(1)*beta_star*k_0*om_0)
+      end if
+      ydest_k = leftv(1)*beta_star*k_0*om_0
+      ydest_om = leftv(1)*beta_raw*om_0*om_0
+      diff_om = 2.0*(1 - f_1)*leftv(1)/(om_0*sigma_om2)*dervk_dervom
+      if (qsas_model .eq. 1) then 
+        do iex = 1, 3
+          vortet(iex, 1:3) = ilocal_recon3(i)%grads(3 + turbulenceequations + iex, 1:3)
+        end do
+        uxx = vortet(1, 1); uyy = vortet(1, 2); uzz = vortet(1, 3)
+        vxx = vortet(2, 1); vyy = vortet(2, 2); vzz = vortet(2, 3)
+        wxx = vortet(3, 1); wyy = vortet(3, 2); wzz = vortet(3, 3)
+        cell_volume = ielem(n, i)%totvolume
+        u_lapl = sqrt((uxx + uyy + uzz)**2 + (vxx + vyy + vzz)**2 + (wxx + wyy + wzz)**2)
+        dervk2 = kx*kx + ky*ky + kz*kz
+        dervom2 = omx*omx + omy*omy + omz*omz
+        delta_cell = cell_volume**0.333333333333333
+        l_sas = sqrt(k_0)/(beta_star**0.25*om_0)
+        l_vk = max(kappa*snorm/u_lapl, &       !this switch provides high wave-number damping
+                   c_smg*delta_cell*sqrt(kappa*eta2_sas/(beta_raw/beta_star - alpha_raw)))
+        q_sas1 = leftv(1)*eta2_sas*kappa*snorm**2*(l_sas/l_vk)**2
+        q_sas2 = -c_sas*2*leftv(1)*k_0/sigma_phi*max(dervk2/k_0**2, dervom2/om_0**2)
+        q_sas = max(q_sas1 + q_sas2, 0.0)
+      else
+        q_sas = zero
+      end if
+      !final source terms
+      if (qsas_model .eq. 2) then
+        cell_volume = ielem(n, i)%totvolume
+        delta_cell = cell_volume**0.333333333333333
+        l_t_des = sqrt(k_0)/(beta_star*om_0)
+        f_des_sst = max(1.0, l_t_des/(c_des_sst*delta_cell)*(1 - f_2))
+        ydest_k = f_des_sst*ydest_k
+      end if
+      srcfull_k = prod_k - ydest_k
+      srcfull_om = prod_om - ydest_om + diff_om + q_sas
+      source_t(1) = srcfull_k
+      source_t(2) = srcfull_om
+    end select
+  end subroutine sources
+
+  subroutine sources_derivatives(n, iconsidered, source_t)
+    implicit none
+    integer, intent(in)::n, iconsidered
+    real, dimension(turbulenceequations), intent(inout)::source_t
+    real::intenergy, r1, u1, v1, w1, et1, s1, ie1, p1, skin1, e1, rs, us, vs, ws, khx
+    real::vhx, amp, dvel, omega, squaret, tch_x, tch_x3, tch_fv1, tch_fv2
+    real::tch_rs, tch_r, tch_g, tch_glim, tch_fw, tch_dif, tch_dest, tch_prod
+    integer::i, k, j, l, ihgt, ihgj, iex, lowre
+    real::snorm, onorm, divnorm, ax, ay, az, tch_shh, tch_sav, verysmall, onesix, prodterm1, stild, rr
+    real::gg, fw, destterm, fodt, srcfull, dbpr, dbdi, dbde, dby, dbx, prodtermfinal
+    real:: r_des, f_des, ddw, f_des_sst, l_t_des
+    real :: ux, uy, vx, vy, shear, sratio, prodmod, cvor, stildmod, prodterm2, sfac, sss, usss, ssss, s_bar, kron
+    real:: uz, vz, wx, wy, wz
+    real:: uxx, uyy, uzz, vxx, vyy, vzz, wxx, wyy, wzz  !for sas only
+    real, dimension(3, 3)::vortet, tvort, svort, ovort
+    real, dimension(3)::vortem, vertf, vertex
+    real, dimension(turbulenceequations, 1:3)::derivturb
+    real:: srcfull_k, srcfull_om, prod_k, prod_om, ydest_k, ydest_om, diff_om, q_sas
+    real:: sigma_k, sigma_om, f_1, f_2, phi_1, phi_2, d_omplus !-------------- those are for diffusion too!
+    real:: alpha_raw, alpha_star, re_t_sst, alpha_inf
+    real:: beta_stari, beta_i, beta_raw, beta_star
+    real:: k_0, om_0, wally
+    real:: dervk_dervom, dervom2, dervk2, u_lapl !generalization of the velocity laplacian
+    real:: l_sas, l_vk, delta_cell, cell_volume, q_sas1, q_sas2
+    real:: kx, ky, kz, omx, omy, omz
+    real, dimension(1:nof_variables)::leftv, rightv
+    real::mp_pinfl, gammal
+    real, dimension(1:4)::viscl, laml
+    real, dimension(1:20)::eddyfl, eddyfr
+    real, dimension(1:2)::turbmv
+    real, dimension(1)::etvm
+    i = iconsidered
+    verysmall = 10e-16
+    vortet(1:3, 1:3) = ilocal_recon3(i)%grads(1:3, 1:3)
+    ux = vortet(1, 1); uy = vortet(1, 2); uz = vortet(1, 3)
+    vx = vortet(2, 1); vy = vortet(2, 2); vz = vortet(2, 3)
+    wx = vortet(3, 1); wy = vortet(3, 2); wz = vortet(3, 3)
+    do ihgt = 1, 3
+      do ihgj = 1, 3
+        tvort(ihgt, ihgj) = vortet(ihgj, ihgt)
+      end do
+    end do
+    svort = 0.5*(vortet + tvort)
+    ovort = 0.5*(vortet - tvort)
+    snorm = sqrt(2.0d0*((svort(1, 1)*svort(1, 1)) + (svort(1, 2)*svort(1, 2)) + (svort(1, 3)*svort(1, 3)) + &
+                        (svort(2, 1)*svort(2, 1)) + (svort(2, 2)*svort(2, 2)) + (svort(2, 3)*svort(2, 3)) + &
+                        (svort(3, 1)*svort(3, 1)) + (svort(3, 2)*svort(3, 2)) + (svort(3, 3)*svort(3, 3))))
+    onorm = sqrt(2.0d0*((ovort(1, 1)*ovort(1, 1)) + (ovort(1, 2)*ovort(1, 2)) + (ovort(1, 3)*ovort(1, 3)) + &
+                        (ovort(2, 1)*ovort(2, 1)) + (ovort(2, 2)*ovort(2, 2)) + (ovort(2, 3)*ovort(2, 3)) + &
+                        (ovort(3, 1)*ovort(3, 1)) + (ovort(3, 2)*ovort(3, 2)) + (ovort(3, 3)*ovort(3, 3))))
+    omega = onorm
+    divnorm = ux + uy + uz  !careful with the sign. if it becomes very big, it can produce negative production
+    usss = sqrt((2.0*((ux*ux) + (vy*vy) + (wz*wz))) &
+                + ((uy + vx)*(uy + vx) + (uz + wx)*(uz + wx) + (wy + vz)*(wy + vz)) &
+                - (2.0/3.0*(ux + vy + wz)*(ux + vy + wz)))
+    derivturb(1, 1:3) = ilocal_recon3(i)%grads(5, 1:3)
+    squaret = (sqrt((derivturb(1, 1)**2) + (derivturb(1, 2)**2) + (derivturb(1, 3)**2)))**2
+    leftv(1:nof_variables) = u_c(i)%val(1, 1:nof_variables)
+    call cons2prim(n, leftv, mp_pinfl, gammal)
+    rightv(1:nof_variables) = leftv(1:nof_variables)
+    call sutherland(n, leftv, rightv, viscl, laml)
+    turbmv(1) = u_ct(i)%val(1, 1)
+    turbmv(2) = turbmv(1)
+    select case (turbulencemodel)
+
+    case (1) !!spalart almaras model
+      if (ispal .eq. 1) then
+        eddyfl(2) = turbmv(1)
+        eddyfr(2) = turbmv(2)
+        onesix = 1.0d0/6.0d0
+        call eddyvisco(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
+        cw1 = cb1/(kappa*kappa)
+        cw1 = cw1 + (1.0 + cb2)/sigma
+        tch_x = turbmv(1)/viscl(1)
+        if (tch_x .lt. verysmall) then
+          source_t(1) = zero
+        else
+          tch_x3 = (tch_x)*(tch_x)*(tch_x)
+          tch_fv1 = tch_x3/(tch_x3 + (cv1*cv1*cv1))
+          tch_fv2 = 1.0d0 - (tch_x/(1.0d0 + tch_x*tch_fv1))
+          ddw = ielem(n, i)%walldist
+          if (des_model .eq. 1) then
+            cell_volume = ielem(n, i)%totvolume
+            delta_cell = cell_volume**0.333333333333333
+            ddw = min(ddw, c_des_sa*delta_cell)
+          end if
+          if (des_model .eq. 2) then
+            cell_volume = ielem(n, i)%totvolume
+            delta_cell = cell_volume**0.333333333333333
+            r_des = min(10.0, (viscl(1) + viscl(3))/(snorm*(kappa*ddw)**2 + 1e-16))
+            !previous limiter is just for numerical reasons regarding tanh
+            f_des = 1 - tanh((8.0*r_des)**3)
+            ddw = max(ddw - f_des*max(ddw - c_des_sa*delta_cell, 1e-16), 10.0e-16)
+          end if
+          prodterm1 = (turbmv(1))/(leftv(1)*kappa*kappa*ddw*ddw)
+          stild = max(omega + (tch_fv2*prodterm1), 0.3*omega)
+          prodtermfinal = stild*turbmv(1)*cb1/leftv(1)
+          rr = min((turbmv(1)/(((leftv(1)*stild*kappa*kappa*(ddw)*(ddw))) + 0.000000001)), 10.0)
+          gg = rr + (cw2*(rr**6 - rr))
+          fw = gg*(((1.0 + cw3**6)/(gg**6 + cw3**6))**onesix)
+          destterm = cw1*fw*(((turbmv(1))/(leftv(1)*(ddw)))**2)
+          fodt = cb2*squaret/sigma
+          prodtermfinal = stild*cb1
+          destterm = 2.0*cw1*fw*(turbmv(1)/(leftv(1)*ddw**2))
+          fodt = 2.0*cb2*(sqrt(squaret))/sigma
+          source_t(1) = min(prodtermfinal + fodt - destterm, zero)
+        end if
+      else
+        call eddyvisco(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
+        tch_x = turbmv(1)/viscl(1)
+        if (tch_x .gt. 10.0d0) then
+          tch_x = tch_x
+        else
+          tch_x = 0.05d0*log(1.0d0 + exp(20.0d0*(tch_x)))
+        end if
+        ddw = ielem(n, i)%walldist
+        if (des_model .eq. 1) then
+          cell_volume = ielem(n, i)%totvolume
+          delta_cell = cell_volume**0.333333333333333
+          ddw = min(ddw, c_des_sa*delta_cell)
+        end if
+        if (des_model .eq. 2) then
+          cell_volume = ielem(n, i)%totvolume
+          delta_cell = cell_volume**0.333333333333333
+          r_des = min(10.0d0, (viscl(1) + viscl(3))/(snorm*(kappa*ddw)**2 + 1e-16))
+          !previous limiter is just for numerical reasons regarding tanh
+          f_des = 1 - tanh((8.0d0*r_des)**3)
+          ddw = max(ddw - f_des*max(ddw - c_des_sa*delta_cell, 1e-16), 10.0e-16)
+        end if
+        tch_x3 = (tch_x)*(tch_x)*(tch_x)
+        tch_fv1 = tch_x3/(tch_x3 + (cv1*cv1*cv1))
+        tch_fv2 = 1.0d0 - (tch_x/(1.0d0 + tch_x*tch_fv1))
+        prodterm1 = (tch_fv2*tch_x*(turbmv(1)))/(leftv(1)*kappa*kappa*(ddw)*(ddw))
+        if (prodterm1 .ge. (-0.7d0*omega)) then
+          stild = omega + prodterm1
+        end if
+        if (prodterm1 .lt. (-0.7d0*omega)) then
+          stild = omega + ((omega*(((0.7d0*0.7d0)*(omega)) + (0.9*prodterm1)))/(((0.9 - 1.4)*omega) - prodterm1))
+        end if
+        prodtermfinal = stild*turbmv(1)*cb1*tch_x
+        rr = ((turbmv(1)*tch_x/(leftv(1)*stild*kappa*kappa*(ddw)*(ddw))))
+        gg = rr + (cw2*(rr**6 - rr))
+        fw = gg*(((1.0 + cw3**6)/(gg**6 + cw3**6))**onesix)
+        destterm = cw1*fw*leftv(1)*(((turbmv(1)*tch_x/leftv(1))/(ddw))**2)
+        fodt = leftv(1)*cb2*squaret/sigma
+        prodtermfinal = stild*cb1*tch_x
+        destterm = 2.0*cw1*fw*(turbmv(1)/(leftv(1)*ddw**2))
+        fodt = 2.0*cb2*(sqrt(squaret))/sigma
+        source_t(1) = min(prodtermfinal + fodt - destterm, zero)
+      end if
+
+    case (2)                !k omega sst
+      eddyfl(1) = ielem(n, i)%walldist
+      eddyfl(2) = u_ct(i)%val(1, 1)
+      eddyfl(3) = u_ct(i)%val(1, 2)
+      eddyfl(4:6) = ilocal_recon3(i)%grads(1, 1:3)
+      eddyfl(7:9) = ilocal_recon3(i)%grads(2, 1:3)
+      eddyfl(10:12) = ilocal_recon3(i)%grads(3, 1:3)
+      eddyfl(13:15) = ilocal_recon3(i)%grads(4, 1:3)
+      eddyfl(16:18) = ilocal_recon3(i)%grads(5, 1:3)
+      eddyfr = eddyfl
+      call eddyvisco(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
+      k_0 = (max(verysmall, u_ct(i)%val(1, 1)/leftv(1))) !first subindex makes reference to the time-stepping
+      om_0 = max(1.0e-1*ufreestream/charlength, u_ct(i)%val(1, 2)/leftv(1))
+      source_t(1) = beta_starinf*om_0
+      source_t(2) = beta_starinf*k_0
+    end select
+  end subroutine sources_derivatives
+
+  subroutine sources_computation2d(n)
+    implicit none
+    integer, intent(in)::n
+    integer::i, kmaxe, iconsidered
+    real, dimension(turbulenceequations)::source_t
+    kmaxe = xmpielrank(n)
+    do i = 1, kmaxe
+      iconsidered = i
+      call sources2d(n, iconsidered, source_t)
+   rhst(i)%val(1:turbulenceequations) = rhst(i)%val(1:turbulenceequations) - (source_t(1:turbulenceequations)*ielem(n, i)%totvolume)
+    end do
+  end subroutine sources_computation2d
+
+  subroutine sources_derivatives_computation2d(n)
+    implicit none
+    integer, intent(in)::n
+    integer::i, kmaxe, iconsidered
+    real, dimension(turbulenceequations)::source_t
+    kmaxe = xmpielrank(n)
+    do i = 1, kmaxe
+      iconsidered = i
+      call sources_derivatives2d(n, iconsidered, source_t)
+      sht(i, 1:turbulenceequations) = (source_t(1:turbulenceequations)*ielem(n, i)%totvolume)
+    end do
+  end subroutine sources_derivatives_computation2d
+
+  subroutine sources2d(n, iconsidered, source_t)
+    implicit none
+    integer, intent(in)::n, iconsidered
+    real, dimension(turbulenceequations), intent(inout)::source_t
+    real::intenergy, r1, u1, v1, w1, et1, s1, ie1, p1, skin1, e1, rs, us, vs, ws, khx
+    real::vhx, amp, dvel, omega, squaret, tch_x, tch_x3, tch_fv1, tch_fv2
+    real::tch_rs, tch_r, tch_g, tch_glim, tch_fw, tch_dif, tch_dest, tch_prod
+    integer::i, k, j, l, ihgt, ihgj, iex, lowre
+    real::snorm, onorm, divnorm, ax, ay, az, tch_shh, tch_sav, verysmall, onesix, prodterm1, stild, rr
+    real::gg, fw, destterm, fodt, srcfull, dbpr, dbdi, dbde, dby, dbx, prodtermfinal
+    real:: r_des, f_des, ddw, f_des_sst, l_t_des
+    real :: ux, uy, vx, vy, shear, sratio, prodmod, cvor, stildmod, prodterm2, sfac, sss, usss, ssss, s_bar, kron
+    real:: uz, vz, wx, wy, wz
+    real:: uxx, uyy, uzz, vxx, vyy, vzz, wxx, wyy, wzz  !for sas only
+    real, dimension(2, 2)::vortet, tvort, svort, ovort
+    real, dimension(2)::vortem, vertf, vertex
+    real, dimension(turbulenceequations, 1:2)::derivturb
+    real:: srcfull_k, srcfull_om, prod_k, prod_om, ydest_k, ydest_om, diff_om, q_sas
+    real:: sigma_k, sigma_om, f_1, f_2, phi_1, phi_2, d_omplus !-------------- those are for diffusion too!
+    real:: alpha_raw, alpha_star, re_t_sst, alpha_inf
+    real:: beta_stari, beta_i, beta_raw, beta_star
+    real:: k_0, om_0, wally
+    real:: dervk_dervom, dervom2, dervk2, u_lapl !generalization of the velocity laplacian
+    real:: l_sas, l_vk, delta_cell, cell_volume, q_sas1, q_sas2
+    real:: kx, ky, kz, omx, omy, omz
+    real, dimension(1:nof_variables)::leftv, rightv
+    real::mp_pinfl, gammal, mp_pinfr, gammar
+    real, dimension(1:4)::viscl, laml
+    real, dimension(1:20)::eddyfl, eddyfr
+    real, dimension(1:2)::turbmv
+    real, dimension(1)::etvm
+    i = iconsidered
+    verysmall = 10e-16
+    vortet(1:2, 1:2) = ilocal_recon3(i)%grads(1:2, 1:2)
+    ux = vortet(1, 1); uy = vortet(1, 2)
+    vx = vortet(2, 1); vy = vortet(2, 2)
+    do ihgt = 1, 2
+      do ihgj = 1, 2
+        tvort(ihgt, ihgj) = vortet(ihgj, ihgt)
+      end do
+    end do
+    svort = 0.5*(vortet + tvort)
+    ovort = 0.5*(vortet - tvort)
+    snorm = sqrt(2.0d0*((svort(1, 1)*svort(1, 1)) + (svort(1, 2)*svort(1, 2)) + &
+                        (svort(2, 1)*svort(2, 1)) + (svort(2, 2)*svort(2, 2))))
+    onorm = sqrt(2.0d0*((ovort(1, 1)*ovort(1, 1)) + (ovort(1, 2)*ovort(1, 2)) + &
+                        (ovort(2, 1)*ovort(2, 1)) + (ovort(2, 2)*ovort(2, 2))))
+    omega = onorm
+    divnorm = ux + uy + uz  !careful with the sign. if it becomes very big, it can produce negative production
+    usss = sqrt((2.0*((ux*ux) + (vy*vy))) &
+                + ((uy + vx)*(uy + vx)) &
+                - (2.0/3.0*(ux + vy)*(ux + vy)))
+    derivturb(1, 1:2) = ilocal_recon3(i)%grads(4, 1:2)
+    squaret = (sqrt((derivturb(1, 1)**2) + (derivturb(1, 2)**2)))**2
+    leftv(1:nof_variables) = u_c(i)%val(1, 1:nof_variables)
+    rightv(1:nof_variables) = leftv(1:nof_variables)
+    call cons2prim2(n, leftv, rightv, mp_pinfl, mp_pinfr, gammal, gammar)
+    call sutherland2d(n, leftv, rightv, viscl, laml)
+    turbmv(1) = u_ct(i)%val(1, 1)
+    turbmv(2) = turbmv(1)
+    select case (turbulencemodel)
+    case (1) !!spalart almaras model
+      if (ispal .eq. 1) then
+        eddyfl(2) = turbmv(1)
+        eddyfr(2) = turbmv(2)
+        onesix = 1.0d0/6.0d0
+        call eddyvisco2d(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
+        cw1 = cb1/(kappa*kappa)
+        cw1 = cw1 + (1.0 + cb2)/sigma
+        tch_x = turbmv(1)/viscl(1)
+        if (tch_x .lt. verysmall) then
+          source_t(1) = zero
+        else
+          tch_x3 = (tch_x)*(tch_x)*(tch_x)
+          tch_fv1 = tch_x3/(tch_x3 + (cv1*cv1*cv1))
+          tch_fv2 = 1.0d0 - (tch_x/(1.0d0 + tch_x*tch_fv1))
+          ddw = ielem(n, i)%walldist
+          if (des_model .eq. 1) then
+            cell_volume = ielem(n, i)%totvolume
+            delta_cell = cell_volume**0.333333333333333
+            ddw = min(ddw, c_des_sa*delta_cell)
+          end if
+          if (des_model .eq. 2) then
+            cell_volume = ielem(n, i)%totvolume
+            delta_cell = cell_volume**0.333333333333333
+            r_des = min(10.0, (viscl(1) + viscl(3))/(snorm*(kappa*ddw)**2 + 1e-16))
+            !previous limiter is just for numerical reasons regarding tanh
+            f_des = 1 - tanh((8.0*r_des)**3)
+            ddw = max(ddw - f_des*max(ddw - c_des_sa*delta_cell, 1e-16), 10.0e-16)
+          end if
+          prodterm1 = (turbmv(1))/(leftv(1)*kappa*kappa*ddw*ddw)
+          stild = max(omega + (tch_fv2*prodterm1), 0.3*omega)
+          prodtermfinal = stild*turbmv(1)*cb1
+          rr = min((turbmv(1)/(((leftv(1)*stild*kappa*kappa*(ddw)*(ddw))) + 0.000000001)), 10.0)
+          gg = rr + (cw2*(rr**6 - rr))
+          fw = gg*(((1.0 + cw3**6)/(gg**6 + cw3**6))**onesix)
+          !  destruction term
+          destterm = cw1*fw*(((turbmv(1))/(leftv(1)*(ddw)))**2)
+          ! !         !  first order diffusion term
+          fodt = cb2*squaret/sigma
+          source_t(1) = prodtermfinal + fodt - destterm
+        end if
+      else
+        call eddyvisco2d(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
+        tch_x = turbmv(1)/viscl(1)
+        if (tch_x .gt. 10.0d0) then
+          tch_x = tch_x
+        else
+          tch_x = 0.05d0*log(1.0d0 + exp(20.0d0*(tch_x)))
+        end if
+        ddw = ielem(n, i)%walldist
+        if (des_model .eq. 1) then
+          cell_volume = ielem(n, i)%totvolume
+          delta_cell = cell_volume**0.333333333333333
+          ddw = min(ddw, c_des_sa*delta_cell)
+        end if
+        if (des_model .eq. 2) then
+          cell_volume = ielem(n, i)%totvolume
+          delta_cell = cell_volume**0.333333333333333
+          r_des = min(10.0d0, (viscl(1) + viscl(3))/(snorm*(kappa*ddw)**2 + 1e-16))
+          !previous limiter is just for numerical reasons regarding tanh
+          f_des = 1 - tanh((8.0d0*r_des)**3)
+          ddw = max(ddw - f_des*max(ddw - c_des_sa*delta_cell, 1e-16), 10.0e-16)
+        end if
+        tch_x3 = (tch_x)*(tch_x)*(tch_x)
+        tch_fv1 = tch_x3/(tch_x3 + (cv1*cv1*cv1))
+        tch_fv2 = 1.0d0 - (tch_x/(1.0d0 + tch_x*tch_fv1))
+        prodterm1 = (tch_fv2*tch_x*(turbmv(1)))/(leftv(1)*kappa*kappa*(ddw)*(ddw))
+        if (prodterm1 .ge. (-0.7d0*omega)) then
+          stild = omega + prodterm1
+        end if
+        if (prodterm1 .lt. (-0.7d0*omega)) then
+          stild = omega + ((omega*(((0.7d0*0.7d0)*(omega)) + (0.9*prodterm1)))/(((0.9 - 1.4)*omega) - prodterm1))
+        end if
+        prodtermfinal = stild*turbmv(1)*cb1*tch_x
+        rr = ((turbmv(1)*tch_x/(leftv(1)*stild*kappa*kappa*(ddw)*(ddw))))
+        gg = rr + (cw2*(rr**6 - rr))
+        fw = gg*(((1.0 + cw3**6)/(gg**6 + cw3**6))**onesix)
+        ! !          destruction term
+        destterm = cw1*fw*leftv(1)*(((turbmv(1)*tch_x/leftv(1))/(ddw))**2)
+        ! !          first order diffusion term
+        fodt = leftv(1)*cb2*squaret/sigma
+        source_t(1) = prodtermfinal + fodt - destterm
+      end if
+
+    case (2)                !k omega sst
+      eddyfl(1) = ielem(n, i)%walldist
+      eddyfl(2) = u_ct(i)%val(1, 1)
+      eddyfl(3) = u_ct(i)%val(1, 2)
+      eddyfl(4:5) = ilocal_recon3(i)%grads(1, 1:2)
+      eddyfl(6:7) = ilocal_recon3(i)%grads(2, 1:2)
+      eddyfl(8:9) = ilocal_recon3(i)%grads(4, 1:2)
+      eddyfl(10:11) = ilocal_recon3(i)%grads(5, 1:2)
+      eddyfr = eddyfl
+      call eddyvisco2d(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
+      k_0 = (max(verysmall, u_ct(i)%val(1, 1)/leftv(1))) !first subindex makes reference to the time-stepping
+      om_0 = max(1.0e-1*ufreestream/charlength, u_ct(i)%val(1, 2)/leftv(1))
+      wally = ielem(n, i)%walldist
+      !calculate here k and omega gradients
+      omx = ilocal_recon3(i)%grads(5, 1)
+      omy = ilocal_recon3(i)%grads(5, 2)
+      kx = ilocal_recon3(i)%grads(4, 1)
+      ky = ilocal_recon3(i)%grads(4, 2)
+      dervk_dervom = kx*omx + ky*omy
+      !parameters
+      !-----needed in diffusion--------
+      d_omplus = max(2*leftv(1)/sigma_om2/om_0*dervk_dervom, 1e-10)
+      phi_2 = max(sqrt(k_0)/(0.09*om_0*wally), 500.0*viscl(1)/(leftv(1)*wally*wally*om_0))
+      phi_1 = min(phi_2, 4.0*leftv(1)*k_0/(sigma_om2*d_omplus*wally*wally))
+      f_1 = tanh(phi_1**4)
+      f_2 = tanh(phi_2**2)
+      alpha_inf = f_1*alpha_inf1 + (1.0 - f_1)*alpha_inf2
+      alpha_star = alpha_starinf
+      alpha_raw = alpha_inf
+      beta_i = f_1*beta_i1 + (1.0 - f_1)*beta_i2
+      alpha_star0 = beta_i/3.0
+      beta_stari = beta_starinf
+      lowre = 0
+      !low-re correction------------------------------------------------------------------
+      if (lowre .eq. 1) then
+        re_t_sst = leftv(1)*k_0/(viscl(1)*om_0)  !limiters for this???
+        alpha_star = alpha_starinf*(alpha_star0 + re_t_sst/r_k_sst)/(1.0 + re_t_sst/r_k_sst)
+        alpha_raw = alpha_inf/alpha_star*(alpha_0 + re_t_sst/r_om_sst)/(1.0 + re_t_sst/r_om_sst)
+        beta_stari = beta_starinf*(4.0/15.0 + (re_t_sst/r_beta)**4)/(1.0 + (re_t_sst/r_beta)**4)
+      end if
+      !no mach number corrections for the beta
+      beta_star = beta_stari
+      beta_raw = beta_i
+      !production terms
+      !production of k
+      if (vort_model .eq. 1) then
+        prod_k = viscl(3)*onorm*snorm!-2.0/3.0*leftv(1)*k_0*divnorm
+        prod_om = alpha_raw*leftv(1)*snorm*onorm
+      else
+        prod_k = viscl(3)*(snorm**2)!-2.0/3.0*divnorm*divnorm)-2.0/3.0*leftv(1)*k_0*divnorm
+        prod_k = min(prod_k, 10.0*leftv(1)*beta_star*k_0*om_0)
+      end if
+      !destruction terms
+      !destruction of k
+      ydest_k = leftv(1)*beta_star*k_0*om_0
+      !destruction of omega
+      ydest_om = leftv(1)*beta_raw*om_0*om_0
+      !crossed-diffusion term
+      !crossed diffusion of omega
+      diff_om = 2.0*(1 - f_1)*leftv(1)/(om_0*sigma_om2)*dervk_dervom
+      !qsas term: scale adaptive
+      if (qsas_model .eq. 1) then  
+        !calculate here second derivative of u
+        !declare all variables
+        do iex = 1, 2
+          vortet(iex, 1:2) = ilocal_recon3(i)%grads(3 + turbulenceequations + iex, 1:2)
+        end do
+        uxx = vortet(1, 1); uyy = vortet(1, 2); 
+        vxx = vortet(2, 1); vyy = vortet(2, 2); 
+        !compute here cell volume
+        cell_volume = ielem(n, i)%totvolume
+        u_lapl = sqrt((uxx + uyy + uzz)**2 + (vxx + vyy + vzz)**2 + (wxx + wyy + wzz)**2)
+        dervk2 = kx*kx + ky*ky + kz*kz
+        dervom2 = omx*omx + omy*omy + omz*omz
+        delta_cell = cell_volume**0.333333333333333
+        l_sas = sqrt(k_0)/(beta_star**0.25*om_0)
+        l_vk = max(kappa*snorm/u_lapl, &       !this switch provides high wave-number damping
+                   c_smg*delta_cell*sqrt(kappa*eta2_sas/(beta_raw/beta_star - alpha_raw)))
+        q_sas1 = leftv(1)*eta2_sas*kappa*snorm**2*(l_sas/l_vk)**2
+        q_sas2 = -c_sas*2*leftv(1)*k_0/sigma_phi*max(dervk2/k_0**2, dervom2/om_0**2)
+        q_sas = max(q_sas1 + q_sas2, 0.0)
+      else
+        q_sas = zero
+      end if
+      !final source terms
+      !des-sst model (if qsas_model=2)
+      if (qsas_model .eq. 2) then
+        cell_volume = ielem(n, i)%totvolume
+        delta_cell = cell_volume**0.333333333333333
+        l_t_des = sqrt(k_0)/(beta_star*om_0)
+        f_des_sst = max(1.0, l_t_des/(c_des_sst*delta_cell)*(1 - f_2))
+        !the (1-f_2) is meant to protect the boundary layer. will result in same
+        !separation point that standard s-a
+        ydest_k = f_des_sst*ydest_k
+      end if
+      srcfull_k = prod_k - ydest_k
+      srcfull_om = prod_om - ydest_om + diff_om + q_sas
+      !filling the output vector
+      source_t(1) = srcfull_k
+      source_t(2) = srcfull_om
+    end select
+  end subroutine sources2d
+
+  subroutine sources_derivatives2d(n, iconsidered, source_t)
+    implicit none
+    integer, intent(in)::n, iconsidered
+    real, dimension(turbulenceequations), intent(inout)::source_t
+    real::intenergy, r1, u1, v1, w1, et1, s1, ie1, p1, skin1, e1, rs, us, vs, ws, khx
+    real::vhx, amp, dvel, omega, squaret, tch_x, tch_x3, tch_fv1, tch_fv2
+    real::tch_rs, tch_r, tch_g, tch_glim, tch_fw, tch_dif, tch_dest, tch_prod
+    integer::i, k, j, l, ihgt, ihgj, iex, lowre
+    real::snorm, onorm, divnorm, ax, ay, az, tch_shh, tch_sav, verysmall, onesix, prodterm1, stild, rr
+    real::gg, fw, destterm, fodt, srcfull, dbpr, dbdi, dbde, dby, dbx, prodtermfinal
+    real:: r_des, f_des, ddw, f_des_sst, l_t_des
+    real :: ux, uy, vx, vy, shear, sratio, prodmod, cvor, stildmod, prodterm2, sfac, sss, usss, ssss, s_bar, kron
+    real:: uz, vz, wx, wy, wz
+    real:: uxx, uyy, uzz, vxx, vyy, vzz, wxx, wyy, wzz  !for sas only
+    real, dimension(2, 2)::vortet, tvort, svort, ovort
+    real, dimension(2)::vortem, vertf, vertex
+    real, dimension(turbulenceequations, 1:2)::derivturb
+    real:: srcfull_k, srcfull_om, prod_k, prod_om, ydest_k, ydest_om, diff_om, q_sas
+    real:: sigma_k, sigma_om, f_1, f_2, phi_1, phi_2, d_omplus !-------------- those are for diffusion too!
+    real:: alpha_raw, alpha_star, re_t_sst, alpha_inf
+    real:: beta_stari, beta_i, beta_raw, beta_star
+    real:: k_0, om_0, wally
+    real:: dervk_dervom, dervom2, dervk2, u_lapl !generalization of the velocity laplacian
+    real:: l_sas, l_vk, delta_cell, cell_volume, q_sas1, q_sas2
+    real:: kx, ky, kz, omx, omy, omz
+    real, dimension(1:nof_variables)::leftv, rightv
+    real::mp_pinfl, gammal
+    real, dimension(1:4)::viscl, laml
+    real, dimension(1:20)::eddyfl, eddyfr
+    real, dimension(1:2)::turbmv
+    real, dimension(1)::etvm
+    i = iconsidered
+    verysmall = 10e-16
+    vortet(1:2, 1:2) = ilocal_recon3(i)%grads(1:2, 1:2)
+    ux = vortet(1, 1); uy = vortet(1, 2)
+    vx = vortet(2, 1); vy = vortet(2, 2)
+    do ihgt = 1, 2
+      do ihgj = 1, 2
+        tvort(ihgt, ihgj) = vortet(ihgj, ihgt)
+      end do
+    end do
+    svort = 0.5*(vortet + tvort)
+    ovort = 0.5*(vortet - tvort)
+    snorm = sqrt(2.0d0*((svort(1, 1)*svort(1, 1)) + (svort(1, 2)*svort(1, 2)) + &
+                        (svort(2, 1)*svort(2, 1)) + (svort(2, 2)*svort(2, 2))))
+    onorm = sqrt(2.0d0*((ovort(1, 1)*ovort(1, 1)) + (ovort(1, 2)*ovort(1, 2)) + &
+                        (ovort(2, 1)*ovort(2, 1)) + (ovort(2, 2)*ovort(2, 2))))
+    omega = onorm
+    divnorm = ux + uy !careful with the sign. if it becomes very big, it can produce negative production
+    usss = sqrt((2.0*((ux*ux) + (vy*vy))) &
+                + ((uy + vx)*(uy + vx)) &
+                - (2.0/3.0*(ux + vy)*(ux + vy)))
+    derivturb(1, 1:2) = ilocal_recon3(i)%grads(4, 1:2)
+    squaret = (sqrt((derivturb(1, 1)**2) + (derivturb(1, 2)**2)))**2
+    leftv(1:nof_variables) = u_c(i)%val(1, 1:nof_variables)
+    call cons2prim(n, leftv, mp_pinfl, gammal)
+    rightv(1:nof_variables) = leftv(1:nof_variables)
+    call sutherland2d(n, leftv, rightv, viscl, laml)
+    turbmv(1) = u_ct(i)%val(1, 1)
+    turbmv(2) = turbmv(1)
+    select case (turbulencemodel)
+
+    case (1) !!spalart almaras model
+      if (ispal .eq. 1) then
+        eddyfl(2) = turbmv(1)
+        eddyfr(2) = turbmv(2)
+        onesix = 1.0d0/6.0d0
+        call eddyvisco2d(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
+        cw1 = cb1/(kappa*kappa)
+        cw1 = cw1 + (1.0 + cb2)/sigma
+        tch_x = turbmv(1)/viscl(1)
+        if (tch_x .lt. verysmall) then
+          source_t(1) = zero
+        else
+          tch_x3 = (tch_x)*(tch_x)*(tch_x)
+          tch_fv1 = tch_x3/(tch_x3 + (cv1*cv1*cv1))
+          tch_fv2 = 1.0d0 - (tch_x/(1.0d0 + tch_x*tch_fv1))
+          ddw = ielem(n, i)%walldist
+          if (des_model .eq. 1) then
+            cell_volume = ielem(n, i)%totvolume
+            delta_cell = cell_volume**0.333333333333333
+            ddw = min(ddw, c_des_sa*delta_cell)
+          end if
+          if (des_model .eq. 2) then
+            cell_volume = ielem(n, i)%totvolume
+            delta_cell = cell_volume**0.333333333333333
+            r_des = min(10.0, (viscl(1) + viscl(3))/(snorm*(kappa*ddw)**2 + 1e-16))
+            !previous limiter is just for numerical reasons regarding tanh
+            f_des = 1 - tanh((8.0*r_des)**3)
+            ddw = max(ddw - f_des*max(ddw - c_des_sa*delta_cell, 1e-16), 10.0e-16)
+          end if
+          prodterm1 = (turbmv(1))/(leftv(1)*kappa*kappa*ddw*ddw)
+          stild = max(omega + (tch_fv2*prodterm1), 0.3*omega)
+          prodtermfinal = stild*turbmv(1)*cb1/leftv(1)
+          rr = min((turbmv(1)/(((leftv(1)*stild*kappa*kappa*(ddw)*(ddw))) + 0.000000001)), 10.0)
+          gg = rr + (cw2*(rr**6 - rr))
+          fw = gg*(((1.0 + cw3**6)/(gg**6 + cw3**6))**onesix)
+          !  destruction term
+          destterm = cw1*fw*(((turbmv(1))/(leftv(1)*(ddw)))**2)
+          !  first order diffusion term
+          fodt = cb2*squaret/sigma
+          prodtermfinal = stild*cb1
+          destterm = 2.0*cw1*fw*(turbmv(1)/(leftv(1)*(kappa**2)*(ddw**2)))
+          fodt = -2.0*cb2*(sqrt(squaret))
+        end if
+      else
+        call eddyvisco2d(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
+        tch_x = turbmv(1)/viscl(1)
+        if (tch_x .gt. 10.0d0) then
+          tch_x = tch_x
+        else
+          tch_x = 0.05d0*log(1.0d0 + exp(20.0d0*(tch_x)))
+        end if
+        ddw = ielem(n, i)%walldist
+        if (des_model .eq. 1) then
+          cell_volume = ielem(n, i)%totvolume
+          delta_cell = cell_volume**0.333333333333333
+          ddw = min(ddw, c_des_sa*delta_cell)
+        end if
+        if (des_model .eq. 2) then
+          cell_volume = ielem(n, i)%totvolume
+          delta_cell = cell_volume**0.333333333333333
+          r_des = min(10.0d0, (viscl(1) + viscl(3))/(snorm*(kappa*ddw)**2 + 1e-16))
+          !previous limiter is just for numerical reasons regarding tanh
+          f_des = 1 - tanh((8.0d0*r_des)**3)
+          ddw = max(ddw - f_des*max(ddw - c_des_sa*delta_cell, 1e-16), 10.0e-16)
+        end if
+        tch_x3 = (tch_x)*(tch_x)*(tch_x)
+        tch_fv1 = tch_x3/(tch_x3 + (cv1*cv1*cv1))
+        tch_fv2 = 1.0d0 - (tch_x/(1.0d0 + tch_x*tch_fv1))
+        prodterm1 = (tch_fv2*tch_x*(turbmv(1)))/(leftv(1)*kappa*kappa*(ddw)*(ddw))
+        if (prodterm1 .ge. (-0.7d0*omega)) then
+          stild = omega + prodterm1
+        end if
+        if (prodterm1 .lt. (-0.7d0*omega)) then
+          stild = omega + ((omega*(((0.7d0*0.7d0)*(omega)) + (0.9*prodterm1)))/(((0.9 - 1.4)*omega) - prodterm1))
+        end if
+        prodtermfinal = stild*turbmv(1)*cb1*tch_x
+        rr = ((turbmv(1)*tch_x/(leftv(1)*stild*kappa*kappa*(ddw)*(ddw))))
+        gg = rr + (cw2*(rr**6 - rr))
+        fw = gg*(((1.0 + cw3**6)/(gg**6 + cw3**6))**onesix)
+        ! destruction term
+        destterm = cw1*fw*leftv(1)*(((turbmv(1)*tch_x/leftv(1))/(ddw))**2)
+        ! first order diffusion term
+        fodt = leftv(1)*cb2*squaret/sigma
+        prodtermfinal = stild*cb1*tch_x
+        destterm = 2.0*cw1*fw*(turbmv(1)/(leftv(1)*ddw**2))
+        fodt = 2.0*cb2*(sqrt(squaret))/sigma
+        source_t(1) = min(prodtermfinal + fodt - destterm, zero)
+      end if
+
+    case (2)                !k omega sst
+      eddyfl(1) = ielem(n, i)%walldist
+      eddyfl(2) = u_ct(i)%val(1, 1)
+      eddyfl(3) = u_ct(i)%val(1, 2)
+      eddyfl(4:5) = ilocal_recon3(i)%grads(1, 1:2)
+      eddyfl(6:7) = ilocal_recon3(i)%grads(2, 1:2)
+      eddyfl(8:9) = ilocal_recon3(i)%grads(4, 1:2)
+      eddyfl(10:11) = ilocal_recon3(i)%grads(5, 1:2)
+      eddyfr = eddyfl
+      call eddyvisco2d(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
+      k_0 = (max(verysmall, u_ct(i)%val(1, 1)/leftv(1))) !first subindex makes reference to the time-stepping
+      om_0 = max(1.0e-1*ufreestream/charlength, u_ct(i)%val(1, 2)/leftv(1))
+      !filling the output vector
+      source_t(1) = beta_starinf*om_0
+      source_t(2) = beta_starinf*k_0
+    end select
+  end subroutine sources_derivatives2d
 end module source

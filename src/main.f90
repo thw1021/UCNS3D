@@ -1,844 +1,444 @@
-PROGRAM UCNS3D
-!> @author 
-!> Panagiotis Tsoutsanis & Antonis Foivos Antoniadis
-!> copyright: Panagiotis Tsoutsanis & Antonis Foivos Antoniadis
-!> version: 3.0
-!DESCRIPTION
-!> @brief:
-!> Main Driver of UCNS3D code
-USE MPIINFO
-USE TRANSLATE
-use DECLARATION
-USE MEMORY
-USE COMMUNICATIONS
-USE IO
-USE PARTITION
-USE LIBRARY
-USE TRANSFORM
-USE FLUXES
-USE INITIALISATION
-USE BOUNDARY
-USE ADVANCE
-USE RECON
-USE LOCAL
-USE PROFILE
-USE FLOW_OPERATIONS
-USE GRADIENTS
-USE BASIS
-USE PRESTORE
-USE RIEMANN
-USE SOURCE
-USE implicit_time
-USE implicit_FLUXES
-USE MOODR
-USE OMP_LIB
-USE PARAMETERS
+program ucns3d
+  use mpi_info
+  use translate
+  use declaration
+  use memory
+  use communications
+  use io
+  use partition
+  use library
+  use transform
+  use fluxes
+  use initialisation
+  use boundary
+  use advance
+  use recon
+  use local
+  use profile
+  use flow_operations
+  use gradients
+  use basis
+  use prestore
+  use riemann
+  use source
+  use implicit_time
+  use implicit_fluxes
+  use moodr
+  use omp_lib
+  use parameters
 
+  implicit none
 
+  external metis_partmeshdual
+  external parmetis_v3_partmeshkway
 
-IMPLICIT NONE
+  call mpi_init_thread(mpi_thread_funneled, provided, ierror)
+  call mpi_comm_size(mpi_comm_world, isize, ierror)
+  call mpi_comm_rank(mpi_comm_world, n, ierror)
+  call open_input1(n, itt)
+  call tolerances
+  call read_ucns3d
+  call close_input1(n, itt)
 
+  if (n .eq. 0) call translate_mesh
 
-EXTERNAL METIS_PartMeshDual
-EXTERNAL ParMETIS_V3_PartMeshKway
-!CALL MPI_INIT(IERROR)
+  call mpi_barrier(mpi_comm_world, ierror)
+  call timing(n, cpux1, cpux2, cpux3, cpux4, cpux5, cpux6, timex1, timex2, timex3, timex4, timex5, timex6)
+  cpux1(1) = mpi_wtime()
+  call open_arbitrary(n, imaxe, imaxn, imaxb)
+  call shallocation(ieshape, imaxe)
+  call mpi_barrier(mpi_comm_world, ierror)
+  call find_shape(n, imaxe, ieshape)
+  call checkres
+  call xmpiallocate(xmpie, xmpil, xmpin, xmpielrank, xmpinrank, imaxe, imaxn, nproc)
+  call mpi_barrier(mpi_comm_world, ierror)
 
-
-CALL MPI_INIT_THREAD(MPI_THREAD_FUNNELED,PROVIDED,IERROR)
-CALL MPI_COMM_SIZE(MPI_COMM_WORLD,ISIZE,IERROR)
-CALL MPI_COMM_RANK(MPI_COMM_WORLD,N,IERROR)
-
-
-CALL OPEN_INPUT1(N,ITT) !> Open the input files
-
-CALL TOLERANCES  !> setup the tolerances values
-CALL READ_UCNS3D !> Read all the parameter files
-
- CALL CLOSE_INPUT1(N,ITT) !> Close the input files
-
-
-IF (N.EQ.0)THEN
-  CALL TRANSLATE_MESH !> Translate the mesh from fluent msh format to native format
-
- END IF
- CALL MPI_BARRIER(MPI_COMM_WORLD, IERROR)
- 
-
-CALL TIMING(N,CPUX1,CPUX2,CPUX3,CPUX4,CPUX5,CPUX6,TIMEX1,TIMEX2,TIMEX3,TIMEX4,TIMEX5,TIMEX6) !> start the timers
- CPUX1(1)=MPI_WTIME()
-!**************************DEVELOPED BY PANAGIOTIS TSOUTSANIS**************************!
-!*****************************FMACS RESEARCH GROUP CRANFIELD **************************!
-!*****************************___CRANFIELD_____UNIVERSITY____**************************!
-!print *, 'Number of tasks=',ISIZE,' My rank=',N
-! IF (N.EQ.0)THEN
-! OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='new',ACTION='WRITE')
-! CLOSE(63)
-! END IF
-!---------------------------------------------------------------!
-!		       I/O OPERATIONS 				!
-!---------------------------------------------------------------!
-
-
-
- CALL OPEN_ARBITRARY(N,IMAXE,IMAXN,IMAXB) !> Open the grid files
-
-
-CALL SHALLOCATION(IESHAPE,IMAXE) !> Allocate arrays for shape of each element
-
-  CALL MPI_BARRIER(MPI_COMM_WORLD, IERROR)
-
-CALL FIND_SHAPE(N,IMAXE,IESHAPE)	!> Find the shape each element
-
-
-
-CALL CHECKRES  !> Check the existence of RESTART/CHECKPOINT files
-
-CALL XMPIALLOCATE(XMPIE,XMPIL,XMPIN,XMPIELRANK,XMPINRANK,IMAXE,IMAXN,NPROC) !> Allocate memory for local and global numbering of elements and nodes
-
-
-
- 
-CALL MPI_BARRIER(MPI_COMM_WORLD, IERROR)
-   
-    if (emetis.lt.6)then    !> Choose a grid partitioning property if emetis<6 use serial METIS
-    if (n.eq.0) then
-	
-	If (emetis.eq.1)then
-          Call Partitioner1(n,IMAXE,imaxn,XMPIE,ieshape)
-        end if
-        If (emetis .eq.2)then
-	  
-	  Call Partitioner2(n,IMAXE,imaxn,XMPIE,ieshape)
-	  
-	end if
-	If (emetis .eq. 3) then
-	  Call Partitioner3(n,IMAXE,imaxn,XMPIE,ieshape)
-	end if
-	If (emetis .eq. 4) then
-	  Call Partitioner4(n,IMAXE,imaxn,XMPIE,ieshape)
-	end if
-	if (emetis.eq.5)then
-	  Call Partitioner5(n,IMAXE,imaxn,XMPIE,ieshape)
-	end if
-! 	if (emetis.eq.6)then
-! 	  Call Partitioner5(n,IMAXE,imaxn,XMPIE,ieshape)
-! 	end if
-	
-	
+  if (emetis .lt. 6) then
+    if (n .eq. 0) then
+      if (emetis .eq. 1) call partitioner1(n, imaxe, imaxn, xmpie, ieshape)
+      if (emetis .eq. 2) call partitioner2(n, imaxe, imaxn, xmpie, ieshape)
+      if (emetis .eq. 3) call partitioner3(n, imaxe, imaxn, xmpie, ieshape)
+      if (emetis .eq. 4) call partitioner4(n, imaxe, imaxn, xmpie, ieshape)
+      if (emetis .eq. 5) call partitioner5(n, imaxe, imaxn, xmpie, ieshape)
     end if
-    
-      call MPI_BCAST(XMPIE,IMAXE,MPI_INTEGER,0,MPI_COMM_WORLD,IERROR) 
-      
-   else
-    
-    if (emetis.eq.6)then !> When emetis=6 use ParMETIS (default)
-	  Call Partitioner6(n,IMAXE,imaxn,XMPIE,ieshape)
-	end if
-    end if
-    
-
-
-CALL MPI_BARRIER(MPI_COMM_WORLD, IERROR)
-
-
-CALL XMPIFIND(XMPIE,XMPIN,XMPIELRANK,XMPINRANK,IMAXE,IMAXN,NPROC) !> Determine the number of elements in this process
-
-call ELALLOCATION(N,XMPIE,XMPIELRANK,IELEM,IMAXE,IESHAPE,ITESTCASE,IMAXB,IBOUND,XMIN,XMAX,YMIN,YMAX,ZMIN,ZMAX) !> Allocate the appropriate memory for each elements
-
-
-
-
-CALL READ_INPUT(N,XMPIELRANK,XMPINRANK,XMPIE,XMPIN,IELEM,INODE,IMAXN,IMAXE,IBOUND,IMAXB,XMPINNUMBER,SCALER,INODER) !> Read the grid files and populate the allocated memory values for vertex coordinates and numbering
-
-
-CALL FIX_OFFSETS_LOCAL(N)
-
- CALL DETERMINE_SIZE(N,IORDER,ISELEM,ISELEMT,IOVERST,IOVERTO,ILX,NUMNEIGHBOURS,IDEGFREE,IMAXDEGFREE,IEXTEND) !> Determing the stencil sizes, number of polynomial coefficients etc.
- 
-
-
- CALL GAUSSIANPOINTS(IGQRULES,NUMBEROFPOINTS,NUMBEROFPOINTS2)   !> Establish the number of Gausian quadrature points for each element
- call QUADALLOC(NUMBEROFPOINTS,NUMBEROFPOINTS2) !>Allocate the memory required for the Gaussian integration rules
-
-
- CALL SHDEALLOCATION(IESHAPE,IMAXE)                     !> Deallocate memory for the shape allocation
-
-
-
-
-
-
-
-
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
- if (n.eq.0) then 
-   CPUX3(1) = MPI_Wtime()
-   WRITE(100+N,*)"TIMEI_1",CPUX3(1)-CPUX1(1)     !> Write in file the total wall clock time taken so far
-end if
-
-call ALLOCATE2
-CALL NEIGHBOURSS(N,IELEM,IMAXE,IMAXN,XMPIE,XMPIN,XMPIELRANK,RESTART,INODEr) !> Find neighbours of each element
- call ALLOCATE3
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-
-
-
-
-
-
-
- if (n.eq.0) then 
-   CPUX3(1) = MPI_Wtime()
-   WRITE(100+N,*)"TIMEI_2",CPUX3(1)-CPUX1(1)   !> Write in file the total wall clock time taken so far
-end if
-   
-
-!$OMP PARALLEL DEFAULT(SHARED)
-
-  CALL GEOMETRY_CALC
-
-
-!$OMP END PARALLEL 
-!$OMP BARRIER
-
-
- CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
- if (n.eq.0)  then
-   CPUX3(1) = MPI_Wtime()
-   WRITE(100+N,*)"TIMEI_3",CPUX3(1)-CPUX1(1)
-end if
-
-CALL READ_BOUND(N,IMAXB,IBOUND,XMPIELRANK)
-
-   IF (DG.EQ.1)THEN
-   IF (FILTERING.EQ.1)THEN
-    ALLOCATE(MODAL_FILTER(1:IDEGFREE),MODAL_FILTER_STRONG(1:IDEGFREE),MODAL_FILTER_WEAK(1:IDEGFREE))
-  END IF
-	END IF
-
-
-	IF (ADDA.EQ.1)THEN
-	ALLOCATE(ADDA_FILTER_STRONG(1:IDEGFREE))
-	ALLOCATE(ADDA_FILTER_WEAK(1:IDEGFREE))
-	END IF
-
-
-!$OMP BARRIER
-!$OMP PARALLEL DEFAULT(SHARED)
-   CALL APPLY_BOUNDARY(N,XPER,YPER,ZPER,IPERIODICITY,XMPIELRANK)
-!$OMP BARRIER
-!$OMP END PARALLEL 
-
-
-
-
-				CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-				!$OMP MASTER
-				IF (N.EQ.0)THEN
-				
-				  OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='old',ACTION='WRITE',POSITION='APPEND')
-				  WRITE(63,*)"finished applying boundary conditions"
-				  CPUX3(1) = MPI_Wtime()
-				  WRITE(63,*)"time1=",CPUX3(1)-cpux1(1)
-				  CLOSE(63)
-				  END IF
-				  !$OMP END MASTER
-				CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-  CALL XMPILOCAL
-
-  !IF (TECPLOT.LT.5)then
-  call COUNT_WALLS
-  !END IF
-
-  CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-
-
-  !$OMP BARRIER
-!$OMP MASTER
-IF (LOWMEM.EQ.0)CALL GLOBALISTX(N,XMPIE,XMPIL,XMPIELRANK,IMAXE,ISIZE,CENTERR,GLNEIGH,IELEM)
-IF (LOWMEM.EQ.1)CALL GLOBALIST(N,XMPIE,XMPIL,XMPIELRANK,IMAXE,ISIZE,CENTERR,GLNEIGH,GLNEIGHPER,IELEM)
- !$OMP END MASTER
-!$OMP BARRIER
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-
-				!$OMP MASTER
-				IF (N.EQ.0)THEN
-				  OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='old',ACTION='WRITE',POSITION='APPEND')
-				  WRITE(63,*)"finished obtaining neighbours within my cpu"
-				  CPUX3(1) = MPI_Wtime()
-				  WRITE(63,*)"time2=",CPUX3(1)-cpux1(1)
-				  CLOSE(63)
-				  END IF
-
-
-
- if (dimensiona.eq.3)then
- CALL CONS(N,ICONR,ICONS,IPERIODICITY,XMPIELRANK,ISIZE,ICONRPA,ICONRPM,ICONSPO,XPER,YPER,ZPER,ICONRPF,NUMNEIGHBOURS,TYPESTEN)
- else
-CALL CONS2d(N,ICONR,ICONS,IPERIODICITY,XMPIELRANK,ISIZE,ICONRPA,ICONRPM,ICONSPO,XPER,YPER,ZPER,ICONRPF,NUMNEIGHBOURS,TYPESTEN)
- end if
-
-
-				IF (N.EQ.0)THEN
-				  OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='old',ACTION='WRITE',POSITION='APPEND')
-				  WRITE(63,*)"finished obtaining neighbours within my cpu"
-				  CPUX3(1) = MPI_Wtime()
-				  WRITE(63,*)"time22=",CPUX3(1)-cpux1(1)
-				  CLOSE(63)
-				  END IF
-				  !$OMP END MASTER
-
-  IF (LOWMEM.EQ.0)CALL GLOBALISTX2(N,XMPIE,XMPIL,XMPIELRANK,IMAXE,ISIZE,CENTERR,GLNEIGH,IELEM)
- 
-  IF (LOWMEM.EQ.1)CALL GLOBALIST2(N,XMPIE,XMPIL,XMPIELRANK,IMAXE,ISIZE,CENTERR,GLNEIGH,GLNEIGHPER,IELEM)
-				  !$OMP MASTER
-				  IF (N.EQ.0)THEN
-				  OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='old',ACTION='WRITE',POSITION='APPEND')
-				  WRITE(63,*)"finished obtaining neighbours across all cpu"
-				  CPUX3(1) = MPI_Wtime()
-! ! ! 				  WRITE(63,*)"time3=",CPUX3(1)-cpux1(1)
-				  CLOSE(63)
-				  END IF
-				  !$OMP END MASTER
-
-
-IF (ISCHEME.GT.1)THEN
- CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-  CPUX3(1)=MPI_WTIME()
- CALL allocate5
-  !$OMP PARALLEL DEFAULT(SHARED)
- IF (LOWMEM.EQ.0)CALL DETSTENX(N)
- IF (LOWMEM.EQ.1)CALL DETSTEN(N)
- !$OMP END PARALLEL 
- 
- 
- 
-				  !$OMP MASTER
-				  IF (N.EQ.0)THEN
-				  OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='old',ACTION='WRITE',POSITION='APPEND')
-				  WRITE(63,*)"finished obtaining the central stencils across all cpu"
-				  CPUX3(1) = MPI_Wtime()
-				  WRITE(63,*)"time4=",CPUX3(1)-cpux1(1)
-				  CLOSE(63)
-				  END IF
-				  !$OMP END MASTER
- 
- 
-  CALL LOCALSTALLOCATION(N,XMPIELRANK,ILOCALSTENCIL,ILOCALSTENCILPER,TYPESTEN,NUMNEIGHBOURS)
-! CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-
-
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
- if (n.eq.0)  then
-   CPUX3(1) = MPI_Wtime()
-   WRITE(100+N,*)"TIME_I4",CPUX3(1)-CPUX1(1)
-end if
-
-
-!$OMP PARALLEL DEFAULT(SHARED)
-    
-  IF ((EES.EQ.0).OR.(EES.GE.4))THEN
-  IF (LOWMEM.EQ.0)CALL STENCIILSX(N)
-  IF (LOWMEM.EQ.1)CALL STENCIILS(N)
+    call mpi_bcast(xmpie, imaxe, mpi_integer, 0, mpi_comm_world, ierror)
+  else
+    if (emetis .eq. 6) call partitioner6(n, imaxe, imaxn, xmpie, ieshape)
   end if
-  if ((ees.gt.0).and.(ees.le.2))then
-  IF (LOWMEM.EQ.0)CALL STENCIILS_EESX(N)
-  IF (LOWMEM.EQ.1)CALL STENCIILS_EES(N)
-  
-  END IF
-!$OMP END PARALLEL 
 
-   if (ees.eq.3)then
-      CALL STENCILS3(N)
-  
-   end if
-
-
-
-  DEALLOCATE(ILOCALALLELG)
-  DEALLOCATE(ILOCALALLELGPER)
-  CALL GLOBALDEA
-
-
- 
-  
-  CALL STENCILS(N,IELEM,IMAXE,XMPIE,XMPIELRANK,ILOCALSTENCIL,TYPESTEN,NUMNEIGHBOURS,RESTART)
-    IF (IADAPT.EQ.1)THEN
-  CALL ADAPT_CRITERION
-  END IF
-END IF
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-
-				  !$OMP MASTER
-				  IF (N.EQ.0)THEN
-				  OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='old',ACTION='WRITE',POSITION='APPEND')
-				  WRITE(63,*)"finished obtaining the directional stencils across all cpu"
-				  CPUX3(1) = MPI_Wtime()
-				  WRITE(63,*)"time5=",CPUX3(1)-cpux1(1)
-				  CLOSE(63)
-				  END IF
-				  !$OMP END MASTER
-
-
-
- 
-
-! CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-  CALL ESTABEXHANGE(N,IELEM,IMAXE,XMPIE,XMPIN,XMPIELRANK,ILOCALSTENCIL,IEXCHANGER,IEXCHANGES,IRECEXR,IRECEXS,&
-NUMNEIGHBOURS,ISCHEME,ISIZE,IPERIODICITY,TYPESTEN,XMPIL)
-!
-
- CALL RENUMBER_NEIGHBOURS(N,IELEM,XMPIE,XMPIELRANK,IEXCHANGER,IEXCHANGES)
-! 
-
-! 
-
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
- if (n.eq.0)  then
-   CPUX3(1) = MPI_Wtime()
-  WRITE(100+N,*)"TIMEI_5",CPUX3(1)-CPUX1(1)
-end if
-
-
-
-CALL DEALLOCATEMPI1(N)
-
-if (NPROBES.GT.0)THEN
-CALL PROBEPOS(N,PROBEI)
-END IF
-
- !memory allocation for transformation to computational domain!
- 
-				!$OMP MASTER
-				  IF (N.EQ.0)THEN
-				  OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='old',ACTION='WRITE',POSITION='APPEND')
-				  WRITE(63,*)"started prestoring reconstruction matrices"
-				  CPUX3(1) = MPI_Wtime()
-				  WRITE(63,*)"time6=",CPUX3(1)-cpux1(1)
-				  CLOSE(63)
-				  END IF
-				  !$OMP END MASTER
- 
-
-
-
-
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
- if (n.eq.0) then 
-   CPUX3(1) = MPI_Wtime()
-WRITE(100+N,*)"TIMEI_6",CPUX3(1)-CPUX1(1)
-end if
-
-
-
-
-
-
-CALL LOCAL_RECONALLOCATION3(N,ILOCAL_RECON3)
-
-
- CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-
-
-CALL EXCH_CORDS(N)
-
-
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-
-if ((rungekutta.GE.10).AND.(rungekutta.LT.12))then
-call EXCH_CORDS2(N,ISIZE,IEXBOUNDHIRi,IEXBOUNDHISi,ITESTCASE,NUMBEROFPOINTS2,IEXCHANGER,IEXCHANGES)
-end if
-
-
-
-if ((fastest.ne.1).and.(ischeme.ge.2))then
-CALL ALLOCATE_BASIS_FUNCTION(N,INTEG_BASIS,XMPIELRANK,IDEGFREE)
-end if
-
-
-
-! !$OMP PARALLEL DEFAULT(SHARED)
-!  CALL MEMORY1
-! !$OMP END PARALLEL
-
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
- if (n.eq.0)  then
-   CPUX3(1) = MPI_Wtime()
-WRITE(100+N,*)"TIMEI_7",CPUX3(1)-CPUX1(1)
-end if
-
-
-
-
-
-  IF (STENCIL_IO.EQ.1)THEN
-   call stenprint(n)
-  END IF
-
- 
-
-call SOLEX_ALLOC(N)
-if (rungekutta.ge.2)then
-!THIS IS PARALLEL
-
-
-!$OMP PARALLEL DEFAULT(SHARED)
-if (dimensiona.eq.3)then
-CALL direct_side(n)
-ELSE
-CALL direct_side2d(n)
-END IF
-!$OMP END PARALLEL
-end if
-
-
-
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-
-
-
-CALL EXCH_CORD3(N)
-if (iperiodicity.eq.1)then
-CALL READ_INPUT_PERIOD(N,XMPIELRANK,XMPINRANK,XMPIE,XMPIN,IELEM,INODE,IMAXN,IMAXE,IBOUND,IMAXB,XMPINNUMBER,SCALER)
-end if
- deallocate(inoder2)
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-
-if ((fastest.ne.1).and.(ischeme.ge.2))then
-call walls_higher(n)
-end if
- 
-
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-   CPUX2(1) = MPI_Wtime()
-  
-  IF ((DG.EQ.1).or.(adda_type.eq.2))THEN
- 
- CALL ALLOCATE_DG
- 
- END IF
-
-  CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
- if (n.eq.0)  then
-   CPUX3(1) = MPI_Wtime()
- WRITE(100+N,*)"TIMEI_8",CPUX3(1)-CPUX1(1)
-end if
-  
-  					!$OMP MASTER
-				  IF (N.EQ.0)THEN
-				  OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='old',ACTION='WRITE',POSITION='APPEND')
-				  WRITE(63,*)"started prestoring reconstruction matrices"
-				  CPUX3(1) = MPI_Wtime()
-				  WRITE(63,*)"time7=",CPUX3(1)-cpux1(1)
-				  
-				  CLOSE(63)
-				  END IF
-				  !$OMP END MASTER
-  
-		!$OMP PARALLEL DEFAULT(SHARED)
-			if ((fastest.ne.1).and.(ischeme.ge.2)) call PRESTORE_1(N)
-		!$OMP END PARALLEL
-
-
-
-					!$OMP MASTER
-				  IF (N.EQ.0)THEN
-				  OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='old',ACTION='WRITE',POSITION='APPEND')
-				  WRITE(63,*)"finishded prestoring reconstruction matrices"
-				  CPUX3(1) = MPI_Wtime()
-				  WRITE(63,*)"time8=",CPUX3(1)-cpux1(1)
-				  CLOSE(63)
-				  END IF
-				  !$OMP END MASTER
-
- 
-
-
-
-CALL DEALCORDINATES2	!FOR ALE DO NOT DEALLOCATE
-CALL LOCALSDEALLOCATION(N,XMPIELRANK,ILOCALSTENCIL,ILOCALSTENCILPER,TYPESTEN,NUMNEIGHBOURS)	!FOR ALE DO NOT DEALLOCATE
-CALL DEALLOCATEMPI2(N)	!FOR ALE DO NOT DEALLOCATE
-CALL DEALCORDINATES1(N,IEXCORDR,IEXCORDS) !FOR ALE DO NOT DEALLOCATE
-
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-  
-
-
-
-
-
-				
-  
-  IF (TURBULENCE.EQ.1)THEN
-    if (dimensiona.eq.3)then
-    call WallDistance(N,ielem,imaxe,XMPIELRANK)
-    else
-    call WallDistance2d(N,ielem,imaxe,XMPIELRANK)
+  call mpi_barrier(mpi_comm_world, ierror)
+  call xmpifind(xmpie, xmpin, xmpielrank, xmpinrank, imaxe, imaxn, nproc)
+  call elallocation(n, xmpie, xmpielrank, ielem, imaxe, ieshape, itestcase, imaxb, ibound, xmin, xmax, ymin, ymax, zmin, zmax)
+  call read_input(n, xmpielrank, xmpinrank, xmpie, xmpin, ielem, inode, imaxn, imaxe, ibound, imaxb, xmpinnumber, scaler, inoder)
+  call fix_offsets_local(n)
+  call determine_size(n, iorder, iselem, iselemt, ioverst, ioverto, ilx, numneighbours, idegfree, imaxdegfree, iextend)
+  call gaussianpoints(igqrules, numberofpoints, numberofpoints2)
+  call quadalloc(numberofpoints, numberofpoints2)
+  call shdeallocation(ieshape, imaxe)
+  call mpi_barrier(mpi_comm_world, ierror)
+
+  if (n .eq. 0) then
+    cpux3(1) = mpi_wtime()
+    write (100 + n, *) "timei_1", cpux3(1) - cpux1(1)
+  end if
+
+  call allocate2
+  call neighbourss(n, ielem, imaxe, imaxn, xmpie, xmpin, xmpielrank, restart, inoder)
+  call allocate3
+  call mpi_barrier(mpi_comm_world, ierror)
+
+  if (n .eq. 0) then
+    cpux3(1) = mpi_wtime()
+    write (100 + n, *) "timei_2", cpux3(1) - cpux1(1)
+  end if
+
+  call geometry_calc
+  call mpi_barrier(mpi_comm_world, ierror)
+
+  if (n .eq. 0) then
+    cpux3(1) = mpi_wtime()
+    write (100 + n, *) "timei_3", cpux3(1) - cpux1(1)
+  end if
+
+  call read_bound(n, imaxb, ibound, xmpielrank)
+
+  if (dg .eq. 1) then
+    if (filtering .eq. 1) then
+      allocate (modal_filter(1:idegfree), modal_filter_strong(1:idegfree), modal_filter_weak(1:idegfree))
     end if
-  END IF
+  end if
+
+  if (adda .eq. 1) then
+    allocate (adda_filter_strong(1:idegfree))
+    allocate (adda_filter_weak(1:idegfree))
+  end if
+
+  call apply_boundary(n, xper, yper, zper, iperiodicity, xmpielrank)
+  call mpi_barrier(mpi_comm_world, ierror)
+
+  if (n .eq. 0) then
+    open (63, file='history.txt', form='formatted', status='old', action='write', position='append')
+    write (63, *) "finished applying boundary conditions"
+    cpux3(1) = mpi_wtime()
+    write (63, *) "time1=", cpux3(1) - cpux1(1)
+    close (63)
+  end if
+
+  call mpi_barrier(mpi_comm_world, ierror)
+  call xmpilocal
+  call count_walls
+  call mpi_barrier(mpi_comm_world, ierror)
+
+  if (lowmem .eq. 0) call globalistx(n, xmpie, xmpil, xmpielrank, imaxe, isize, centerr, glneigh, ielem)
+  if (lowmem .eq. 1) call globalist(n, xmpie, xmpil, xmpielrank, imaxe, isize, centerr, glneigh, glneighper, ielem)
+
+  call mpi_barrier(mpi_comm_world, ierror)
+
+  if (n .eq. 0) then
+    open (63, file='history.txt', form='formatted', status='old', action='write', position='append')
+    write (63, *) "finished obtaining neighbours within my cpu"
+    cpux3(1) = mpi_wtime()
+    write (63, *) "time2=", cpux3(1) - cpux1(1)
+    close (63)
+  end if
+
+  if (dimensiona .eq. 3) then
+    call cons(n, iconr, icons, iperiodicity, xmpielrank, isize, iconrpa, iconrpm, iconspo, xper, yper, zper, iconrpf, numneighbours, typesten)
+  else
+    call cons2d(n, iconr, icons, iperiodicity, xmpielrank, isize, iconrpa, iconrpm, iconspo, xper, yper, zper, iconrpf, numneighbours, typesten)
+  end if
+
+  if (n .eq. 0) then
+    open (63, file='history.txt', form='formatted', status='old', action='write', position='append')
+    write (63, *) "finished obtaining neighbours within my cpu"
+    cpux3(1) = mpi_wtime()
+    write (63, *) "time22=", cpux3(1) - cpux1(1)
+    close (63)
+  end if
+
+  if (lowmem .eq. 0) call globalistx2(n, xmpie, xmpil, xmpielrank, imaxe, isize, centerr, glneigh, ielem)
+  if (lowmem .eq. 1) call globalist2(n, xmpie, xmpil, xmpielrank, imaxe, isize, centerr, glneigh, glneighper, ielem)
+
+  if (n .eq. 0) then
+    open (63, file='history.txt', form='formatted', status='old', action='write', position='append')
+    write (63, *) "finished obtaining neighbours across all cpu"
+    cpux3(1) = mpi_wtime()
+    close (63)
+  end if
+
+  if (ischeme .gt. 1) then
+    call mpi_barrier(mpi_comm_world, ierror)
+    cpux3(1) = mpi_wtime()
+    call allocate5
+    if (lowmem .eq. 0) call detstenx(n)
+    if (lowmem .eq. 1) call detsten(n)
+    if (n .eq. 0) then
+      open (63, file='history.txt', form='formatted', status='old', action='write', position='append')
+      write (63, *) "finished obtaining the central stencils across all cpu"
+      cpux3(1) = mpi_wtime()
+      write (63, *) "time4=", cpux3(1) - cpux1(1)
+      close (63)
+    end if
+    call localstallocation(n, xmpielrank, ilocalstencil, ilocalstencilper, typesten, numneighbours)
+    call mpi_barrier(mpi_comm_world, ierror)
+    if (n .eq. 0) then
+      cpux3(1) = mpi_wtime()
+      write (100 + n, *) "time_i4", cpux3(1) - cpux1(1)
+    end if
+    if ((ees .eq. 0) .or. (ees .ge. 4)) then
+      if (lowmem .eq. 0) call stenciilsx(n)
+      if (lowmem .eq. 1) call stenciils(n)
+    end if
+    if ((ees .gt. 0) .and. (ees .le. 2)) then
+      if (lowmem .eq. 0) call stenciils_eesx(n)
+      if (lowmem .eq. 1) call stenciils_ees(n)
+    end if
+    if (ees .eq. 3) call stencils3(n)
+    deallocate (ilocalallelg)
+    deallocate (ilocalallelgper)
+    call globaldea
+    call stencils(n, ielem, imaxe, xmpie, xmpielrank, ilocalstencil, typesten, numneighbours, restart)
+    if (iadapt .eq. 1) call adapt_criterion
+  end if
+
+  call mpi_barrier(mpi_comm_world, ierror)
+
+  if (n .eq. 0) then
+    open (63, file='history.txt', form='formatted', status='old', action='write', position='append')
+    write (63, *) "finished obtaining the directional stencils across all cpu"
+    cpux3(1) = mpi_wtime()
+    write (63, *) "time5=", cpux3(1) - cpux1(1)
+    close (63)
+  end if
 
-  
+  call estabexhange(n, ielem, imaxe, xmpie, xmpin, xmpielrank, ilocalstencil, iexchanger, iexchanges, irecexr, irecexs, numneighbours, ischeme, isize, iperiodicity, typesten, xmpil)
+  call renumber_neighbours(n, ielem, xmpie, xmpielrank, iexchanger, iexchanges)
+  call mpi_barrier(mpi_comm_world, ierror)
 
+  if (n .eq. 0) then
+    cpux3(1) = mpi_wtime()
+    write (100 + n, *) "timei_5", cpux3(1) - cpux1(1)
+  end if
 
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
+  call deallocatempi1(n)
 
+  if (nprobes .gt. 0) call probepos(n, probei)
+
+  if (n .eq. 0) then
+    open (63, file='history.txt', form='formatted', status='old', action='write', position='append')
+    write (63, *) "started prestoring reconstruction matrices"
+    cpux3(1) = mpi_wtime()
+    write (63, *) "time6=", cpux3(1) - cpux1(1)
+    close (63)
+  end if
 
-				  !$OMP MASTER
-				  IF (N.EQ.0)THEN
-				  OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='old',ACTION='WRITE',POSITION='APPEND')
-				  WRITE(63,*)"started prestoring geometry information"
-				  CPUX3(1) = MPI_Wtime()
-				  WRITE(63,*)"time9=",CPUX3(1)-cpux1(1)
-				  CLOSE(63)
-				  END IF
-				  !$OMP END MASTER
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
- if (n.eq.0)then  
-   CPUX3(1) = MPI_Wtime()
-  WRITE(100+N,*)"TIMEI_9",CPUX3(1)-CPUX1(1)
-end if
-
-!FOR ALE THIS NEEDS TO BE REPEATED
-!$OMP PARALLEL DEFAULT(SHARED)
-CALL GRADS_ASSIGN(N)
-CALL FIND_ANGLES(N)
-!$OMP END PARALLEL
-
+  call mpi_barrier(mpi_comm_world, ierror)
 
+  if (n .eq. 0) then
+    cpux3(1) = mpi_wtime()
+    write (100 + n, *) "timei_6", cpux3(1) - cpux1(1)
+  end if
 
-  
+  call local_reconallocation3(n, ilocal_recon3)
+  call mpi_barrier(mpi_comm_world, ierror)
+  call exch_cords(n)
+  call mpi_barrier(mpi_comm_world, ierror)
+
+  if ((rungekutta .ge. 10) .and. (rungekutta .lt. 12)) call exch_cords2(n, isize, iexboundhiri, iexboundhisi, itestcase, numberofpoints2, iexchanger, iexchanges)
+  if ((fastest .ne. 1) .and. (ischeme .ge. 2)) call allocate_basis_function(n, integ_basis, xmpielrank, idegfree)
 
-  
-  
+  call mpi_barrier(mpi_comm_world, ierror)
 
-				!$OMP MASTER
-				  IF (N.EQ.0)THEN
-				  OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='old',ACTION='WRITE',POSITION='APPEND')
-				  WRITE(63,*)"allocating solution  and flux variables"
-				  CPUX3(1) = MPI_Wtime()
-				  WRITE(63,*)"time10=",CPUX3(1)-cpux1(1)
-				  CLOSE(63)
-				  END IF
-				  !$OMP END MASTER
-
-CALL U_C_ALLOCATION(N,XMPIELRANK,U_C,U_E,ITESTCASE,U_CT)
-
-
-IF (DG.EQ.1)THEN
+  if (n .eq. 0) then
+    cpux3(1) = mpi_wtime()
+    write (100 + n, *) "timei_7", cpux3(1) - cpux1(1)
+  end if
+
+  if (stencil_io .eq. 1) call stenprint(n)
+
+  call solex_alloc(n)
 
-!$OMP PARALLEL DEFAULT(SHARED)
-CALL build_MASS_MATRIX(N)
-!$OMP END PARALLEL
-
-END IF
-
-!$OMP MASTER
-				  IF (N.EQ.0)THEN
-				  OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='old',ACTION='WRITE',POSITION='APPEND')
-				  WRITE(63,*)"initialising"
-				  CPUX3(1) = MPI_Wtime()
-				  WRITE(63,*)"time10=",CPUX3(1)-cpux1(1)
-				  CLOSE(63)
-				  END IF
-				  !$OMP END MASTER
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
+  if (rungekutta .ge. 2) then
+    if (dimensiona .eq. 3) call direct_side(n)
+    else call direct_side2d(n)
+  end if
 
-    !$OMP PARALLEL DEFAULT(SHARED)
-    CALL INITIALISE (N)
-   !$OMP END PARALLEL
-    
- 
-
-
-
-IF (RESTART.GT.0)THEN
-   CALL REST_READ(N)  
-END IF
- 
- 
+  call mpi_barrier(mpi_comm_world, ierror)
+  call exch_cord3(n)
 
+  if (iperiodicity .eq. 1) call read_input_period(n, xmpielrank, xmpinrank, xmpie, xmpin, ielem, inode, imaxn, imaxe, ibound, imaxb, xmpinnumber, scaler)
+
+  deallocate (inoder2)
+  call mpi_barrier(mpi_comm_world, ierror)
 
- CALL GLOBALDEA2(XMPIL,XMPIE)  !FOR ALE DO NOT DEALLOCATE
+  if ((fastest .ne. 1) .and. (ischeme .ge. 2)) call walls_higher(n)
 
+  call mpi_barrier(mpi_comm_world, ierror)
+  cpux2(1) = mpi_wtime()
 
- !$OMP MASTER
-				  IF (N.EQ.0)THEN
-				  OPEN(63,FILE='history.txt',FORM='FORMATTED',STATUS='old',ACTION='WRITE',POSITION='APPEND')
-				  WRITE(63,*)"flux allocation"
-				  CPUX3(1) = MPI_Wtime()
-				  WRITE(63,*)"time10=",CPUX3(1)-cpux1(1)
-				  CLOSE(63)
-				  END IF
-				  !$OMP END MASTER
+  if ((dg .eq. 1) .or. (adda_type .eq. 2)) call allocate_dg
 
- CALL SUMFLUX_ALLOCATION(N)
+  call mpi_barrier(mpi_comm_world, ierror)
 
- 
- 
+  if (n .eq. 0) then
+    cpux3(1) = mpi_wtime()
+    write (100 + n, *) "timei_8", cpux3(1) - cpux1(1)
+  end if
+
+  if (n .eq. 0) then
+    open (63, file='history.txt', form='formatted', status='old', action='write', position='append')
+    write (63, *) "started prestoring reconstruction matrices"
+    cpux3(1) = mpi_wtime()
+    write (63, *) "time7=", cpux3(1) - cpux1(1)
+    close (63)
+  end if
+
+  if ((fastest .ne. 1) .and. (ischeme .ge. 2)) call prestore_1(n)
+
+  if (n .eq. 0) then
+    open (63, file='history.txt', form='formatted', status='old', action='write', position='append')
+    write (63, *) "finishded prestoring reconstruction matrices"
+    cpux3(1) = mpi_wtime()
+    write (63, *) "time8=", cpux3(1) - cpux1(1)
+    close (63)
+  end if
 
- 
- 
- if (rungekutta.GE.10)then
- 
-  call IMPALLOCATE(N)
- 
-  
- end if
- 
-! 
-! 
-! 
-! ! !----------------------------------------------------------------!
-! ! !		ADVANCEMENT OF SOLUTION IN TIME			 !
-! ! !           DIFFERENT OPTIONS AVAILABLE DEPENDING ON SCHEME	 !
-! ! !----------------------------------------------------------------!
+  call dealcordinates2
+  call localsdeallocation(n, xmpielrank, ilocalstencil, ilocalstencilper, typesten, numneighbours)
+  call deallocatempi2(n)
+  call dealcordinates1(n, iexcordr, iexcords)
+  call mpi_barrier(mpi_comm_world, ierror)
+
+  if (turbulence .eq. 1) then
+    if (dimensiona .eq. 3) call walldistance(n, ielem, imaxe, xmpielrank)
+    else call walldistance2d(n, ielem, imaxe, xmpielrank)
+  end if
+
+  call mpi_barrier(mpi_comm_world, ierror)
+
+  if (n .eq. 0) then
+    open (63, file='history.txt', form='formatted', status='old', action='write', position='append')
+    write (63, *) "started prestoring geometry information"
+    cpux3(1) = mpi_wtime()
+    write (63, *) "time9=", cpux3(1) - cpux1(1)
+    close (63)
+  end if
+
+  call mpi_barrier(mpi_comm_world, ierror)
+
+  if (n .eq. 0) then
+    cpux3(1) = mpi_wtime()
+    write (100 + n, *) "timei_9", cpux3(1) - cpux1(1)
+  end if
+
+  call grads_assign(n)
+  call find_angles(n)
+
+  if (n .eq. 0) then
+    open (63, file='history.txt', form='formatted', status='old', action='write', position='append')
+    write (63, *) "allocating solution  and flux variables"
+    cpux3(1) = mpi_wtime()
+    write (63, *) "time10=", cpux3(1) - cpux1(1)
+    close (63)
+  end if
 
- CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-   CPUX6(1)=MPI_WTIME()
-   
-  CALL TIMERS(N,CPUX1,CPUX2,CPUX3,CPUX4,CPUX5,CPUX6,TIMEX1,TIMEX2,TIMEX3,TIMEX4,TIMEX5,TIMEX6)
+  call u_c_allocation(n, xmpielrank, u_c, u_e, itestcase, u_ct)
 
+  if (dg .eq. 1) call build_mass_matrix(n)
 
-! !$OMP PARALLEL DEFAULT(SHARED)
-!   CALL MEMORY2
-! !$OMP END PARALLEL
- 
+  if (n .eq. 0) then
+    open (63, file='history.txt', form='formatted', status='old', action='write', position='append')
+    write (63, *) "initialising"
+    cpux3(1) = mpi_wtime()
+    write (63, *) "time10=", cpux3(1) - cpux1(1)
+    close (63)
+  end if
 
+  call mpi_barrier(mpi_comm_world, ierror)
+  call initialise(n)
 
+  if (restart .gt. 0) call rest_read(n)
 
+  call globaldea2(xmpil, xmpie)
 
-  IF (STATISTICS.EQ.1)THEN
-  IF (N.EQ.0)THEN
-  
-    WRITE(ST_N_CPU,FMT='(I10)') ISIZE
-    THREAD_N=OMP_GET_MAX_THREADS()
-    WRITE(ST_N_THREADS,FMT='(I10)') THREAD_N
-    STATFILE="STATS_MPI_"//TRIM(ADJUSTL(ST_N_CPU))//"_THREADS_"//TRIM(ADJUSTL(ST_N_THREADS))//".txt"
-    OPEN(133,FILE=STATFILE,FORM='FORMATTED',STATUS='REPLACE',ACTION='WRITE')
-    WRITE(133,'(5X,A2,1X,A11,A11,A11,A11,A11,A11,A11,A11,A11,A11)')"IT","T_TIME","T_COMM","T_COMP","T_DGINT","T_HALO","T_RECON","T_BOUND","T_ADDA","T_FLUX","T_UPDATE"
-    CLOSE(133)
-  
-  END IF
-  END IF
-  
- 
+  if (n .eq. 0) then
+    open (63, file='history.txt', form='formatted', status='old', action='write', position='append')
+    write (63, *) "flux allocation"
+    cpux3(1) = mpi_wtime()
+    write (63, *) "time10=", cpux3(1) - cpux1(1)
+    close (63)
+  end if
 
+  call sumflux_allocation(n)
 
- 
-IF (FASTEST_Q.EQ.1)THEN
-    CALL MEMORY_FAST(N)
-    
-    
-    
-    
-END IF
+  if (rungekutta .ge. 10) call impallocate(n)
 
-CALL NEW_ARRAYS(N)
+  call mpi_barrier(mpi_comm_world, ierror)
+  cpux6(1) = mpi_wtime()
+  call timers(n, cpux1, cpux2, cpux3, cpux4, cpux5, cpux6, timex1, timex2, timex3, timex4, timex5, timex6)
 
+  if (statistics .eq. 1) then
+    if (n .eq. 0) then
+      write (st_n_cpu, fmt='(i10)') isize
+      thread_n = omp_get_max_threads()
+      write (st_n_threads, fmt='(i10)') thread_n
+      statfile = "stats_mpi_"//trim(adjustl(st_n_cpu))//"_threads_"//trim(adjustl(st_n_threads))//".txt"
+      open (133, file=statfile, form='formatted', status='replace', action='write')
+      write(133,'(5x,a2,1x,a11,a11,a11,a11,a11,a11,a11,a11,a11,a11)')"it","t_time","t_comm","t_comp","t_dgint","t_halo","t_recon","t_bound","t_adda","t_flux","t_update"
+      close (133)
+    end if
+  end if
 
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
+  if (fastest_q .eq. 1) call memory_fast(n)
 
+  call new_arrays(n)
+  call mpi_barrier(mpi_comm_world, ierror)
+  call exch_cords_opt(n)
 
-CALL EXCH_CORDS_OPT(N)
-IF (DIMENSIONA.EQ.3)THEN
-    CALL LOCAL_RECONALLOCATION4(N)
-ELSE
-    CALL LOCAL_RECONALLOCATION42D(N)
-END IF
-   
-   
-IF (FASTEST.NE.1)THEN
-    CALL EXCHANGE_HIGHER_PRE(N)
-END IF
-    
-    CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
+  if (dimensiona .eq. 3) call local_reconallocation4(n)
+  else call local_reconallocation42d(n)
 
-call FIX_NODES_LOCAL	!THIS HAS TO BE INVESTIGATED FOR ALE
+  if (fastest .ne. 1) call exchange_higher_pre(n)
 
+  call mpi_barrier(mpi_comm_world, ierror)
+  call fix_nodes_local
+  call mpi_barrier(mpi_comm_world, ierror)
+  call specify_write_variables(n)
+  call mpi_barrier(mpi_comm_world, ierror)
 
+  select case (tecplot)
+    case (5)
+      call partition_preparation(n)
+      if (outsurf .eq. 1) then
+        call prepare_surfaces_v(n)
+        call partition_preparation_wallv(n)
+      end if
+    case (6)
+      call partition_preparation_p(n)
+      if (outsurf .eq. 1) call partition_preparation_p_wall(n)
+  end select
 
+  call mpi_barrier(mpi_comm_world, ierror)
+  cpux3(1) = mpi_wtime()
+  if (n .eq. 0) write (100 + n, *) cpux3(1) - cpux2(1)
 
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
+  cpux2(1) = mpi_wtime()
 
+  if (n .eq. 0) print *, "ucns3d running"
 
+  call local_reconallocation5(n)
 
-CALL SPECIFY_WRITE_VARIABLES(N)
+  if (dimensiona .eq. 3) call time_marching(n)
+  else call time_marching2(n)
 
+  call mpi_barrier(mpi_comm_world, ierror)
+  cpux3(1) = mpi_wtime()
 
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
+  if (n .eq. 0) write (100 + n, *) "total time taken=", cpux3(1) - cpux2(1), "seconds"
 
-SELECT CASE(TECPLOT)
+  call mpi_barrier(mpi_comm_world, ierror)
+  call mpi_finalize(ierror)
 
-CASE(5)
+  if (n .eq. 0) print *, "ucns3d running running"
 
-
-
-CALL PARTITION_PREPARATION(N)
-
-IF (outsurf.eq.1)THEN
-CALL PREPARE_SURFACES_v(N)
-CALL PARTITION_PREPARATION_WALLV(N)
-END IF
-
-CASE(6)
-
-CALL PARTITION_PREPARATION_P(N)
-IF (outsurf.eq.1)THEN
-CALL PARTITION_PREPARATION_p_WALL(n)
-END IF
-
-
-
-
-END SELECT
-
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-CPUX3(1) = MPI_Wtime()
-!  CALL CPU_TIME(CPUX3(1))
-
-if (n.eq.0)  WRITE(100+N,*)CPUX3(1)-CPUX2(1)
-!
-CPUX2(1) = MPI_Wtime()
-if (n.eq.0)print*,"UCNS3D Running"
-   
-!now allocate memory for gradients
-call local_reconallocation5(n)
-
-!end if
-
-
-IF (DIMENSIONA.EQ.3)THEN
-    !$OMP PARALLEL DEFAULT(SHARED)
-
-    CALL TIME_MARCHING(N)
-    !$OMP END PARALLEL
-ELSE
-    !$OMP PARALLEL DEFAULT(SHARED)
-    CALL TIME_MARCHING2(N)
-    !$OMP END PARALLEL
-END IF
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-CPUX3(1) = MPI_Wtime()
-
-if (n.eq.0)  WRITE(100+N,*)"TOTAL TIME TAKEN=",CPUX3(1)-CPUX2(1),"SECONDS"
-
-CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-CALL MPI_FINALIZE(IERROR)
-
-if (n.eq.0) print*,"UCNS3D finished running"
-
-
-END PROGRAM UCNS3D
+end program ucns3d

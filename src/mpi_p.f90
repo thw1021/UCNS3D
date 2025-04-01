@@ -1,12 +1,11 @@
-MODULE MPIINFO
-USE MPI
-IMPLICIT NONE
+module mpi_info
+  use mpi
+  implicit none
 
- !INCLUDE "mpif.h"
-
-INTEGER:: N !THE NUMBER OF RANK THAT I HAVE(FOR EACH PROCESSOR!
-INTEGER:: ISIZE !THE TOTAL NUMBER OF RANKS(SIZE OF)
-! INTEGER:: ICOMMUNICATOR !THE COMMUNICATOR OF COMM_wORLD
-INTEGER::IERROR,provided
-INTEGER::STATUS(MPI_STATUS_SIZE)
- END MODULE
+  ! include "mpif.h"
+  integer:: n                   ! the number of rank that i have(for each processor!
+  integer:: isize               !the total number of ranks(size of)
+  ! integer:: icommunicator     ! the communicator of comm_world
+  integer::ierror,provided
+  integer::status(mpi_status_size)
+end module

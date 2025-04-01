@@ -1,772 +1,542 @@
-MODULE BOUNDARY
-!> @brief
-!> This module includes the subroutines for reading and establishing the boundary conditions
-!> for all the cells that need to be bounded including the periodic ones
-USE DECLARATION
-USE LIBRARY
-USE TRANSFORM
-IMPLICIT NONE
-CONTAINS
-
-
-
-SUBROUTINE READ_BOUND(N,IMAXB,IBOUND,XMPIELRANK)
-!> @brief
-!> This subroutine reads the boundary conditions for all the bounded elements
-
-IMPLICIT NONE
-INTEGER,INTENT(IN)::N,IMAXB
-TYPE(BOUND_NUMBER),ALLOCATABLE,DIMENSION(:,:),INTENT(INOUT)::IBOUND
-CHARACTER(LEN=12)::BNDFILE,ibx_code
-INTEGER,ALLOCATABLE,DIMENSION(:),INTENT(IN)::XMPIELRANK
-INTEGER::I,J,JI,K,LM,IEX,KMAXN,KK,KMAXE,kkk,JJJ,jfx,JB,KXK,ITR1,jj,JJ1
-INTEGER::IOY,IBID,IB1,IB2,IB3,IB4,IBX1,ITL,ibgw,ibgw2,IBLEED,ibdum
-integer,dimension(4)::ib_n
-INTEGER::NB1,NB2,NB3,NB4
-	KMAXE=XMPIELRANK(N)
-
-kkk=0
-totiw=0
-ibgw=0
-ibgw2=0
-
-
-
-
-
-
-IF (DIMENSIONA.EQ.3)THEN
-
-BNDFILE='GRID.bnd'
-		if (binio.eq.0)OPEN(10,FILE=BNDFILE,FORM='FORMATTED',STATUS='OLD',ACTION='READ',IOSTAT=IOY)
-		if (binio.eq.1)OPEN(10,FILE=BNDFILE,FORM='UNFORMATTED',STATUS='OLD',ACTION='READ',IOSTAT=IOY)
-
-itl=0
-
-IF (BINIO.EQ.0)THEN
-DO ji=1,IMAXB
-	READ(10,*)IBID,IB1,IB2,IB3,IB4
-	
-	if ((inoder(IB1)%itor.gt.0).and.(inoder(IB2)%itor.GT.0).and.(inoder(IB3)%itor.GT.0)&
-	.and.(inoder(IB4)%itor.GT.0))then
-	itl=itl+1
-
-	end if
-end do
-ELSE
-DO ji=1,IMAXB
-	READ(10)IBID,IB1,IB2,IB3,IB4
-	
-	if ((inoder(IB1)%itor.gt.0).and.(inoder(IB2)%itor.GT.0).and.(inoder(IB3)%itor.GT.0)&
-	.and.(inoder(IB4)%itor.GT.0))then
-	itl=itl+1
-
-	end if
-end do
-
-END IF
-
-if (itl.gt.0)then
-
-allocate(ibound(n:n,itl))
-ibound(n:n,:)%inum=0
-end if
-
-
- close(10)
-
-itl=0
-if (binio.eq.0)OPEN(10,FILE=BNDFILE,FORM='FORMATTED',STATUS='OLD',ACTION='READ',IOSTAT=IOY)
-if (binio.eq.1)OPEN(10,FILE=BNDFILE,FORM='UNFORMATTED',STATUS='OLD',ACTION='READ',IOSTAT=IOY)
-
-IF (BINIO.EQ.0)THEN
-DO ji=1,IMAXB
-	READ(10,*)IBID,IB_n(1),IB_n(2),IB_n(3),IB_n(4),ibx1
-	
-	if (ibx1.eq.4)then
-	ibgw=ibgw+1
-	end if
-	
-	if ((inoder(IB_n(1))%itor.gt.0).and.(inoder(IB_n(2))%itor.GT.0).and.(inoder(IB_n(3))%itor.GT.0)&
-	.and.(inoder(IB_n(4))%itor.GT.0))then
-	itl=itl+1
-	    if (ibx1.eq.4)then
-	    ibound(n,itl)%inum=ibgw
-	    totiw=totiw+1
-	    end if
-		
-
-
-	    ibound(n,itl)%icode=ibx1
-	    ibound(n,itl)%IBID=IBID
-	    if (ib_n(3).eq.ib_n(4))then
-	    
-	      ibound(n,itl)%ishape=6
-	      ALLOCATE( ibound(n,itl)%ibl(1:3))
-			ibound(n,itl)%ibl(1:3)=ib_n(1:3)
-	    else
-
-	      ibound(n,itl)%ishape=5
-	       ALLOCATE( ibound(n,itl)%ibl(1:4))
-			ibound(n,itl)%ibl(1:4)=ib_n(1:4)
-	    end if
-
-	end if
-end do
-
-
-ELSE
-	
-DO ji=1,IMAXB
-	READ(10)IBID,IB_n(1),IB_n(2),IB_n(3),IB_n(4),ibx1
-		
-	
-
-	if (ibx1.eq.4)then
-	ibgw=ibgw+1
-	end if
-	
-	if ((inoder(IB_n(1))%itor.gt.0).and.(inoder(IB_n(2))%itor.GT.0).and.(inoder(IB_n(3))%itor.GT.0)&
-	.and.(inoder(IB_n(4))%itor.GT.0))then
-	itl=itl+1
-	    if (ibx1.eq.4)then
-	    ibound(n,itl)%inum=ibgw
-	    totiw=totiw+1
-	    end if
-
-	    ibound(n,itl)%icode=ibx1
-	    ibound(n,itl)%ibid=IBID
-	    if (ib_n(3).eq.ib_n(4))then
-	    
-	      ibound(n,itl)%ishape=6
-	      ALLOCATE( ibound(n,itl)%ibl(1:3))
-			ibound(n,itl)%ibl(1:3)=ib_n(1:3)
-	    else
-
-	      ibound(n,itl)%ishape=5
-	       ALLOCATE( ibound(n,itl)%ibl(1:4))
-			ibound(n,itl)%ibl(1:4)=ib_n(1:4)
-	    end if
-
-	end if
-end do
-
-END IF
- close(10)
-n_boundaries=itl
-
-itl=0
-DO JI=1,n_boundaries
-  IF ((IBOUND(N,JI)%ICODE.EQ.5).or.(IBOUND(N,JI)%ICODE.EQ.50))THEN
-    ALLOCATE(IBOUND(N,JI)%LOCALN(2))
-    allocate(ibound(n,ji)%CPUN(2))
-    itl=itl+1
-    ibound(n,ji)%localn=0
-    ibound(n,ji)%cpun=0
-  end if
-end do
-
-
-DO I=1,KMAXE
-  IF (IELEM(N,I)%INTERIOR.EQ.1)THEN
-  ALLOCATE(IELEM(N,I)%iBOUNDs(IELEM(N,I)%IFCA))
-  IELEM(N,I)%iBOUNDs=0
-  ielem(n,I)%nofbc=0
-  END IF
-END DO
-
-itl=0
-JJ1=0
-   do ji=1,n_boundaries
-	do jfx=1,inoder2(ibound(n,ji)%ibl(1))%NUMBEROFNEIB
-	     j=inoder2(ibound(n,ji)%ibl(1))%NEIBIDS(jfx)
-	      if (ielem(n,j)%interior.eq.1)then
-		  do jj=1,ielem(n,j)%ifca
-			if (ielem(n,j)%ineighg(jj).eq.0)then
-		      IF (IELEM(N,j)%TYPES_fACES(Jj).EQ.IBOUND(N,ji)%ISHAPE)THEN
-				IF (IBOUND(N,ji)%ISHAPE.EQ.6)THEN
-				  NB1=IELEM(N,j)%NODES_FACES(jJ,1)
-				  NB2=IELEM(N,j)%NODES_FACES(jJ,2)
-				  NB3=IELEM(N,j)%NODES_FACES(jJ,3)
-				  IB1=IBOUND(N,ji)%IBL(1)
-				  IB2=IBOUND(N,ji)%IBL(2)
-				  IB3=IBOUND(N,ji)%IBL(3)
-				  IF (((NB1.EQ.IB1).OR.(NB1.EQ.IB2).OR.(NB1.EQ.IB3)).AND.&
-				  ((NB2.EQ.IB1).OR.(NB2.EQ.IB2).OR.(NB2.EQ.IB3)).AND.&
-				  ((NB3.EQ.IB1).OR.(NB3.EQ.IB2).OR.(NB3.EQ.IB3)))THEN
-				 IELEM(N,J)%IBOUNDS(JJ)=ji
-				 IBOUND(N,Ji)%which=j
-				 IBOUND(N,Ji)%face=jj
-				  ielem(n,J)%nofbc=ielem(n,J)%nofbc+1
-				    if ((IBOUND(N,JI)%ICODE.EQ.5).or.(IBOUND(N,JI)%ICODE.EQ.50))then
-				    IBOUND(N,Ji)%localn(1)=J;IBOUND(N,Ji)%cpun(1)=n
-				    JJ1=JJ1+1
-				      
-				    go to 51
-				    end if
-				  END IF
-			      END IF
-				  IF (IBOUND(N,ji)%ISHAPE.EQ.5)THEN
-				    NB1=IELEM(N,j)%NODES_FACES(jJ,1)
-				    NB2=IELEM(N,j)%NODES_FACES(jJ,2)
-				    NB3=IELEM(N,j)%NODES_FACES(jJ,3)
-				    NB4=IELEM(N,j)%NODES_FACES(jJ,4)
-				    IB1=IBOUND(N,ji)%IBL(1)
-				    IB2=IBOUND(N,ji)%IBL(2)
-				    IB3=IBOUND(N,ji)%IBL(3)
-				    IB4=IBOUND(N,ji)%IBL(4)
-					IF (((NB1.EQ.IB1).OR.(NB1.EQ.IB2).OR.(NB1.EQ.IB3).OR.(NB1.EQ.IB4)).AND.&
-					((NB2.EQ.IB1).OR.(NB2.EQ.IB2).OR.(NB2.EQ.IB3).OR.(NB2.EQ.IB4)).AND.&
-					((NB3.EQ.IB1).OR.(NB3.EQ.IB2).OR.(NB3.EQ.IB3).OR.(NB3.EQ.IB4)).AND.&
-					((NB4.EQ.IB1).OR.(NB4.EQ.IB2).OR.(NB4.EQ.IB3).OR.(NB4.EQ.IB4)))THEN
-					IELEM(N,J)%IBOUNDS(JJ)=ji
-					IBOUND(N,Ji)%which=j
-				 IBOUND(N,Ji)%face=jj
-				    ielem(n,J)%nofbc=ielem(n,J)%nofbc+1
-				    if ((IBOUND(N,JI)%ICODE.EQ.5).or.(IBOUND(N,JI)%ICODE.EQ.50))then
-				    IBOUND(N,Ji)%localn(1)=J;IBOUND(N,Ji)%cpun(1)=n
-				    JJ1=JJ1+1
-				      
-				    go to 51
-				    end if
-					END IF
-				    END IF
-			  END IF
-		      end if
-		END DO
-		
-	      END IF
-	  END DO
-      51 continue
-    END DO
-
-
-
-     
-
-
-end if
-
-IF (DIMENSIONA.EQ.2)THEN
-
-BNDFILE='GRID.bnd'
-		IF (BINIO.EQ.0)OPEN(10,FILE=BNDFILE,FORM='FORMATTED',STATUS='OLD',ACTION='READ',IOSTAT=IOY)
-		IF (BINIO.EQ.1)OPEN(10,FILE=BNDFILE,FORM='UNFORMATTED',STATUS='OLD',ACTION='READ',IOSTAT=IOY)
-
-itl=0
-
-IF (BINIO.EQ.0)THEN
-DO ji=1,IMAXB
-	READ(10,*)IBID,IB1,IB2
-	
-	if ((inoder(IB1)%itor.gt.0).and.(inoder(IB2)%itor.GT.0))then
-	itl=itl+1
-
-	end if
-end do
-ELSE
-DO ji=1,IMAXB
-	READ(10)IBID,IB1,IB2
-	
-	if ((inoder(IB1)%itor.gt.0).and.(inoder(IB2)%itor.GT.0))then
-	itl=itl+1
-
-	end if
-end do
-
-END IF
-
-if (itl.gt.0)then
-
-allocate(ibound(n:n,itl))
-ibound(n:n,:)%inum=0
-
-end if
-
-
-close(10)
-
-itl=0
-IF (BINIO.EQ.0)OPEN(10,FILE=BNDFILE,FORM='FORMATTED',STATUS='OLD',ACTION='READ',IOSTAT=IOY)
-IF (BINIO.EQ.1)OPEN(10,FILE=BNDFILE,FORM='UNFORMATTED',STATUS='OLD',ACTION='READ',IOSTAT=IOY)
-
-IF (BINIO.EQ.0)THEN
-DO ji=1,IMAXB
-	READ(10,*)IBID,IB_n(1),IB_n(2),IB_n(3),IB_n(4),ibx1
-	IF (BLEED.EQ.1)THEN
-		ibdum=ibx1
-		if (ibx1.eq.4)then
-
-		if ((inoder(IB_n(1))%itor.gt.0).and.(inoder(IB_n(2))%itor.GT.0))then
-
-		!NOW CHECK IF THIS IS IN A BLEED ZONE
-
-
-		DO IBLEED=1,BLEED_NUMBER
-			IF (((inoder(IB_n(1))%CORD(1).GE.bleed_start(IBLEED,1)).AND.(inoder(IB_n(1))%CORD(1).LE.bleed_END(IBLEED,1))).AND.((inoder(IB_n(2))%CORD(1).GE.bleed_start(IBLEED,1)).AND.(inoder(IB_n(2))%CORD(1).LE.bleed_END(IBLEED,1))).AND.((inoder(IB_n(1))%CORD(2).GE.bleed_start(IBLEED,2)).AND.(inoder(IB_n(1))%CORD(2).LE.bleed_END(IBLEED,2))).AND.((inoder(IB_n(2))%CORD(2).GE.bleed_start(IBLEED,2)).AND.(inoder(IB_n(2))%CORD(2).LE.bleed_END(IBLEED,2))))THEN
-			IBdum=99
-
-
-			END IF
-
-		END DO
-
-		END IF
-		end if
-		ibx1=IBdum
-
-
-	END IF
-
-
-	if ((ibx1.eq.4).or.(ibx1.eq.99))then
-	ibgw=ibgw+1
-	end if
-	if ((inoder(IB_n(1))%itor.gt.0).and.(inoder(IB_n(2))%itor.GT.0))then
-	itl=itl+1
-	     if ((ibx1.eq.4).or.(ibx1.eq.99))then
-	    ibound(n,itl)%inum=ibgw;totiw=totiw+1
-	    end if
-	    ibound(n,itl)%icode=ibx1
-	   ibound(n,itl)%ibid=IBID
-
-	      ibound(n,itl)%ishape=7
-	       ALLOCATE( ibound(n,itl)%ibl(1:2))
-			ibound(n,itl)%ibl(1:2)=ib_n(1:2)
-	   
-
-	end if
-end do
-ELSE
-DO ji=1,IMAXB
-	READ(10)IBID,IB_n(1),IB_n(2),IB_n(3),IB_n(4),ibx1
-	IF (BLEED.EQ.1)THEN
-		ibdum=ibx1
-		if (ibx1.eq.4)then
-		if ((inoder(IB_n(1))%itor.gt.0).and.(inoder(IB_n(2))%itor.GT.0))then
-
-		!NOW CHECK IF THIS IS IN A BLEED ZONE
-
-
-		DO IBLEED=1,BLEED_NUMBER
-			IF (((inoder(IB_n(1))%CORD(1).GE.bleed_start(IBLEED,1)).AND.(inoder(IB_n(1))%CORD(1).LE.bleed_END(IBLEED,1))).AND.((inoder(IB_n(2))%CORD(1).GE.bleed_start(IBLEED,1)).AND.(inoder(IB_n(2))%CORD(1).LE.bleed_END(IBLEED,1))).AND.((inoder(IB_n(1))%CORD(2).GE.bleed_start(IBLEED,2)).AND.(inoder(IB_n(1))%CORD(2).LE.bleed_END(IBLEED,2))).AND.((inoder(IB_n(2))%CORD(2).GE.bleed_start(IBLEED,2)).AND.(inoder(IB_n(2))%CORD(2).LE.bleed_END(IBLEED,2))))THEN
-			IBdum=99
-
-
-			END IF
-
-		END DO
-
-		END IF
-		end if
-		ibx1=IBdum
-
-
-	END IF
-
-
-	if ((ibx1.eq.4).or.(ibx1.eq.99))then
-	ibgw=ibgw+1
-	end if
-	if ((inoder(IB_n(1))%itor.gt.0).and.(inoder(IB_n(2))%itor.GT.0))then
-	itl=itl+1
-	     if ((ibx1.eq.4).or.(ibx1.eq.99))then
-	    ibound(n,itl)%inum=ibgw;totiw=totiw+1
-	    end if
-	    ibound(n,itl)%icode=ibx1
-	 ibound(n,itl)%ibid=IBID
-
-	      ibound(n,itl)%ishape=7
-	       ALLOCATE( ibound(n,itl)%ibl(1:2))
-			ibound(n,itl)%ibl(1:2)=ib_n(1:2)
-	   
-
-	end if
-end do
-
-END IF
-
-close(10)
-
-n_boundaries=itl
-
-
-
-
-DO JI=1,n_boundaries
-  IF ((IBOUND(N,JI)%ICODE.EQ.5).or.(IBOUND(N,JI)%ICODE.EQ.50))THEN
-    ALLOCATE(IBOUND(N,JI)%LOCALN(2))
-    allocate(ibound(n,ji)%CPUN(2))
-    ibound(n,ji)%localn=0
-    ibound(n,ji)%cpun=0
-  end if
-end do
-
-DO I=1,KMAXE
-  IF (IELEM(N,I)%INTERIOR.EQ.1)THEN
-  ALLOCATE(IELEM(N,I)%iBOUNDs(IELEM(N,I)%IFCA))
-
-IF (BLEED.EQ.1)THEN
-  ALLOCATE(IELEM(N,I)%BLEEDN(IELEM(N,I)%IFCA))
-  IELEM(N,I)%BLEEDN(:)=0
-  END IF
-  IELEM(N,I)%iBOUNDs=0
-  ielem(n,i)%nofbc=0
-  END IF
-END DO
-
-itl=0
-
-   do ji=1,n_boundaries
-	do jfx=1,inoder2(ibound(n,ji)%ibl(1))%NUMBEROFNEIB
-	     j=inoder2(ibound(n,ji)%ibl(1))%NEIBIDS(jfx)
-	      if (ielem(n,j)%interior.eq.1)then
-		  do jj=1,ielem(n,j)%ifca
-		     if (ielem(n,j)%ineighg(jj).eq.0)then
-				
-				  NB1=IELEM(N,j)%NODES_FACES(jJ,1)
-				  NB2=IELEM(N,j)%NODES_FACES(jJ,2)
-				  
-				  IB1=IBOUND(N,ji)%IBL(1)
-				  IB2=IBOUND(N,ji)%IBL(2)
-				  
-				   IF (((NB1.EQ.IB1).OR.(NB1.EQ.IB2)).AND.&
-				((NB2.EQ.IB1).OR.(NB2.EQ.IB2)))THEN
-				 IELEM(N,J)%IBOUNDS(JJ)=ji
-				 IBOUND(N,Ji)%which=j
-				 IBOUND(N,Ji)%face=jj
-				    ielem(n,J)%nofbc=ielem(n,J)%nofbc+1
-				    if ((IBOUND(N,JI)%ICODE.EQ.5).or.(IBOUND(N,JI)%ICODE.EQ.50))then
-				    IBOUND(N,Ji)%localn(1)=J;IBOUND(N,Ji)%cpun(1)=n
-				   
-				    itl=itl+1
-				    end if
-				  END IF
-			      
-			  end if
-		END DO
-	      END IF
-	  END DO
-    END DO
-
-
-
-
- 
-
-
-  end if
-
-
-
-totwalls=ibgw
-
-
-
-
-
-      IF (TOTIW.GT.0)THEN
-	ALLOCATE(IBOUND_T(TOTIW))
-	ALLOCATE(IBOUND_T2(TOTIW))
-	TOTIW=0
-	
-	
-	
-	DO I=1,KMAXE
-  if (ielem(n,i)%interior.eq.1)then
-	DO j=1,IELEM(N,I)%IFCA
-	  if (ielem(n,i)%ibounds(J).gt.0)then
-	     if ((ibound(n,ielem(n,i)%ibounds(j))%icode.eq.4).or.(ibound(n,ielem(n,i)%ibounds(j))%icode.eq.99))then
-		 TOTIW=TOTIW+1
-				IBOUND_T(TOTIW)=I
-				IBOUND_T2(TOTIW)=j
-	      END IF
-	  end if
-	END DO
-   end if
-END DO
-	
-	end if
-
-
-
-	CALL MPI_BARRIER(MPI_COMM_WORLD,IERROR)
-! 	DEALLOCATE(IBOUND)
-END SUBROUTINE READ_BOUND
-! 
-! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-SUBROUTINE APPLY_BOUNDARY(N,XPER,YPER,ZPER,IPERIODICITY,XMPIELRANK)
-!> @brief
-!> This subroutine assigns the correct boundary condition code for all the bounded elements
-IMPLICIT NONE
-REAL,INTENT(IN)::XPER,YPER,ZPER
-INTEGER,INTENT(IN)::IPERIODICITY,N
-REAL::SMALL,tolerance,dist,temp_x
-INTEGER::I,K,j,kk,ii,kmaxe,jj1,jj2,ji,l,IBLEED
-INTEGER,ALLOCATABLE,DIMENSION(:),INTENT(IN)::XMPIELRANK
-integer::dum1,dum2,N_NODE
-REAL,DIMENSION(1:8,1:DIMENSIONA)::VEXT,NODES_LIST
-
-	KMAXE=XMPIELRANK(N)
- 
-
-TOLERANCE=TOLSMALL !> The tolerance can have a significant impact on the periodic boundary conditions matching rules
-
-
-
-
-
-jj1=0
-if (dimensiona.eq.3)then
-
-jj2=0
-do i=1,n_boundaries
-if ((IBOUND(N,I)%ICODE.EQ.5).or.(IBOUND(N,I)%ICODE.EQ.50))then
-jj2=jj2+1
-end if
-
-
-end do
-
-
-!$OMP DO
-DO I=1,KMAXE			! For ALL ELEMENTS
-    if (ielem(n,i)%interior.eq.1)then		! THAT HAVE AT LEAST ONE UNKNWON NEIGHBOUR
-	    IF (ielem(n,i)%nofbc.GT.0)THEN		! THAT HAVE AT LEAST ESTABLISHED A BOUNDARY CONDITION CODE
-			
-		  DO J=1,ielem(n,i)%IFCA			! LOOP ALL THEIR FACES
-		      if (IELEM(N,I)%IBOUNDS(J).gt.0)then
-		     IF ((IBOUND(N,IELEM(N,I)%IBOUNDS(J))%ICODE.EQ.5).or.(IBOUND(N,IELEM(N,I)%IBOUNDS(J))%ICODE.EQ.50))THEN	!IF ANY OF THEM HAS A PERIODIC BOUNDARY CONDITION THEN
-				    if (IBOUND(N,IELEM(N,I)%IBOUNDS(J))%ISHAPE.EQ.5)then
-				    N_NODE=4
-				    else
-				    N_NODE=3
-				    end if
-				    DO Kk=1,n_node
-				      NODES_LIST(kk,1:3)=inoder(IBOUND(N,IELEM(N,I)%IBOUNDS(J))%ibl(kk))%CORD(1:3)
-				    END DO
-				    vext(1,1:3)=CORDINATES3(N,NODES_LIST,N_NODE)
-				    
-			   do ii=1,n_boundaries				! loop all the boundaries
-				if ((ii.ne.IELEM(N,I)%IBOUNDS(J)).and.((IBOUND(n,ii)%icode.eq.5).or.(IBOUND(n,ii)%icode.eq.50)).and.&
-(IBOUND(N,IELEM(N,I)%IBOUNDS(J))%ishape.eq.IBOUND(n,ii)%ishape))then
-				      if ((IBOUND(n,ii)%localn(1).gt.0)) then	! excluding itself, and of same shape type
- 				   if (ielem(n,IBOUND(N,ii)%localn(1))%ihexgl.ne.ielem(n,i)%ihexgl)then
-! 				    
-				    DO Kk=1,n_node
-				      NODES_LIST(kk,1:3)=inoder(ibound(N,ii)%ibl(kk))%CORD(1:3)
-				    END DO
-				    vext(2,1:3)=CORDINATES3(N,NODES_LIST,N_NODE)
-				    
-				    dist=distance3(n,VEXT)
-				      
-                    IF(PER_ROT.EQ.0)THEN
-				      if (((abs(vext(2,1)-xper).lt.tolsmall).or.(abs((abs(vext(2,1)-xper))-xper).lt.tolsmall)).and.&
-				      ((abs(vext(1,1)-xper).lt.tolsmall).or.(abs((abs(vext(1,1)-xper))-xper).lt.tolsmall)))then
-				      if ((abs(vext(2,2)-vext(1,2)).lt.tolsmall).and.(abs(vext(2,3)-vext(1,3)).lt.tolsmall))then
-				
-				      
-! 				      if (((abs(dist-xper)).lt.TOLSMALL).or.((abs(dist-yper)).lt.TOLSMALL).or.((abs(dist-zper)).lt.TOLSMALL))then
-
-				      IBOUND(N,ii)%localn(2)=i;IBOUND(N,ii)%cpun(2)=n
-				      IELEM(N,I)%INEIGHG(J)=ielem(n,IBOUND(N,ii)%localn(1))%ihexgl
-
-			
-
-
-! 				      IELEM(N,I)%INEIGHG(J)=IELEM(N,IBOUND(N,IELEM(N,I)%IBOUNDS(J))%localn(1))%IHEXGL
-! 				      
-				      jj1=jj1+1
- 				      go to 101
- 				      end if
-				      end if
-				       if (((abs(vext(2,2)-Yper).lt.tolsmall).or.(abs((abs(vext(2,2)-Yper))-Yper).lt.tolsmall)).and.&
-				      ((abs(vext(1,2)-Yper).lt.tolsmall).or.(abs((abs(vext(1,2)-Yper))-Yper).lt.tolsmall)))then
-				      if ((abs(vext(2,1)-vext(1,1)).lt.tolsmall).and.(abs(vext(2,3)-vext(1,3)).lt.tolsmall))then
-				      
-! 				      if (((abs(dist-xper)).lt.TOLSMALL).or.((abs(dist-yper)).lt.TOLSMALL).or.((abs(dist-zper)).lt.TOLSMALL))then
-
-				      IBOUND(N,ii)%localn(2)=i;IBOUND(N,ii)%cpun(2)=n
-				      IELEM(N,I)%INEIGHG(J)=ielem(n,IBOUND(N,ii)%localn(1))%ihexgl
-				      jj1=jj1+1
- 				      go to 101
- 				      end if
-				      end if
-				       if (((abs(vext(2,3)-Zper).lt.tolsmall).or.(abs((abs(vext(2,3)-Zper))-Zper).lt.tolsmall)).and.&
-				      ((abs(vext(1,3)-Zper).lt.tolsmall).or.(abs((abs(vext(1,3)-Zper))-Zper).lt.tolsmall)))then
-				      if ((abs(vext(2,2)-vext(1,2)).lt.tolsmall).and.(abs(vext(2,1)-vext(1,1)).lt.tolsmall))then
-				      
-! 				      if (((abs(dist-xper)).lt.TOLSMALL).or.((abs(dist-yper)).lt.TOLSMALL).or.((abs(dist-zper)).lt.TOLSMALL))then
-
-				      IBOUND(N,ii)%localn(2)=i;IBOUND(N,ii)%cpun(2)=n
-				      IELEM(N,I)%INEIGHG(J)=ielem(n,IBOUND(N,ii)%localn(1))%ihexgl
-				      jj1=jj1+1
- 				      go to 101
- 				      end if
-				      end if
-				    ELSE
-                        vext(2,:)=ROTATE_PER(vext(2,:),IBOUND(n,ii)%icode,angle_per)
-                        if ((abs(vext(1,1)-vext(2,1)).lt.tol_per).and.&
-                            (abs(vext(1,2)-vext(2,2)).lt.tol_per).and.&
-                            (abs(vext(1,3)-vext(2,3)).lt.tol_per)) then              
-                                IBOUND(N,ii)%localn(2)=i
-                                IBOUND(N,ii)%cpun(2)=n
-                                IELEM(N,I)%INEIGHG(J)=ielem(n,IBOUND(N,ii)%localn(1))%ihexgl
-                                jj1=jj1+1
+module boundary
+  ! @brief
+  ! this module includes the subroutines for reading and establishing the boundary conditions
+  ! for all the cells that need to be bounded including the periodic ones
+  use declaration
+  use library
+  use transform
+  implicit none
+
+contains
+  subroutine read_bound(n, imaxb, ibound, xmpielrank)
+    ! @brief
+    ! this subroutine reads the boundary conditions for all the bounded elements
+    implicit none
+    integer, intent(in)::n, imaxb
+    type(bound_number), allocatable, dimension(:, :), intent(inout)::ibound
+    character(len=12)::bndfile, ibx_code
+    integer, allocatable, dimension(:), intent(in)::xmpielrank
+    integer::i, j, ji, k, lm, iex, kmaxn, kk, kmaxe, kkk, jjj, jfx, jb, kxk, itr1, jj, jj1
+    integer::ioy, ibid, ib1, ib2, ib3, ib4, ibx1, itl, ibgw, ibgw2, ibleed, ibdum
+    integer, dimension(4)::ib_n
+    integer::nb1, nb2, nb3, nb4
+    kmaxe = xmpielrank(n)
+
+    kkk = 0
+    totiw = 0
+    ibgw = 0
+    ibgw2 = 0
+
+    if (dimensiona .eq. 3) then
+      bndfile = 'grid.bnd'
+      if (binio .eq. 0)
+        open (10, file=bndfile, form='formatted', status='old', action='read', iostat=ioy)
+      if (binio .eq. 1)
+        open (10, file=bndfile, form='unformatted', status='old', action='read', iostat=ioy)
+      itl = 0
+      if (binio .eq. 0) then
+        do ji = 1, imaxb
+          read (10, *) ibid, ib1, ib2, ib3, ib4
+          if ((inoder(ib1)%itor .gt. 0) .and. (inoder(ib2)%itor .gt. 0) .and. (inoder(ib3)%itor .gt. 0) .and. (inoder(ib4)%itor .gt. 0)) then
+            itl = itl + 1
+          end if
+        end do
+      else
+        do ji = 1, imaxb
+          read (10) ibid, ib1, ib2, ib3, ib4
+          if ((inoder(ib1)%itor .gt. 0) .and. (inoder(ib2)%itor .gt. 0) .and. (inoder(ib3)%itor .gt. 0) .and. (inoder(ib4)%itor .gt. 0)) then
+            itl = itl + 1
+          end if
+        end do
+      end if
+      if (itl .gt. 0) then
+        allocate (ibound(n:n, itl))
+        ibound(n:n, :)%inum = 0
+      end if
+      close (10)
+
+      itl = 0
+      if (binio .eq. 0)
+        open (10, file=bndfile, form='formatted', status='old', action='read', iostat=ioy)
+      if (binio .eq. 1)
+        open (10, file=bndfile, form='unformatted', status='old', action='read', iostat=ioy)
+
+      if (binio .eq. 0) then
+        do ji = 1, imaxb
+          read (10, *) ibid, ib_n(1), ib_n(2), ib_n(3), ib_n(4), ibx1
+          if (ibx1 .eq. 4) then
+            ibgw = ibgw + 1
+          end if
+          if ((inoder(ib_n(1))%itor .gt. 0) .and. (inoder(ib_n(2))%itor .gt. 0) .and. (inoder(ib_n(3))%itor .gt. 0) .and. (inoder(ib_n(4))%itor .gt. 0)) then
+            itl = itl + 1
+            if (ibx1 .eq. 4) then
+              ibound(n, itl)%inum = ibgw
+              totiw = totiw + 1
+            end if
+            ibound(n, itl)%icode = ibx1
+            ibound(n, itl)%ibid = ibid
+            if (ib_n(3) .eq. ib_n(4)) then
+              ibound(n, itl)%ishape = 6
+              allocate (ibound(n, itl)%ibl(1:3))
+              ibound(n, itl)%ibl(1:3) = ib_n(1:3)
+            else
+              ibound(n, itl)%ishape = 5
+              allocate (ibound(n, itl)%ibl(1:4))
+              ibound(n, itl)%ibl(1:4) = ib_n(1:4)
+            end if
+          end if
+        end do
+      else
+        do ji = 1, imaxb
+          read (10) ibid, ib_n(1), ib_n(2), ib_n(3), ib_n(4), ibx1
+          if (ibx1 .eq. 4) then
+            ibgw = ibgw + 1
+          end if
+          if ((inoder(ib_n(1))%itor .gt. 0) .and. (inoder(ib_n(2))%itor .gt. 0) .and. (inoder(ib_n(3))%itor .gt. 0) .and. (inoder(ib_n(4))%itor .gt. 0)) then
+            itl = itl + 1
+            if (ibx1 .eq. 4) then
+              ibound(n, itl)%inum = ibgw
+              totiw = totiw + 1
+            end if
+            ibound(n, itl)%icode = ibx1
+            ibound(n, itl)%ibid = ibid
+            if (ib_n(3) .eq. ib_n(4)) then
+              ibound(n, itl)%ishape = 6
+              allocate (ibound(n, itl)%ibl(1:3))
+              ibound(n, itl)%ibl(1:3) = ib_n(1:3)
+            else
+              ibound(n, itl)%ishape = 5
+              allocate (ibound(n, itl)%ibl(1:4))
+              ibound(n, itl)%ibl(1:4) = ib_n(1:4)
+            end if
+          end if
+        end do
+      end if
+      close (10)
+      n_boundaries = itl
+      itl = 0
+      do ji = 1, n_boundaries
+        if ((ibound(n, ji)%icode .eq. 5) .or. (ibound(n, ji)%icode .eq. 50)) then
+          allocate (ibound(n, ji)%localn(2))
+          allocate (ibound(n, ji)%cpun(2))
+          itl = itl + 1
+          ibound(n, ji)%localn = 0
+          ibound(n, ji)%cpun = 0
+        end if
+      end do
+      do i = 1, kmaxe
+        if (ielem(n, i)%interior .eq. 1) then
+          allocate (ielem(n, i)%ibounds(ielem(n, i)%ifca))
+          ielem(n, i)%ibounds = 0
+          ielem(n, i)%nofbc = 0
+        end if
+      end do
+
+      itl = 0
+      jj1 = 0
+      do ji = 1, n_boundaries
+        do jfx = 1, inoder2(ibound(n, ji)%ibl(1))%numberofneib
+          j = inoder2(ibound(n, ji)%ibl(1))%neibids(jfx)
+          if (ielem(n, j)%interior .eq. 1) then
+            do jj = 1, ielem(n, j)%ifca
+              if (ielem(n, j)%ineighg(jj) .eq. 0) then
+                if (ielem(n, j)%types_faces(jj) .eq. ibound(n, ji)%ishape) then
+                  if (ibound(n, ji)%ishape .eq. 6) then
+                    nb1 = ielem(n, j)%nodes_faces(jj, 1)
+                    nb2 = ielem(n, j)%nodes_faces(jj, 2)
+                    nb3 = ielem(n, j)%nodes_faces(jj, 3)
+                    ib1 = ibound(n, ji)%ibl(1)
+                    ib2 = ibound(n, ji)%ibl(2)
+                    ib3 = ibound(n, ji)%ibl(3)
+                    if (((nb1 .eq. ib1) .or. (nb1 .eq. ib2) .or. (nb1 .eq. ib3)) .and. &
+                          ((nb2 .eq. ib1) .or. (nb2 .eq. ib2) .or. (nb2 .eq. ib3)) .and. &
+                          ((nb3 .eq. ib1) .or. (nb3 .eq. ib2) .or. (nb3 .eq. ib3))) then
+                      ielem(n, j)%ibounds(jj) = ji
+                      ibound(n, ji)%which = j
+                      ibound(n, ji)%face = jj
+                      ielem(n, j)%nofbc = ielem(n, j)%nofbc + 1
+                      if ((ibound(n, ji)%icode .eq. 5) .or. (ibound(n, ji)%icode .eq. 50)) then
+                        ibound(n, ji)%localn(1) = j; ibound(n, ji)%cpun(1) = n
+                        jj1 = jj1 + 1
+                        go to 51
+                      end if
+                    end if
+                  end if
+                  if (ibound(n, ji)%ishape .eq. 5) then
+                    nb1 = ielem(n, j)%nodes_faces(jj, 1)
+                    nb2 = ielem(n, j)%nodes_faces(jj, 2)
+                    nb3 = ielem(n, j)%nodes_faces(jj, 3)
+                    nb4 = ielem(n, j)%nodes_faces(jj, 4)
+                    ib1 = ibound(n, ji)%ibl(1)
+                    ib2 = ibound(n, ji)%ibl(2)
+                    ib3 = ibound(n, ji)%ibl(3)
+                    ib4 = ibound(n, ji)%ibl(4)
+                    if (((nb1 .eq. ib1) .or. (nb1 .eq. ib2) .or. (nb1 .eq. ib3) .or. (nb1 .eq. ib4)) .and. &
+                          ((nb2 .eq. ib1) .or. (nb2 .eq. ib2) .or. (nb2 .eq. ib3) .or. (nb2 .eq. ib4)) .and. &
+                          ((nb3 .eq. ib1) .or. (nb3 .eq. ib2) .or. (nb3 .eq. ib3) .or. (nb3 .eq. ib4)) .and. &
+                          ((nb4 .eq. ib1) .or. (nb4 .eq. ib2) .or. (nb4 .eq. ib3) .or. (nb4 .eq. ib4))) then
+                      ielem(n, j)%ibounds(jj) = ji
+                      ibound(n, ji)%which = j
+                      ibound(n, ji)%face = jj
+                      ielem(n, j)%nofbc = ielem(n, j)%nofbc + 1
+                      if ((ibound(n, ji)%icode .eq. 5) .or. (ibound(n, ji)%icode .eq. 50)) then
+                        ibound(n, ji)%localn(1) = j; ibound(n, ji)%cpun(1) = n
+                        jj1 = jj1 + 1
+                        go to 51
+                      end if
+                    end if
+                  end if
+                end if
+              end if
+            end do
+          end if
+        end do
+  51    continue
+      end do
+    end if
+
+    if (dimensiona .eq. 2) then
+      bndfile = 'grid.bnd'
+      if (binio .eq. 0)
+        open (10, file=bndfile, form='formatted', status='old', action='read', iostat=ioy)
+      if (binio .eq. 1)
+        open (10, file=bndfile, form='unformatted', status='old', action='read', iostat=ioy)
+      itl = 0
+      if (binio .eq. 0) then
+        do ji = 1, imaxb
+          read (10, *) ibid, ib1, ib2
+          if ((inoder(ib1)%itor .gt. 0) .and. (inoder(ib2)%itor .gt. 0)) then
+            itl = itl + 1
+          end if
+        end do
+      else
+        do ji = 1, imaxb
+          read (10) ibid, ib1, ib2
+          if ((inoder(ib1)%itor .gt. 0) .and. (inoder(ib2)%itor .gt. 0)) then
+            itl = itl + 1
+          end if
+        end do
+      end if
+
+      if (itl .gt. 0) then
+        allocate (ibound(n:n, itl))
+        ibound(n:n, :)%inum = 0
+      end if
+
+      close (10)
+
+      itl = 0
+      if (binio .eq. 0)
+        open (10, file=bndfile, form='formatted', status='old', action='read', iostat=ioy)
+      if (binio .eq. 1)
+        open (10, file=bndfile, form='unformatted', status='old', action='read', iostat=ioy)
+
+      if (binio .eq. 0) then
+        do ji = 1, imaxb
+          read (10, *) ibid, ib_n(1), ib_n(2), ib_n(3), ib_n(4), ibx1
+          if (bleed .eq. 1) then
+            ibdum = ibx1
+            if (ibx1 .eq. 4) then
+              if ((inoder(ib_n(1))%itor .gt. 0) .and. (inoder(ib_n(2))%itor .gt. 0)) then
+                !now check if this is in a bleed zone
+                do ibleed = 1, bleed_number
+                  if (((inoder(ib_n(1))%cord(1).ge.bleed_start(ibleed,1)).and.(inoder(ib_n(1))%cord(1).le.bleed_end(ibleed,1))).and.((inoder(ib_n(2))%cord(1).ge.bleed_start(ibleed,1)).and.(inoder(ib_n(2))%cord(1).le.bleed_end(ibleed,1))).and.((inoder(ib_n(1))%cord(2).ge.bleed_start(ibleed,2)).and.(inoder(ib_n(1))%cord(2).le.bleed_end(ibleed,2))).and.((inoder(ib_n(2))%cord(2).ge.bleed_start(ibleed,2)).and.(inoder(ib_n(2))%cord(2).le.bleed_end(ibleed,2))))then
+                    ibdum = 99
+                  end if
+                end do
+              end if
+            end if
+            ibx1 = ibdum
+          end if
+
+          if ((ibx1 .eq. 4) .or. (ibx1 .eq. 99)) then
+            ibgw = ibgw + 1
+          end if
+          if ((inoder(ib_n(1))%itor .gt. 0) .and. (inoder(ib_n(2))%itor .gt. 0)) then
+            itl = itl + 1
+            if ((ibx1 .eq. 4) .or. (ibx1 .eq. 99)) then
+              ibound(n, itl)%inum = ibgw; totiw = totiw + 1
+            end if
+            ibound(n, itl)%icode = ibx1
+            ibound(n, itl)%ibid = ibid
+            ibound(n, itl)%ishape = 7
+            allocate (ibound(n, itl)%ibl(1:2))
+            ibound(n, itl)%ibl(1:2) = ib_n(1:2)
+          end if
+        end do
+      else
+        do ji = 1, imaxb
+          read (10) ibid, ib_n(1), ib_n(2), ib_n(3), ib_n(4), ibx1
+          if (bleed .eq. 1) then
+            ibdum = ibx1
+            if (ibx1 .eq. 4) then
+              if ((inoder(ib_n(1))%itor .gt. 0) .and. (inoder(ib_n(2))%itor .gt. 0)) then
+                ! now check if this is in a bleed zone
+                do ibleed = 1, bleed_number
+                  if (((inoder(ib_n(1))%cord(1).ge.bleed_start(ibleed,1)).and.(inoder(ib_n(1))%cord(1).le.bleed_end(ibleed,1))).and.((inoder(ib_n(2))%cord(1).ge.bleed_start(ibleed,1)).and.(inoder(ib_n(2))%cord(1).le.bleed_end(ibleed,1))).and.((inoder(ib_n(1))%cord(2).ge.bleed_start(ibleed,2)).and.(inoder(ib_n(1))%cord(2).le.bleed_end(ibleed,2))).and.((inoder(ib_n(2))%cord(2).ge.bleed_start(ibleed,2)).and.(inoder(ib_n(2))%cord(2).le.bleed_end(ibleed,2))))then
+                    ibdum = 99
+                  end if
+                end do
+              end if
+            end if
+            ibx1 = ibdum
+          end if
+          if ((ibx1 .eq. 4) .or. (ibx1 .eq. 99)) then
+            ibgw = ibgw + 1
+          end if
+          if ((inoder(ib_n(1))%itor .gt. 0) .and. (inoder(ib_n(2))%itor .gt. 0)) then
+            itl = itl + 1
+            if ((ibx1 .eq. 4) .or. (ibx1 .eq. 99)) then
+              ibound(n, itl)%inum = ibgw; totiw = totiw + 1
+            end if
+            ibound(n, itl)%icode = ibx1
+            ibound(n, itl)%ibid = ibid
+            ibound(n, itl)%ishape = 7
+            allocate (ibound(n, itl)%ibl(1:2))
+            ibound(n, itl)%ibl(1:2) = ib_n(1:2)
+          end if
+        end do
+      end if
+      close (10)
+      n_boundaries = itl
+      do ji = 1, n_boundaries
+        if ((ibound(n, ji)%icode .eq. 5) .or. (ibound(n, ji)%icode .eq. 50)) then
+          allocate (ibound(n, ji)%localn(2))
+          allocate (ibound(n, ji)%cpun(2))
+          ibound(n, ji)%localn = 0
+          ibound(n, ji)%cpun = 0
+        end if
+      end do
+
+      do i = 1, kmaxe
+        if (ielem(n, i)%interior .eq. 1) then
+          allocate (ielem(n, i)%ibounds(ielem(n, i)%ifca))
+          if (bleed .eq. 1) then
+            allocate (ielem(n, i)%bleedn(ielem(n, i)%ifca))
+            ielem(n, i)%bleedn(:) = 0
+          end if
+          ielem(n, i)%ibounds = 0
+          ielem(n, i)%nofbc = 0
+        end if
+      end do
+
+      itl = 0
+      do ji = 1, n_boundaries
+        do jfx = 1, inoder2(ibound(n, ji)%ibl(1))%numberofneib
+          j = inoder2(ibound(n, ji)%ibl(1))%neibids(jfx)
+          if (ielem(n, j)%interior .eq. 1) then
+            do jj = 1, ielem(n, j)%ifca
+              if (ielem(n, j)%ineighg(jj) .eq. 0) then
+                nb1 = ielem(n, j)%nodes_faces(jj, 1)
+                nb2 = ielem(n, j)%nodes_faces(jj, 2)
+                ib1 = ibound(n, ji)%ibl(1)
+                ib2 = ibound(n, ji)%ibl(2)
+                if (((nb1 .eq. ib1) .or. (nb1 .eq. ib2)) .and. &
+                      ((nb2 .eq. ib1) .or. (nb2 .eq. ib2))) then
+                  ielem(n, j)%ibounds(jj) = ji
+                  ibound(n, ji)%which = j
+                  ibound(n, ji)%face = jj
+                  ielem(n, j)%nofbc = ielem(n, j)%nofbc + 1
+                  if ((ibound(n, ji)%icode .eq. 5) .or. (ibound(n, ji)%icode .eq. 50)) then
+                    ibound(n, ji)%localn(1) = j; ibound(n, ji)%cpun(1) = n
+                    itl = itl + 1
+                  end if
+                end if
+              end if
+            end do
+          end if
+        end do
+      end do
+    end if
+    totwalls = ibgw
+
+    if (totiw .gt. 0) then
+      allocate (ibound_t(totiw))
+      allocate (ibound_t2(totiw))
+      totiw = 0
+      do i = 1, kmaxe
+        if (ielem(n, i)%interior .eq. 1) then
+          do j = 1, ielem(n, i)%ifca
+            if (ielem(n, i)%ibounds(j) .gt. 0) then
+              if ((ibound(n, ielem(n, i)%ibounds(j))%icode .eq. 4) .or. (ibound(n, ielem(n, i)%ibounds(j))%icode .eq. 99)) then
+                totiw = totiw + 1
+                ibound_t(totiw) = i
+                ibound_t2(totiw) = j
+              end if
+            end if
+          end do
+        end if
+      end do
+    end if
+
+    call mpi_barrier(mpi_comm_world, ierror)
+    ! deallocate(ibound)
+  end subroutine read_bound
+
+  subroutine apply_boundary(n, xper, yper, zper, iperiodicity, xmpielrank)
+    ! @brief
+    ! this subroutine assigns the correct boundary condition code for all the bounded elements
+    implicit none
+    real, intent(in)::xper, yper, zper
+    integer, intent(in)::iperiodicity, n
+    real::small, tolerance, dist, temp_x
+    integer::i, k, j, kk, ii, kmaxe, jj1, jj2, ji, l, ibleed
+    integer, allocatable, dimension(:), intent(in)::xmpielrank
+    integer::dum1, dum2, n_node
+    real, dimension(1:8, 1:dimensiona)::vext, nodes_list
+
+    kmaxe = xmpielrank(n)
+    tolerance = tolsmall ! the tolerance can have a significant impact on the periodic boundary conditions matching rules
+    jj1 = 0
+    if (dimensiona .eq. 3) then
+      jj2 = 0
+      do i = 1, n_boundaries
+        if ((ibound(n, i)%icode .eq. 5) .or. (ibound(n, i)%icode .eq. 50)) then
+          jj2 = jj2 + 1
+        end if
+      end do
+      do i = 1, kmaxe                        ! for all elements
+        if (ielem(n, i)%interior .eq. 1) then                ! that have at least one unknwon neighbour
+          if (ielem(n, i)%nofbc .gt. 0) then                ! that have at least established a boundary condition code
+            do j = 1, ielem(n, i)%ifca                        ! loop all their faces
+              if (ielem(n, i)%ibounds(j) .gt. 0) then
+                if ((ibound(n, ielem(n, i)%ibounds(j))%icode .eq. 5) .or. (ibound(n, ielem(n, i)%ibounds(j))%icode .eq. 50)) then        !if any of them has a periodic boundary condition then
+                  if (ibound(n, ielem(n, i)%ibounds(j))%ishape .eq. 5) then
+                    n_node = 4
+                  else
+                    n_node = 3
+                  end if
+                  do kk = 1, n_node
+                    nodes_list(kk, 1:3) = inoder(ibound(n, ielem(n, i)%ibounds(j))%ibl(kk))%cord(1:3)
+                  end do
+                  vext(1, 1:3) = cordinates3(n, nodes_list, n_node)
+                  do ii = 1, n_boundaries                                ! loop all the boundaries
+                    if ((ii .ne. ielem(n, i)%ibounds(j)) .and. ((ibound(n, ii)%icode .eq. 5) .or. (ibound(n, ii)%icode .eq. 50)) .and. (ibound(n, ielem(n, i)%ibounds(j))%ishape .eq. ibound(n, ii)%ishape)) then
+                      if ((ibound(n, ii)%localn(1) .gt. 0)) then        ! excluding itself, and of same shape type
+                        if (ielem(n, ibound(n, ii)%localn(1))%ihexgl .ne. ielem(n, i)%ihexgl) then
+                          do kk = 1, n_node
+                            nodes_list(kk, 1:3) = inoder(ibound(n, ii)%ibl(kk))%cord(1:3)
+                          end do
+                          vext(2, 1:3) = cordinates3(n, nodes_list, n_node)
+                          dist = distance3(n, vext)
+                          if (per_rot .eq. 0) then
+                            if (((abs(vext(2, 1) - xper) .lt. tolsmall) .or. (abs((abs(vext(2, 1) - xper)) - xper) .lt. tolsmall)) .and. ((abs(vext(1, 1) - xper) .lt. tolsmall) .or. (abs((abs(vext(1, 1) - xper)) - xper) .lt. tolsmall))) then
+                              if ((abs(vext(2, 2) - vext(1, 2)) .lt. tolsmall) .and. (abs(vext(2, 3) - vext(1, 3)) .lt. tolsmall)) then
+                                ibound(n, ii)%localn(2) = i; ibound(n, ii)%cpun(2) = n
+                                ielem(n, i)%ineighg(j) = ielem(n, ibound(n, ii)%localn(1))%ihexgl
+                                jj1 = jj1 + 1
+                                go to 101
+                              end if
+                            end if
+                            if (((abs(vext(2, 2) - yper) .lt. tolsmall) .or. (abs((abs(vext(2, 2) - yper)) - yper) .lt. tolsmall)) .and. ((abs(vext(1, 2) - yper) .lt. tolsmall) .or. (abs((abs(vext(1, 2) - yper)) - yper) .lt. tolsmall))) then
+                              if ((abs(vext(2, 1) - vext(1, 1)) .lt. tolsmall) .and. (abs(vext(2, 3) - vext(1, 3)) .lt. tolsmall)) then
+                                ibound(n, ii)%localn(2) = i; ibound(n, ii)%cpun(2) = n
+                                ielem(n, i)%ineighg(j) = ielem(n, ibound(n, ii)%localn(1))%ihexgl
+                                jj1 = jj1 + 1
+                                go to 101
+                              end if
+                            end if
+                          if (((abs(vext(2, 3) - zper) .lt. tolsmall) .or. (abs((abs(vext(2, 3) - zper)) - zper) .lt. tolsmall)) .and. ((abs(vext(1, 3) - zper) .lt. tolsmall) .or. (abs((abs(vext(1, 3) - zper)) - zper) .lt. tolsmall))) then
+                            if ((abs(vext(2, 2) - vext(1, 2)) .lt. tolsmall) .and. (abs(vext(2, 1) - vext(1, 1)) .lt. tolsmall)) then
+                              ibound(n, ii)%localn(2) = i; ibound(n, ii)%cpun(2) = n
+                              ielem(n, i)%ineighg(j) = ielem(n, ibound(n, ii)%localn(1))%ihexgl
+                              jj1 = jj1 + 1
+                              go to 101
+                            end if
+                          end if
+                        else
+                          vext(2, :) = rotate_per(vext(2, :), ibound(n, ii)%icode, angle_per)
+                          if ((abs(vext(1, 1) - vext(2, 1)) .lt. tol_per) .and. &
+                              (abs(vext(1, 2) - vext(2, 2)) .lt. tol_per) .and. &
+                              (abs(vext(1, 3) - vext(2, 3)) .lt. tol_per)) then
+                            ibound(n, ii)%localn(2) = i
+                            ibound(n, ii)%cpun(2) = n
+                            ielem(n, i)%ineighg(j) = ielem(n, ibound(n, ii)%localn(1))%ihexgl
+                            jj1 = jj1 + 1
                             go to 101
- 				      end if
-				    END IF
-				    end if
-
-				      
-				end if
- 			    end if
-			  end do
-			  101 continue
-		      end if
-		    end if
-		    end do
-	      end if
+                          end if
+                        end if
+                      end if
+                    end if
+                  end if
+                end do
+101           continue
+              end if
+            end if
+          end do
+        end if
+      end if
+    end do
+    else
+      jj2 = 0
+      do i = 1, n_boundaries
+        if (ibound(n, i)%icode .eq. 5) then
+          jj2 = jj2 + 1
+        end if
+      end do
+      jj1 = 0
+      do i = 1, kmaxe                        !> all elements
+        if (ielem(n, i)%interior .eq. 1) then                ! that have at least one unknwon neighbour
+          if (ielem(n, i)%nofbc .gt. 0) then                ! that have at least established a boundary condition code
+            do j = 1, ielem(n, i)%ifca                        ! loop all their boundary faces
+              if (ielem(n, i)%ibounds(j) .gt. 0) then
+                if (bleed .eq. 1) then
+                  if (ibound(n, ielem(n, i)%ibounds(j))%icode .eq. 99) then
+                    !assign the bleed zone
+                    n_node = 2
+                    do kk = 1, n_node
+                      nodes_list(kk, 1:2) = inoder(ibound(n, ielem(n, i)%ibounds(j))%ibl(kk))%cord(1:2)
+                    end do
+                    vext(1, :) = cordinates2(n, nodes_list, n_node)
+                    do ibleed = 1, bleed_number
+                      if (((vext(1,1).ge.bleed_start(ibleed,1)).and.(vext(1,1).le.bleed_end(ibleed,1))).and.((vext(1,2).ge.bleed_start(ibleed,2)).and.(vext(1,2).le.bleed_end(ibleed,2))))then
+                        ielem(n, i)%bleedn(j) = ibleed        !assign the bleed number
+                      end if
+                    end do
+                  end if
+                end if
+                if (ibound(n, ielem(n, i)%ibounds(j))%icode .eq. 5) then        ! if any of them has a periodic boundary condition then
+                  n_node = 2
+                  do kk = 1, n_node
+                    nodes_list(kk, 1:2) = inoder(ibound(n, ielem(n, i)%ibounds(j))%ibl(kk))%cord(1:2)
+                  end do
+                  vext(1, :) = cordinates2(n, nodes_list, n_node)
+                  do ii = 1, n_boundaries                                ! loop all the boundaries
+                    if (((ii .ne. ielem(n, i)%ibounds(j)) .and. (ibound(n, ii)%icode .eq. 5))) then
+                      if (ibound(n, ii)%localn(1) .gt. 0) then        ! excluding itself, and of same shape type
+                        if (ielem(n, ibound(n, ii)%localn(1))%ihexgl .ne. ielem(n, i)%ihexgl) then
+                          do kk = 1, n_node
+                            nodes_list(kk, 1:2) = inoder(ibound(n, ii)%ibl(kk))%cord(1:2)
+                          end do
+                          vext(2, :) = cordinates2(n, nodes_list, n_node)
+                          dist = distance2(n, vext)
+                          if (((abs(vext(2, 1) - xper) .lt. tolsmall) .or. (abs((abs(vext(2, 1) - xper)) - xper) .lt. tolsmall)) .and. ((abs(vext(1, 1) - xper) .lt. tolsmall) .or. (abs((abs(vext(1, 1) - xper)) - xper) .lt. tolsmall))) then
+                            if ((abs(vext(2, 2) - vext(1, 2)) .lt. tolsmall)) then
+                              ibound(n, ii)%localn(2) = i; ibound(n, ii)%cpun(2) = n
+                              ielem(n, i)%ineighg(j) = ielem(n, ibound(n, ii)%localn(1))%ihexgl
+                              jj1 = jj1 + 1
+                              go to 201
+                            end if
+                          end if
+                          if (((abs(vext(2, 2) - yper) .lt. tolsmall) .or. (abs((abs(vext(2, 2) - yper)) - yper) .lt. tolsmall)) .and. ((abs(vext(1, 2) - yper) .lt. tolsmall) .or. (abs((abs(vext(1, 2) - yper)) - yper) .lt. tolsmall))) then
+                            if ((abs(vext(2, 1) - vext(1, 1)) .lt. tolsmall)) then
+                              ibound(n, ii)%localn(2) = i; ibound(n, ii)%cpun(2) = n
+                              ielem(n, i)%ineighg(j) = ielem(n, ibound(n, ii)%localn(1))%ihexgl
+                              jj1 = jj1 + 1
+                              go to 201
+                            end if
+                          end if
+                        end if
+                      end if
+                    end if
+                  end do
+201               continue
+                end if
+              end if
+            end do
+          end if
+        end if
+      end do
     end if
-end do
-!$OMP END DO
-
-
-	 	
-		    
-	else
-jj2=0
-do i=1,n_boundaries
-if (IBOUND(n,i)%icode.eq.5)then
-jj2=jj2+1
-end if
-end do
-jj1=0
-!$OMP DO
-DO I=1,KMAXE			!> ALL ELEMENTS
-    if (ielem(n,i)%interior.eq.1)then		! THAT HAVE AT LEAST ONE UNKNWON NEIGHBOUR
-	    IF (ielem(n,i)%nofbc.GT.0)THEN		! THAT HAVE AT LEAST ESTABLISHED A BOUNDARY CONDITION CODE
-		  DO J=1,ielem(n,i)%IFCA			! LOOP ALL THEIR BOUNDARY FACES
-		      if (IELEM(N,I)%IBOUNDS(J).gt.0)then
-
-
-			  IF (BLEED.EQ.1)THEN
-		      IF (IBOUND(N,IELEM(N,I)%IBOUNDS(J))%ICODE.EQ.99)THEN
-
-
-					!ASSIGN THE BLEED ZONE
-					N_NODE=2
-				    DO Kk=1,n_node
-				      NODES_LIST(kk,1:2)=inoder(IBOUND(N,IELEM(N,I)%IBOUNDS(J))%ibl(kk))%CORD(1:2)
-				    END DO
-				    vext(1,:)=CORDINATES2(N,NODES_LIST,N_NODE)
-
-					DO IBLEED=1,BLEED_NUMBER
-						IF (((vext(1,1).GE.bleed_start(IBLEED,1)).AND.(vext(1,1).LE.bleed_END(IBLEED,1))).AND.((vext(1,2).GE.bleed_start(IBLEED,2)).AND.(vext(1,2).LE.bleed_END(IBLEED,2))))THEN
-
-						IELEM(N,I)%BLEEDN(J)=IBLEED	!ASSIGN THE BLEED NUMBER
-						END IF
-					END DO
-
-				END IF
-				END IF
-
-
-		     IF (IBOUND(N,IELEM(N,I)%IBOUNDS(J))%ICODE.EQ.5)THEN	! IF ANY OF THEM HAS A PERIODIC BOUNDARY CONDITION THEN
-		     
-				    N_NODE=2
-				    DO Kk=1,n_node
-				      NODES_LIST(kk,1:2)=inoder(IBOUND(N,IELEM(N,I)%IBOUNDS(J))%ibl(kk))%CORD(1:2)
-				    END DO
-				    vext(1,:)=CORDINATES2(N,NODES_LIST,N_NODE)
-			   do ii=1,n_boundaries				! loop all the boundaries
-				if (((ii.ne.IELEM(N,I)%IBOUNDS(J)).and.(IBOUND(n,ii)%icode.eq.5)))then
-				      if(IBOUND(n,ii)%localn(1).gt.0)then	! excluding itself, and of same shape type
-				    if (ielem(n,IBOUND(N,ii)%localn(1))%ihexgl.ne.ielem(n,i)%ihexgl)then
-				    DO Kk=1,n_node
-				      NODES_LIST(kk,1:2)=inoder(ibound(N,ii)%ibl(kk))%CORD(1:2)
-				    END DO
-				    vext(2,:)=CORDINATES2(N,NODES_LIST,N_NODE)
-				      dist=distance2(n,VEXT)
-				      
-
-
-				      if (((abs(vext(2,1)-xper).lt.tolsmall).or.(abs((abs(vext(2,1)-xper))-xper).lt.tolsmall)).and.&
-				      ((abs(vext(1,1)-xper).lt.tolsmall).or.(abs((abs(vext(1,1)-xper))-xper).lt.tolsmall)))then
-				      if ((abs(vext(2,2)-vext(1,2)).lt.tolsmall))then
-
-
-! 				      if (((abs(dist-xper)).lt.TOLSMALL).or.((abs(dist-yper)).lt.TOLSMALL))then
-						
-				      IBOUND(N,ii)%localn(2)=i;IBOUND(N,ii)%cpun(2)=n
-				      IELEM(N,I)%INEIGHG(J)=ielem(n,IBOUND(N,ii)%localn(1))%ihexgl
-				      jj1=jj1+1
-					go to 201
-				      end if
-				      end if
-				      if (((abs(vext(2,2)-yper).lt.tolsmall).or.(abs((abs(vext(2,2)-yper))-yper).lt.tolsmall)).and.&
-				      ((abs(vext(1,2)-yper).lt.tolsmall).or.(abs((abs(vext(1,2)-yper))-yper).lt.tolsmall)))then
-				      if ((abs(vext(2,1)-vext(1,1)).lt.tolsmall))then
-				      !
-
-! 				      if (((abs(dist-xper)).lt.TOLSMALL).or.((abs(dist-yper)).lt.TOLSMALL))then
-						
-				      IBOUND(N,ii)%localn(2)=i;IBOUND(N,ii)%cpun(2)=n
-				      IELEM(N,I)%INEIGHG(J)=ielem(n,IBOUND(N,ii)%localn(1))%ihexgl
-				      jj1=jj1+1
-					go to 201
-				      end if
-				      end if
-				end if
-				end if
-				end if
-				
-			  end do
-			  201 continue
-			  end if
-		      end if
-		    end do
-	      end if
-    end if
-end do			      
-!$OMP END DO 
-
-  
-	
-end if    
-	      
-
-
-      
-
-
-
-	
-    
-
-END SUBROUTINE APPLY_BOUNDARY
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!---------------------------------------------------------------------------------------------!
-END MODULE BOUNDARY
+  end subroutine apply_boundary
+end module boundary

@@ -37,3 +37,6 @@ tmp/
 .vscode/settings.json
 .vscode/targets.log
 .vscode/dryrun.log
+
+src/ucns3d_p
+src/*.a
