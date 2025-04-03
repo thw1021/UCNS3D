@@ -22,19 +22,19 @@ contains
     if (fastest .ne. 1) then
       ineedt = irecexr(1)%tot
       tneedt = irecexs(1)%tot
-      allocate (iexcordr(ineedt))
-      allocate (iexcords(tneedt))
-      allocate (iexsolhir(ineedt))
-      allocate (iexsolhis(tneedt))
+      allocate(iexcordr(ineedt))
+      allocate(iexcords(tneedt))
+      allocate(iexsolhir(ineedt))
+      allocate(iexsolhis(tneedt))
       if (adda .eq. 1) then
-        allocate (iexsolhird(ineedt))
-        allocate (iexsolhisd(tneedt))
+        allocate(iexsolhird(ineedt))
+        allocate(iexsolhisd(tneedt))
       end if
     end if
-    allocate (iexboundhir(indl))
-    allocate (iexboundhis(tndl))
-    allocate (iexboundhirr(indl))
-    allocate (iexboundhiss(tndl))
+    allocate(iexboundhir(indl))
+    allocate(iexboundhis(tndl))
+    allocate(iexboundhirr(indl))
+    allocate(iexboundhiss(tndl))
     call mpi_barrier(mpi_comm_world, ierror)
     if (dimensiona .eq. 3) then
       i_cnt2 = 4; i_cnt3 = 3; i_cnt4 = 8
@@ -46,11 +46,11 @@ contains
     do i = 1, ineedt
       iexsolhir(i)%procid = irecexr(i)%procid
       iexcordr(i)%procid = irecexr(i)%procid
-      allocate (iexcordr(i)%nodecord(irecexr(i)%muchineed(1), i_cnt4, i_cnt3))
+      allocate(iexcordr(i)%nodecord(irecexr(i)%muchineed(1), i_cnt4, i_cnt3))
       iexcordr(i)%nodecord(1:irecexr(i)%muchineed(1), i_cnt4, i_cnt3) = -tolbig
-      allocate (iexsolhir(i)%sol(irecexr(i)%muchineed(1), nof_variables + turbulenceequations + passivescalar))
+      allocate(iexsolhir(i)%sol(irecexr(i)%muchineed(1), nof_variables + turbulenceequations + passivescalar))
       if (adda .eq. 1) then
-        allocate (iexsolhird(i)%sol(irecexr(i)%muchineed(1), 1))
+        allocate(iexsolhird(i)%sol(irecexr(i)%muchineed(1), 1))
       end if
       iexsolhir(i)%sol(:, :) = 0.0d0
     end do
@@ -59,14 +59,14 @@ contains
       iexboundhir(i)%procid = iexchanger(i)%procid
       iexboundhirr(i)%procid = iexchanger(i)%procid
       if (itestcase .le. 3) then
-        allocate (iexboundhirr(i)%vertpp(iexchanger(i)%muchineed(1), i_cnt2))
+        allocate(iexboundhirr(i)%vertpp(iexchanger(i)%muchineed(1), i_cnt2))
       else
         if (dimensiona .eq. 3) then
           i_cnt = (nof_variables + turbulenceequations + passivescalar) + ((4 + turbulenceequations + passivescalar)*3)
         else
           i_cnt = (nof_variables + turbulenceequations + passivescalar) + ((3 + turbulenceequations + passivescalar)*2)
         end if
-        allocate (iexboundhirr(i)%vertpp(iexchanger(i)%muchineed(1), i_cnt2))
+        allocate(iexboundhirr(i)%vertpp(iexchanger(i)%muchineed(1), i_cnt2))
       end if
       iexboundhirr(i)%vertpp(:, :) = 0
     end do
@@ -74,11 +74,11 @@ contains
     do i = 1, tneedt
       iexsolhis(i)%procid = irecexs(i)%procid
       iexcords(i)%procid = irecexs(i)%procid
-      allocate (iexcords(i)%nodecord(irecexs(i)%muchtheyneed(1), i_cnt4, i_cnt3))
+      allocate(iexcords(i)%nodecord(irecexs(i)%muchtheyneed(1), i_cnt4, i_cnt3))
       iexcords(i)%nodecord(1:irecexs(i)%muchtheyneed(1), 1:i_cnt4, 1:i_cnt3) = -tolbig
-      allocate (iexsolhis(i)%sol(irecexs(i)%muchtheyneed(1), nof_variables + turbulenceequations + passivescalar))
+      allocate(iexsolhis(i)%sol(irecexs(i)%muchtheyneed(1), nof_variables + turbulenceequations + passivescalar))
       if (adda .eq. 1) then
-        allocate (iexsolhisd(i)%sol(irecexs(i)%muchtheyneed(1), 1))
+        allocate(iexsolhisd(i)%sol(irecexs(i)%muchtheyneed(1), 1))
       end if
       iexsolhis(i)%sol(:, :) = 0.0d0
     end do
@@ -87,14 +87,14 @@ contains
       iexboundhis(i)%procid = iexchanges(i)%procid
       iexboundhiss(i)%procid = iexchanges(i)%procid
       if (itestcase .le. 3) then
-        allocate (iexboundhiss(i)%vertpp(iexchanges(i)%muchtheyneed(1), i_cnt2))
+        allocate(iexboundhiss(i)%vertpp(iexchanges(i)%muchtheyneed(1), i_cnt2))
       else
         if (dimensiona .eq. 3) then
           i_cnt = (nof_variables + turbulenceequations + passivescalar) + ((4 + turbulenceequations + passivescalar)*3)
         else
           i_cnt = (nof_variables + turbulenceequations + passivescalar) + ((3 + turbulenceequations + passivescalar)*2)
         end if
-        allocate (iexboundhiss(i)%vertpp(iexchanges(i)%muchtheyneed(1), i_cnt2))
+        allocate(iexboundhiss(i)%vertpp(iexchanges(i)%muchtheyneed(1), i_cnt2))
       end if
       iexboundhiss(i)%vertpp(:, :) = 0
     end do
@@ -176,12 +176,12 @@ irecexr(iavc)%muchineed(1)*i_cnt4*i_cnt3,mpi_double_precision,iexcordr(iavc)%pro
     i_cnt5 = i_cnt3*i_cnt4
     do i = 1, indl
       if (itestcase .le. 3) then
-        allocate (iexboundhir(i)%facesol(iexchanger(i)%muchineed(1), nof_variables))
+        allocate(iexboundhir(i)%facesol(iexchanger(i)%muchineed(1), nof_variables))
         if (dg .eq. 1) then
-          allocate (iexboundhir(i)%facesol_dg(iexchanger(i)%muchineed(1), nof_variables))
+          allocate(iexboundhir(i)%facesol_dg(iexchanger(i)%muchineed(1), nof_variables))
         end if
         if (mood .eq. 1) then
-          allocate (iexboundhir(i)%facesol_m(iexchanger(i)%muchineed(1), 1))
+          allocate(iexboundhir(i)%facesol_m(iexchanger(i)%muchineed(1), 1))
         end if
       else
         if (dimensiona .eq. 3) then
@@ -189,9 +189,9 @@ irecexr(iavc)%muchineed(1)*i_cnt4*i_cnt3,mpi_double_precision,iexcordr(iavc)%pro
         else
           i_cnt = (nof_variables + turbulenceequations + passivescalar) + ((3 + turbulenceequations + passivescalar)*2)
         end if
-        allocate (iexboundhir(i)%facesol(iexchanger(i)%muchineed(1), i_cnt))
+        allocate(iexboundhir(i)%facesol(iexchanger(i)%muchineed(1), i_cnt))
         if (dg .eq. 1) then
-          allocate (iexboundhir(i)%facesol_dg(iexchanger(i)%muchineed(1), i_cnt))
+          allocate(iexboundhir(i)%facesol_dg(iexchanger(i)%muchineed(1), i_cnt))
         end if
       end if
       iexboundhir(i)%facesol(:, :) = 0.0d0
@@ -201,12 +201,12 @@ irecexr(iavc)%muchineed(1)*i_cnt4*i_cnt3,mpi_double_precision,iexcordr(iavc)%pro
     end do
     do i = 1, tndl
       if (itestcase .le. 3) then
-        allocate (iexboundhis(i)%facesol(iexchanges(i)%muchtheyneed(1), nof_variables))
+        allocate(iexboundhis(i)%facesol(iexchanges(i)%muchtheyneed(1), nof_variables))
         if (dg .eq. 1) then
-          allocate (iexboundhis(i)%facesol_dg(iexchanges(i)%muchtheyneed(1), nof_variables))
+          allocate(iexboundhis(i)%facesol_dg(iexchanges(i)%muchtheyneed(1), nof_variables))
         end if
         if (mood .eq. 1) then
-          allocate (iexboundhis(i)%facesol_m(iexchanges(i)%muchtheyneed(1), 1))
+          allocate(iexboundhis(i)%facesol_m(iexchanges(i)%muchtheyneed(1), 1))
         end if
       else
         if (dimensiona .eq. 3) then
@@ -214,9 +214,9 @@ irecexr(iavc)%muchineed(1)*i_cnt4*i_cnt3,mpi_double_precision,iexcordr(iavc)%pro
         else
           i_cnt = (nof_variables + turbulenceequations + passivescalar) + ((3 + turbulenceequations + passivescalar)*2)
         end if
-        allocate (iexboundhis(i)%facesol(iexchanges(i)%muchtheyneed(1), i_cnt))
+        allocate(iexboundhis(i)%facesol(iexchanges(i)%muchtheyneed(1), i_cnt))
         if (dg .eq. 1) then
-          allocate (iexboundhis(i)%facesol_dg(iexchanges(i)%muchtheyneed(1), i_cnt))
+          allocate(iexboundhis(i)%facesol_dg(iexchanges(i)%muchtheyneed(1), i_cnt))
         end if
       end if
       iexboundhis(i)%facesol(:, :) = 0.0d0
@@ -358,17 +358,17 @@ irecexr(iavc)%muchineed(1)*i_cnt4*i_cnt3,mpi_double_precision,iexcordr(iavc)%pro
     real, dimension(1:1)::dumts, rumts
     indl = iexchanger(1)%tot
     tndl = iexchanges(1)%tot
-    allocate (iexboundhiri(indl))
-    allocate (iexboundhisi(tndl))
+    allocate(iexboundhiri(indl))
+    allocate(iexboundhisi(tndl))
     i_cnt = (nof_variables + turbulenceequations + passivescalar)
     do i = 1, indl
       iexboundhiri(i)%procid = iexchanger(i)%procid
-      allocate (iexboundhiri(i)%facesol(iexchanger(i)%muchineed(1), i_cnt))
+      allocate(iexboundhiri(i)%facesol(iexchanger(i)%muchineed(1), i_cnt))
       iexboundhiri(i)%facesol(:, :) = 0.0d0
     end do
     do i = 1, tndl
       iexboundhisi(i)%procid = iexchanges(i)%procid
-      allocate (iexboundhisi(i)%facesol(iexchanges(i)%muchtheyneed(1), i_cnt))
+      allocate(iexboundhisi(i)%facesol(iexchanges(i)%muchtheyneed(1), i_cnt))
       iexboundhisi(i)%facesol(:, :) = 0.0d0
     end do
     call mpi_barrier(mpi_comm_world, ierror)
@@ -1123,7 +1123,7 @@ subroutine  localise_sten2d(n,iconsi,ilox_ihexg,ilox_ihexl,ilox_ihexb,ilox_ihexn
         end if
       end do
       write (630 + n, *) "element number global", ielem(n, i)%ihexgl
-      allocate (ielem(n, i)%nojecount(ielem(n, i)%nonodes))
+      allocate(ielem(n, i)%nojecount(ielem(n, i)%nonodes))
       do nj = 1, ielem(n, i)%nonodes
         write (630 + n, *) "node number", nj
         ielem(n, i)%nojecount(nj) = nojcount(nj)
@@ -1353,7 +1353,7 @@ subroutine  localise_sten2d(n,iconsi,ilox_ihexg,ilox_ihexl,ilox_ihexb,ilox_ihexn
             if (ielem(n, i)%ineighg(k) .eq. ilocal_recon3(i)%ihexg(1, in1)) then
               ielem(n, i)%indexi(k) = in1
               if (rungekutta .ge. 2) then
-                vext(2, 1) = ilox_xxc(1, in1); vext(2, 2) = ilox_yyc(1, in1); 
+                vext(2, 1) = ilox_xxc(1, in1); vext(2, 2) = ilox_yyc(1, in1);
                 if (abs(vext(2, 1) - vext(1, 1)) .gt. xper*oo2) then
                   vext(2, 1) = vext(2, 1) + (xper*sign(1.0, vext(1, 1) - xper*oo2))
                 end if
@@ -1768,7 +1768,7 @@ subroutine  localise_sten2d(n,iconsi,ilox_ihexg,ilox_ihexl,ilox_ihexb,ilox_ihexn
     real, dimension(1:dimensiona)::cords
     real, dimension(1:8, 1:dimensiona)::vext, nodes_list
     i = iconsi
-    tempg1 = 0.0; 
+    tempg1 = 0.0;
     ielem(n, i)%ggs = greengo
     dxx1 = -tolbig; dxx2 = tolbig
     call compute_centre2d(i, cords)

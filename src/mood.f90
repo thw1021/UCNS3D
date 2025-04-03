@@ -40,7 +40,7 @@ contains
     real, allocatable, dimension(:, :) :: utemp
     real, dimension(1:nof_variables) :: utmin, utmax
 
-    allocate (utemp(imaxdegfree + 1, 1:nof_variables + turbulenceequations + passivescalar))
+    allocate(utemp(imaxdegfree + 1, 1:nof_variables + turbulenceequations + passivescalar))
     kmaxe = xmpielrank(n)
 
     if (cascade .eq. 1) then
@@ -218,7 +218,7 @@ contains
       end do
     end if
 
-    deallocate (utemp)
+    deallocate(utemp)
   end subroutine pad_nad
 
   subroutine mood_operator_2(n)

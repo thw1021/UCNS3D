@@ -37,28 +37,28 @@ contains
     if (dimensiona .eq. 3) then
       do i = 1, kmaxe
         if (ielem(n, i)%ishape .eq. 2) then
-          allocate (ilocal_recon3(i)%qpoints(ielem(n, i)%ifca, qp_triangle, 3))
+          allocate(ilocal_recon3(i)%qpoints(ielem(n, i)%ifca, qp_triangle, 3))
           if (srfg .eq. 1) then
-            allocate (ilocal_recon3(i)%rpoints(ielem(n, i)%ifca, qp_triangle, 3))
-            allocate (ilocal_recon3(i)%rotvel(ielem(n, i)%ifca, qp_triangle, 3))
+            allocate(ilocal_recon3(i)%rpoints(ielem(n, i)%ifca, qp_triangle, 3))
+            allocate(ilocal_recon3(i)%rotvel(ielem(n, i)%ifca, qp_triangle, 3))
           end if
           if (mrf .eq. 1) then
-            allocate (ilocal_recon3(i)%rpoints(ielem(n, i)%ifca, qp_triangle, 3))
-            allocate (ilocal_recon3(i)%rotvel(ielem(n, i)%ifca, qp_triangle, 3))
-            allocate (ilocal_recon3(i)%mrf_origin(1:3))
-            allocate (ilocal_recon3(i)%mrf_velocity(1:3))
+            allocate(ilocal_recon3(i)%rpoints(ielem(n, i)%ifca, qp_triangle, 3))
+            allocate(ilocal_recon3(i)%rotvel(ielem(n, i)%ifca, qp_triangle, 3))
+            allocate(ilocal_recon3(i)%mrf_origin(1:3))
+            allocate(ilocal_recon3(i)%mrf_velocity(1:3))
           end if
         else
-          allocate (ilocal_recon3(i)%qpoints(ielem(n, i)%ifca, qp_quad, 3))
+          allocate(ilocal_recon3(i)%qpoints(ielem(n, i)%ifca, qp_quad, 3))
           if (srfg .eq. 1) then
-            allocate (ilocal_recon3(i)%rpoints(ielem(n, i)%ifca, qp_quad, 3))
-            allocate (ilocal_recon3(i)%rotvel(ielem(n, i)%ifca, qp_quad, 3))
+            allocate(ilocal_recon3(i)%rpoints(ielem(n, i)%ifca, qp_quad, 3))
+            allocate(ilocal_recon3(i)%rotvel(ielem(n, i)%ifca, qp_quad, 3))
           end if
           if (mrf .eq. 1) then
-            allocate (ilocal_recon3(i)%rpoints(ielem(n, i)%ifca, qp_quad, 3))
-            allocate (ilocal_recon3(i)%rotvel(ielem(n, i)%ifca, qp_quad, 3))
-            allocate (ilocal_recon3(i)%mrf_origin(1:3))
-            allocate (ilocal_recon3(i)%mrf_velocity(1:3))
+            allocate(ilocal_recon3(i)%rpoints(ielem(n, i)%ifca, qp_quad, 3))
+            allocate(ilocal_recon3(i)%rotvel(ielem(n, i)%ifca, qp_quad, 3))
+            allocate(ilocal_recon3(i)%mrf_origin(1:3))
+            allocate(ilocal_recon3(i)%mrf_velocity(1:3))
           end if
         end if
         iconsidered = i
@@ -79,7 +79,7 @@ contains
 !     vext(k,1:3)=matmul(ilocal_recon3(i)%invccjac(:,:),vext(k,1:3)-ilocal_recon3(i)%vext_ref(1:3))
       end do
       else
-      facex = l; 
+      facex = l;
       call coordinates_face_period1(n, iconsidered, facex, vext, nodes_list)
       end if
       call quadraturequad3d(n, igqrules, vext, qpoints2d, wequa2d)
@@ -91,7 +91,7 @@ contains
       vext(k, 1:3) = inoder(ielem(n, i)%nodes_faces(l, k))%cord(1:dims)
       end do
       else
-      facex = l; 
+      facex = l;
       call coordinates_face_period1(n, iconsidered, facex, vext, nodes_list)
     end if
     call quadraturetriang(n, igqrules, vext, qpoints2d, wequa2d)
@@ -152,7 +152,7 @@ contains
             vext(k, 1:3) = matmul(ilocal_recon3(i)%invccjac(:, :), vext(k, 1:3) - ilocal_recon3(i)%vext_ref(1:3))
           end do        !ngp
         else
-          facex = l; 
+          facex = l;
           call coordinates_face_period1(n, iconsidered, facex, vext, nodes_list)
           do k = 1, nnd
             vext(k, 1:3) = matmul(ilocal_recon3(i)%invccjac(:, :), vext(k, 1:3) - ilocal_recon3(i)%vext_ref(1:3))
@@ -169,7 +169,7 @@ contains
             end do
 
           else ! 2 dimensions
-            facex = l; 
+            facex = l;
             call coordinates_face_period1(n, iconsidered, facex, vext, nodes_list)
             do k = 1, nnd
               vext(k, 1:3) = matmul(ilocal_recon3(i)%invccjac(:, :), vext(k, 1:3) - ilocal_recon3(i)%vext_ref(1:3))
@@ -203,7 +203,7 @@ contains
       end do
     else
       do i = 1, kmaxe
-        allocate (ilocal_recon3(i)%qpoints(ielem(n, i)%ifca, qp_line, 2))
+        allocate(ilocal_recon3(i)%qpoints(ielem(n, i)%ifca, qp_line, 2))
         iconsidered = i
         do l = 1, ielem(n, i)%ifca
           idummy = 0
@@ -223,7 +223,7 @@ contains
                 !end if
               end do
             else
-              facex = l; 
+              facex = l;
               call coordinates_face_period2d1(n, iconsidered, facex, vext, nodes_list)
               do k = 1, nnd
                 !if (dg /= 1) then ! only transforming to reference space if not dg
@@ -325,7 +325,7 @@ contains
     real, dimension(1:numberofpoints2)::weights_q, weights_t
 
     kmaxe = xmpielrank(n)
-    do ii = 1, nof_interior; 
+    do ii = 1, nof_interior;
       i = el_int(ii)
       iconsidered = i
       ielem(n, i)%linc = lwci1
@@ -391,37 +391,37 @@ contains
     real, allocatable, dimension(:, :, :, :, :)::findw_char
     iadmis = ielem(n, iconsidered)%admis
     n_faces = ielem(n, iconsidered)%ifca
-    allocate (lamc(1:iadmis))
-    allocate (lambda(1:nof_variables, 1:iadmis, 1:n_faces, 1:2))
-    allocate (smoothindicator(1:nof_variables, 1:iadmis, 1:n_faces, 1:2))
-    allocate (omegatilde(1:nof_variables, 1:iadmis, 1:n_faces, 1:2))
-    allocate (omega(1:nof_variables, 1:iadmis, 1:n_faces, 1:2))
-    allocate (wenoos(1:nof_variables, 1:iadmis, 1:n_faces, 1:2))
-    allocate (limiteddw(1:nof_variables, 0:idegfree))
-    allocate (limiteddw_char(1:nof_variables, 0:idegfree, 1:iadmis))
-    allocate (gradcharv(1:nof_variables, 1:iadmis, 0:idegfree))
-    allocate (findw(1:nof_variables, 0:idegfree, 1:n_faces, 1:2))
-    allocate (findw_char(1:nof_variables, 0:idegfree, 1:iadmis, 1:n_faces, 1:2))
-    allocate (consmatrix(1:numberofpoints2*n_faces, 1:idegfree))
-    allocate (consmatrixc(1:numberofpoints2*n_faces, 1:idegfree))
-    allocate (ressolution(1:numberofpoints2*n_faces, 1:nof_variables))
-    allocate (eigvl(1:nof_variables, 1:nof_variables), eigvr(1:nof_variables, 1:nof_variables))
+    allocate(lamc(1:iadmis))
+    allocate(lambda(1:nof_variables, 1:iadmis, 1:n_faces, 1:2))
+    allocate(smoothindicator(1:nof_variables, 1:iadmis, 1:n_faces, 1:2))
+    allocate(omegatilde(1:nof_variables, 1:iadmis, 1:n_faces, 1:2))
+    allocate(omega(1:nof_variables, 1:iadmis, 1:n_faces, 1:2))
+    allocate(wenoos(1:nof_variables, 1:iadmis, 1:n_faces, 1:2))
+    allocate(limiteddw(1:nof_variables, 0:idegfree))
+    allocate(limiteddw_char(1:nof_variables, 0:idegfree, 1:iadmis))
+    allocate(gradcharv(1:nof_variables, 1:iadmis, 0:idegfree))
+    allocate(findw(1:nof_variables, 0:idegfree, 1:n_faces, 1:2))
+    allocate(findw_char(1:nof_variables, 0:idegfree, 1:iadmis, 1:n_faces, 1:2))
+    allocate(consmatrix(1:numberofpoints2*n_faces, 1:idegfree))
+    allocate(consmatrixc(1:numberofpoints2*n_faces, 1:idegfree))
+    allocate(ressolution(1:numberofpoints2*n_faces, 1:nof_variables))
+    allocate(eigvl(1:nof_variables, 1:nof_variables), eigvr(1:nof_variables, 1:nof_variables))
     i = iconsidered
     lwcx1 = ielem(n, i)%linc
     do l = 1, ielem(n, i)%ifca  !loop faces
       !define
-      angle1 = ielem(n, i)%faceanglex(l); 
+      angle1 = ielem(n, i)%faceanglex(l);
       angle2 = ielem(n, i)%faceangley(l)
       facex = l
       if (dimensiona .eq. 3) then
-        nx = (cos(angle1)*sin(angle2)); 
-        ny = (sin(angle1)*sin(angle2)); 
+        nx = (cos(angle1)*sin(angle2));
+        ny = (sin(angle1)*sin(angle2));
         nz = (cos(angle2))
       else
         nx = angle1
         ny = angle2
       end if
-      veigl(1:nof_variables) = u_c(i)%val(1, 1:nof_variables); 
+      veigl(1:nof_variables) = u_c(i)%val(1, 1:nof_variables);
       if (dimensiona .eq. 3) then
         call rotatef(n, rveigl, veigl, angle1, angle2)
       else
@@ -438,9 +438,9 @@ contains
       else
         call compute_eigenvectors2d(n, rveigl, rveigr, eigvl, eigvr, gamma)
       end if
-      lambda(:, :, l, 1) = zero; 
-      smoothindicator(:, :, l, 1) = zero; 
-      omegatilde(:, :, l, 1) = zero; 
+      lambda(:, :, l, 1) = zero;
+      smoothindicator(:, :, l, 1) = zero;
+      omegatilde(:, :, l, 1) = zero;
       omega(:, :, l, 1) = zero; facex = l
       call compute_gradcharv_smoothindicator(iconsidered, facex, eigvl, gradcharv, smoothindicator)
       lambda(1:nof_variables, :, l, 1) = 1.0d0; lambda(1:nof_variables, 1, l, 1) = lwcx1
@@ -521,8 +521,8 @@ contains
       end if
       icd = 0
       do ngp = 1, iqp
-        ax = ilocal_recon3(i)%qpoints(l, ngp, 1); 
-        ay = ilocal_recon3(i)%qpoints(l, ngp, 2); 
+        ax = ilocal_recon3(i)%qpoints(l, ngp, 1);
+        ay = ilocal_recon3(i)%qpoints(l, ngp, 2);
         if (dimensiona .eq. 3) then
           az = ilocal_recon3(i)%qpoints(l, ngp, 3)
         end if
@@ -533,7 +533,7 @@ contains
           consmatrix(icd, 1:ielem(n, i)%idegfree) = basis_rec2d(n, ax, ay, ielem(n, i)%iorder, i, ielem(n, i)%idegfree, icompwrt)
         end if
         icompwrt = 0
-        if (ees .eq. 5) then; 
+        if (ees .eq. 5) then;
           icompwrt = 1
           if (dimensiona .eq. 3) then
             consmatrixc(icd, 1:idegfree2) = basis_rec(n, ax, ay, az, iorder2, i, idegfree2, icompwrt)
@@ -542,14 +542,14 @@ contains
           end if
           icompwrt = 0; end if
       end do
-      if (ees .eq. 5) then; 
+      if (ees .eq. 5) then;
         ilocal_recon3(i)%uleft(1:nof_variables, l, :) = zero
         do ngp = 1, iqp
           ilocal_recon3(i)%uleft(1:nof_variables, l, ngp) = ilocal_recon3(i)%uleft(1:nof_variables, l, ngp) &
                                                             + findw_char(1:nof_variables, 0, l, 1, 1)
         end do
         ressolution(1:icd,1:nof_variables)=matmul(consmatrix(1:icd,1:ielem(n,i)%idegfree),transpose(findw_char(1:nof_variables,1:ielem(n,i)%idegfree,l,1,1)))
-        icd = 0; 
+        icd = 0;
         do ngp = 1, iqp; icd = icd + 1
           ilocal_recon3(i)%uleft(1:nof_variables, l, ngp) = ilocal_recon3(i)%uleft(1:nof_variables, l, ngp) &
                                                             + ressolution(icd, 1:nof_variables)
@@ -560,15 +560,15 @@ contains
         end do
 
       ressolution(1:icd,1:nof_variables)=matmul(consmatrix(1:icd,1:ielem(n,i)%idegfree),transpose(findw(1:nof_variables,1:ielem(n,i)%idegfree,l,1)))
-        icd = 0; 
-        do ngp = 1, iqp; 
+        icd = 0;
+        do ngp = 1, iqp;
           icd = icd + 1
           ilocal_recon3(i)%uleft(1:nof_variables, l, ngp) = ilocal_recon3(i)%uleft(1:nof_variables, l, ngp) &
                                                             + ressolution(icd, 1:nof_variables)
         end do
       end if
     end do                        !faces
-    deallocate (lamc, lambda, smoothindicator, omegatilde, &
+    deallocate(lamc, lambda, smoothindicator, omegatilde, &
                 omega, wenoos, limiteddw, limiteddw_char, gradcharv, findw, &
                 findw_char, ressolution, consmatrix, consmatrixc, eigvl, eigvr)
 
@@ -593,7 +593,7 @@ contains
       l = facex
       i = iconsidered
       if (ielem(n, i)%interior .eq. 0) then
-        veigr(1:nof_variables) = u_c(ielem(n, i)%ineigh(l))%val(1, 1:nof_variables); 
+        veigr(1:nof_variables) = u_c(ielem(n, i)%ineigh(l))%val(1, 1:nof_variables);
       else
         if (ilocal_recon3(i)%mrf .eq. 1) then
           srf_speed(2:4) = ilocal_recon3(i)%rotvel(l, 1, 1:3)
@@ -648,7 +648,7 @@ contains
       l = facex
       i = iconsidered
       if (ielem(n, i)%interior .eq. 0) then
-        veigr(1:nof_variables) = u_c(ielem(n, i)%ineigh(l))%val(1, 1:nof_variables); 
+        veigr(1:nof_variables) = u_c(ielem(n, i)%ineigh(l))%val(1, 1:nof_variables);
       else
         if (ielem(n, i)%ineighb(l) .eq. n) then        !my cpu only
           if (ielem(n, i)%ibounds(l) .gt. 0) then        !check for boundaries
@@ -700,13 +700,13 @@ contains
     real, allocatable, dimension(:, :)::consmatrix, consmatrixc, grad5alc, gradssl, weno, ressolution
     iadmis = ielem(n, iconsidered)%admis
     n_faces = ielem(n, iconsidered)%ifca
-    allocate (grad1al(1:idegfree), indicatematrixal(1:idegfree))
-    allocate (grad3al(idegfree), lambdaal(1:iadmis), omegaatildel(1:iadmis), smoothindicatoral(1:iadmis))
-    allocate (lamc(1:iadmis), omegaal(1:iadmis))
-    allocate (consmatrix(1:numberofpoints2*n_faces, 1:idegfree), consmatrixc(1:numberofpoints2*n_faces, 1:idegfree))
-    allocate (grad5alc(1:idegfree, 1:nof_variables), gradssl(1:idegfree, 1:nof_variables))
-    allocate (weno(1:nof_variables + turbulenceequations + passivescalar, 1:iadmis))
-    allocate (ressolution(1:numberofpoints2*n_faces, 1:nof_variables))
+    allocate(grad1al(1:idegfree), indicatematrixal(1:idegfree))
+    allocate(grad3al(idegfree), lambdaal(1:iadmis), omegaatildel(1:iadmis), smoothindicatoral(1:iadmis))
+    allocate(lamc(1:iadmis), omegaal(1:iadmis))
+    allocate(consmatrix(1:numberofpoints2*n_faces, 1:idegfree), consmatrixc(1:numberofpoints2*n_faces, 1:idegfree))
+    allocate(grad5alc(1:idegfree, 1:nof_variables), gradssl(1:idegfree, 1:nof_variables))
+    allocate(weno(1:nof_variables + turbulenceequations + passivescalar, 1:iadmis))
+    allocate(ressolution(1:numberofpoints2*n_faces, 1:nof_variables))
     i = iconsidered
     lwcx1 = ielem(n, i)%linc
     do iex = 1, nof_variables
@@ -839,12 +839,12 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
       do l = 1, ielem(n, i)%ifca
         if (dimensiona .eq. 3) then
           if (ielem(n, i)%types_faces(l) .eq. 5) then
-            iqp = qp_quad; 
+            iqp = qp_quad;
           else
-            iqp = qp_triangle; 
+            iqp = qp_triangle;
           end if
         else
-          iqp = qp_line; 
+          iqp = qp_line;
         end if
         do ngp = 1, iqp
           icd = icd + 1
@@ -869,9 +869,9 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
       do l = 1, ielem(n, i)%ifca
         if (dimensiona .eq. 3) then
           if (ielem(n, i)%types_faces(l) .eq. 5) then
-            iqp = qp_quad; 
+            iqp = qp_quad;
           else
-            iqp = qp_triangle; 
+            iqp = qp_triangle;
           end if
         else
           iqp = qp_line
@@ -883,11 +883,11 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
         end do
       end do
     end if
-    deallocate (grad1al, indicatematrixal, grad3al, lambdaal, omegaatildel, smoothindicatoral)
-    deallocate (lamc, omegaal)
-    deallocate (consmatrix, consmatrixc, grad5alc, gradssl)
-    deallocate (weno)
-    deallocate (ressolution)
+    deallocate(grad1al, indicatematrixal, grad3al, lambdaal, omegaatildel, smoothindicatoral)
+    deallocate(lamc, omegaal)
+    deallocate(consmatrix, consmatrixc, grad5alc, gradssl)
+    deallocate(weno)
+    deallocate(ressolution)
   end subroutine cp_reconstruction
   subroutine cp_reconstruction_turb(iconsidered, idummy, divbyzero, power)
     implicit none
@@ -902,13 +902,13 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
     real, allocatable, dimension(:, :)::consmatrix, consmatrixc, grad5alc, gradssl, weno, ressolution
     iadmis = ielem(n, iconsidered)%admis
     n_faces = ielem(n, iconsidered)%ifca
-    allocate (grad1al(1:idegfree), indicatematrixal(1:idegfree))
-    allocate (grad3al(idegfree), lambdaal(1:iadmis), omegaatildel(1:iadmis), smoothindicatoral(1:iadmis))
-    allocate (lamc(1:iadmis), omegaal(1:iadmis))
-    allocate (consmatrix(1:numberofpoints2*n_faces, 1:idegfree), consmatrixc(1:numberofpoints2*n_faces, 1:idegfree))
-  allocate (grad5alc(1:idegfree, 1:turbulenceequations + passivescalar), gradssl(1:idegfree, 1:turbulenceequations + passivescalar))
-    allocate (weno(1:nof_variables + turbulenceequations + passivescalar, 1:iadmis))
-    allocate (ressolution(1:numberofpoints2*n_faces, 1:turbulenceequations + passivescalar))
+    allocate(grad1al(1:idegfree), indicatematrixal(1:idegfree))
+    allocate(grad3al(idegfree), lambdaal(1:iadmis), omegaatildel(1:iadmis), smoothindicatoral(1:iadmis))
+    allocate(lamc(1:iadmis), omegaal(1:iadmis))
+    allocate(consmatrix(1:numberofpoints2*n_faces, 1:idegfree), consmatrixc(1:numberofpoints2*n_faces, 1:idegfree))
+  allocate(grad5alc(1:idegfree, 1:turbulenceequations + passivescalar), gradssl(1:idegfree, 1:turbulenceequations + passivescalar))
+    allocate(weno(1:nof_variables + turbulenceequations + passivescalar, 1:iadmis))
+    allocate(ressolution(1:numberofpoints2*n_faces, 1:turbulenceequations + passivescalar))
     i = iconsidered
     lwcx1 = ielem(n, i)%linc
     do iex = 1, turbulenceequations + passivescalar
@@ -1038,12 +1038,12 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
       do l = 1, ielem(n, i)%ifca
         if (dimensiona .eq. 3) then
           if (ielem(n, i)%types_faces(l) .eq. 5) then
-            iqp = qp_quad; 
+            iqp = qp_quad;
           else
-            iqp = qp_triangle; 
+            iqp = qp_triangle;
           end if
         else
-          iqp = qp_line; 
+          iqp = qp_line;
         end if
 
         do ngp = 1, iqp
@@ -1065,11 +1065,11 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
       end if
       end do
     end do
-    deallocate (grad1al, indicatematrixal, grad3al, lambdaal, omegaatildel, smoothindicatoral)
-    deallocate (lamc, omegaal)
-    deallocate (consmatrix, consmatrixc, grad5alc, gradssl)
-    deallocate (weno)
-    deallocate (ressolution)
+    deallocate(grad1al, indicatematrixal, grad3al, lambdaal, omegaatildel, smoothindicatoral)
+    deallocate(lamc, omegaal)
+    deallocate(consmatrix, consmatrixc, grad5alc, gradssl)
+    deallocate(weno)
+    deallocate(ressolution)
   end subroutine cp_reconstruction_turb
   subroutine extrapolate_bound(ressolution, varcons, facex, pointx, iconsidered, insten, llx, weno)
     implicit none
@@ -1109,7 +1109,7 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
     integer:: i, ll, ics
     nn = size(a_char, 1) ! = size(b,1) = size(b,2)
     mm = size(a_char, 2)
-    allocate (ba_char(nn, mm, ielem(n, iconsidered)%admis))
+    allocate(ba_char(nn, mm, ielem(n, iconsidered)%admis))
     x_char = zero
     if (ees .eq. 5) then
       do ll = 1, 1
@@ -1139,7 +1139,7 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
         end do; end do
     end if
 
-    deallocate (ba_char)
+    deallocate(ba_char)
   end subroutine diag_at_b_a
 
   subroutine compute_gradcharv_smoothindicator(iconsidered, facex, eigvl, gradcharv, smoothindicator)
@@ -1154,12 +1154,12 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
     real, allocatable, dimension(:, :)::grad5alc, b_char, x_char
     real, allocatable, dimension(:, :, :)::a_char, gradients, gradients_eigvlt
 
-    allocate (lamc(1:typesten))
-    allocate (grad5alc(1:idegfree, 1:nof_variables))
-    allocate (a_char(1:idegfree, 1:nof_variables, 1:typesten), b_char(1:idegfree, 1:idegfree))
-    allocate (x_char(1:nof_variables, 1:typesten))
-    allocate (gradients(0:idegfree, 1:nof_variables, 1:typesten))
-    allocate (gradients_eigvlt(0:idegfree, 1:nof_variables, 1:typesten))
+    allocate(lamc(1:typesten))
+    allocate(grad5alc(1:idegfree, 1:nof_variables))
+    allocate(a_char(1:idegfree, 1:nof_variables, 1:typesten), b_char(1:idegfree, 1:idegfree))
+    allocate(x_char(1:nof_variables, 1:typesten))
+    allocate(gradients(0:idegfree, 1:nof_variables, 1:typesten))
+    allocate(gradients_eigvlt(0:idegfree, 1:nof_variables, 1:typesten))
 
     i = iconsidered
     l = facex
@@ -1216,7 +1216,7 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
       call diag_at_b_a(iconsidered, a_char, b_char, x_char)!,                                     &
       smoothindicator(1:nof_variables, 1:ielem(n, i)%admis, l, 1) = x_char(1:nof_variables, 1:ielem(n, i)%admis)
     end if
-    deallocate (lamc, grad5alc, a_char, b_char, x_char, gradients, gradients_eigvlt)
+    deallocate(lamc, grad5alc, a_char, b_char, x_char, gradients, gradients_eigvlt)
   end subroutine
   subroutine find_bounds(iconsidered, maxvars, aver_vars, sumvars, utmin, utmax, utemp)
     implicit none
@@ -1361,15 +1361,15 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
     real, allocatable, dimension(:)::slope
     i = iconsidered
     ilocal_recon3(iconsidered)%uleft(:, :, :) = zero
-    allocate (slope(1:nof_variables + turbulenceequations + passivescalar))
-    allocate (usol(1:nof_variables + turbulenceequations + passivescalar, 1:6, 1:numberofpoints2))
-    allocate (psi(nof_variables + turbulenceequations + passivescalar, 1:6, 1:numberofpoints2))
-    allocate (consmatrix(1:6*numberofpoints2, 1:idegfree))
-    allocate (gradssl(1:idegfree, 1:nof_variables))
-    allocate (ressolution(1:6*numberofpoints2, 1:nof_variables))
+    allocate(slope(1:nof_variables + turbulenceequations + passivescalar))
+    allocate(usol(1:nof_variables + turbulenceequations + passivescalar, 1:6, 1:numberofpoints2))
+    allocate(psi(nof_variables + turbulenceequations + passivescalar, 1:6, 1:numberofpoints2))
+    allocate(consmatrix(1:6*numberofpoints2, 1:idegfree))
+    allocate(gradssl(1:idegfree, 1:nof_variables))
+    allocate(ressolution(1:6*numberofpoints2, 1:nof_variables))
     if (turbulenceequations .ge. 1) then
-      allocate (gradssl2(1:idegfree, 1:turbulenceequations + passivescalar))
-      allocate (ressolution2(1:6*numberofpoints2, 1:turbulenceequations + passivescalar))
+      allocate(gradssl2(1:idegfree, 1:turbulenceequations + passivescalar))
+      allocate(ressolution2(1:6*numberofpoints2, 1:turbulenceequations + passivescalar))
     end if
     icompwrt = 0
     usol(:, :, :) = zero
@@ -1501,16 +1501,16 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
       end do
     end do
 
-    deallocate (slope)
-    deallocate (usol)
-    deallocate (psi)
-    deallocate (consmatrix)
-    deallocate (gradssl)
-    deallocate (ressolution)
+    deallocate(slope)
+    deallocate(usol)
+    deallocate(psi)
+    deallocate(consmatrix)
+    deallocate(gradssl)
+    deallocate(ressolution)
 
     if (turbulenceequations .ge. 1) then
-      deallocate (gradssl2)
-      deallocate (ressolution2)
+      deallocate(gradssl2)
+      deallocate(ressolution2)
     end if
 
   end subroutine compute_muscl_reconstruction
@@ -1524,7 +1524,7 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
     real::umin, umax, psitot, addc, divg0, limvbg, tempxx
     real, allocatable, dimension(:, :)::utemp
     real, dimension(1:nof_variables + turbulenceequations + passivescalar)::maxvars, aver_vars, sumvars, utmin, utmax
-    allocate (utemp(imaxdegfree + 1, 1:nof_variables + turbulenceequations + passivescalar))
+    allocate(utemp(imaxdegfree + 1, 1:nof_variables + turbulenceequations + passivescalar))
     kmaxe = xmpielrank(n)
     do ii = 1, nof_interior
       i = el_int(ii)
@@ -1555,7 +1555,7 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
         end if
       end if
     end do
-    deallocate (utemp)
+    deallocate(utemp)
   end subroutine muscl
   subroutine solutiontriav2(n)
     implicit none
@@ -1567,16 +1567,16 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
     real, dimension(1:dimensiona, 1:dimensiona)::ainvjt
     real, allocatable, dimension(:)::gradtem
     real, allocatable, dimension(:, :)::xxder, yyder, zzder
-    kmaxe = xmpielrank(n); 
-    allocate (xxder(1:idegfree, 1:numberofpoints2))
-    allocate (yyder(1:idegfree, 1:numberofpoints2))
-    allocate (zzder(1:idegfree, 1:numberofpoints2))
-    allocate (gradtem(1:idegfree))
+    kmaxe = xmpielrank(n);
+    allocate(xxder(1:idegfree, 1:numberofpoints2))
+    allocate(yyder(1:idegfree, 1:numberofpoints2))
+    allocate(zzder(1:idegfree, 1:numberofpoints2))
+    allocate(gradtem(1:idegfree))
     do i = 1, kmaxe
       iconsidered = i
-      ilocal_recon3(i)%uleftv(:, :, :, :) = zero; 
+      ilocal_recon3(i)%uleftv(:, :, :, :) = zero;
       if ((turbulence .gt. 0) .or. (passivescalar .gt. 0)) then
-        ilocal_recon3(i)%uleftturbv(:, :, :, :) = zero; ilocal_recon3(i)%uleftturb(:, :, :) = zero; 
+        ilocal_recon3(i)%uleftturbv(:, :, :, :) = zero; ilocal_recon3(i)%uleftturb(:, :, :) = zero;
       end if
       do ihgt = 1, dimensiona; do ihgj = 1, dimensiona
           ainvjt(ihgt, ihgj) = ilocal_recon3(i)%invccjac(ihgj, ihgt)
@@ -1584,17 +1584,17 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
       do l = 1, ielem(n, i)%ifca; idummy = 0
         if (dimensiona .eq. 3) then
         if (ielem(n, i)%types_faces(l) .eq. 5) then
-          iqp = qp_quad; 
+          iqp = qp_quad;
         else
-          iqp = qp_triangle; 
+          iqp = qp_triangle;
         end if
         else
-        iqp = qp_line; 
+        iqp = qp_line;
         end if
         icd = 0
         do ngp = 1, iqp                        !for gqp
-          ax = ilocal_recon3(i)%qpoints(l, ngp, 1); 
-          ay = ilocal_recon3(i)%qpoints(l, ngp, 2); 
+          ax = ilocal_recon3(i)%qpoints(l, ngp, 1);
+          ay = ilocal_recon3(i)%qpoints(l, ngp, 2);
           if (dimensiona .eq. 3) then
             az = ilocal_recon3(i)%qpoints(l, ngp, 3)
           end if
@@ -1614,9 +1614,9 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
           else
           do k = 1, ielem(n, i)%idegfree
             if (poly .eq. 4) then
-              xxder(k, icd) = tl2dx(ax, ay, k, i); yyder(k, icd) = tl2dy(ax, ay, k, i); 
+              xxder(k, icd) = tl2dx(ax, ay, k, i); yyder(k, icd) = tl2dy(ax, ay, k, i);
             else
-              xxder(k, icd) = df2dx(ax, ay, k, i); yyder(k, icd) = df2dy(ax, ay, k, i); 
+              xxder(k, icd) = df2dx(ax, ay, k, i); yyder(k, icd) = df2dy(ax, ay, k, i);
             end if
           end do
           end if
@@ -1687,10 +1687,10 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
         call compute_gradients_center(n, iconsidered)
       end if
     end do
-    deallocate (xxder)
-    deallocate (yyder)
-    deallocate (zzder)
-    deallocate (gradtem)
+    deallocate(xxder)
+    deallocate(yyder)
+    deallocate(zzder)
+    deallocate(gradtem)
   end subroutine solutiontriav2
 
   subroutine least_squares(n)
@@ -1699,7 +1699,7 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
     integer::iconsidered, ii, i
 
 !$omp do
-    do ii = 1, nof_interior; 
+    do ii = 1, nof_interior;
       i = el_int(ii)
       iconsidered = i
       call allgrads_inner(n, i)
@@ -1760,15 +1760,15 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
     i = iconsidered
     ilocal_recon3(iconsidered)%uleft(:, :, :) = zero
 
-    allocate (usol(1:nof_variables + turbulenceequations + passivescalar, 1:6, 1:numberofpoints2))
-    allocate (consmatrix(1:6*numberofpoints2, 1:idegfree))
-    allocate (gradssl(1:idegfree, 1:nof_variables))
-    allocate (ressolution(1:6*numberofpoints2, 1:nof_variables))
-    allocate (psi(1:nof_variables + turbulenceequations + passivescalar, 1:6, 1:numberofpoints2))
+    allocate(usol(1:nof_variables + turbulenceequations + passivescalar, 1:6, 1:numberofpoints2))
+    allocate(consmatrix(1:6*numberofpoints2, 1:idegfree))
+    allocate(gradssl(1:idegfree, 1:nof_variables))
+    allocate(ressolution(1:6*numberofpoints2, 1:nof_variables))
+    allocate(psi(1:nof_variables + turbulenceequations + passivescalar, 1:6, 1:numberofpoints2))
 
     if (turbulenceequations .ge. 1) then
-      allocate (gradssl2(1:idegfree, 1:turbulenceequations + passivescalar))
-      allocate (ressolution2(1:6*numberofpoints2, 1:turbulenceequations + passivescalar))
+      allocate(gradssl2(1:idegfree, 1:turbulenceequations + passivescalar))
+      allocate(ressolution2(1:6*numberofpoints2, 1:turbulenceequations + passivescalar))
     end if
 
     icompwrt = 0
@@ -1832,14 +1832,14 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
         call extrapolate_bound_linear(usol, iex, l, ngp, i)
       end do
     end do
-    deallocate (usol)
-    deallocate (psi)
-    deallocate (consmatrix)
-    deallocate (gradssl)
-    deallocate (ressolution)
+    deallocate(usol)
+    deallocate(psi)
+    deallocate(consmatrix)
+    deallocate(gradssl)
+    deallocate(ressolution)
     if (turbulenceequations .ge. 1) then
-      deallocate (gradssl2)
-      deallocate (ressolution2)
+      deallocate(gradssl2)
+      deallocate(ressolution2)
     end if
 
   end subroutine compute_linear_reconstruction
@@ -2364,8 +2364,8 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
     real, dimension(1:nof_variables)::maxvars, aver_vars, sumvars, utmin, utmax
     real, allocatable, dimension(:, :, :)::usol
     real, allocatable, dimension(:, :)::utemp
-    allocate (utemp(imaxdegfree + 1, 1:nof_variables + turbulenceequations + passivescalar))
-    allocate (usol(1:nof_variables + turbulenceequations + passivescalar, 1:6, 1:numberofpoints2))
+    allocate(utemp(imaxdegfree + 1, 1:nof_variables + turbulenceequations + passivescalar))
+    allocate(usol(1:nof_variables + turbulenceequations + passivescalar, 1:6, 1:numberofpoints2))
     kmaxe = xmpielrank(n)
     if (code_profile .ne. 102) then
 
@@ -2395,8 +2395,8 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
       end do
 !$omp end do
     end if
-    deallocate (usol)
-    deallocate (utemp)
+    deallocate(usol)
+    deallocate(utemp)
   end subroutine
   subroutine trouble_indicator2
     implicit none
@@ -2473,7 +2473,7 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
           end if
           if ((leftv(4) .ne. leftv(4))) then
             ielem(n, i)%troubled = 1; ielem(n, i)%condition = 1
-          end if 
+          end if
         end if
           if ((leftv(nof_variables) .lt. zero) .or. leftv(nof_variables) .gt. 1.0d0) then
             ielem(n, i)%troubled = 1; ielem(n, i)%condition = 1
@@ -2693,7 +2693,7 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
     integer::i, kmaxe, j, k
     real, allocatable, dimension(:)::grad1al
     kmaxe = xmpielrank(n)
-    allocate (grad1al(1:idegfree))
+    allocate(grad1al(1:idegfree))
 !$omp do
     do i = 1, kmaxe
     do j = 1, nof_variables
@@ -2705,7 +2705,7 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
     end do
     end do
 !$omp end do
-    deallocate (grad1al)
+    deallocate(grad1al)
   end subroutine apply_filter2
   subroutine filter(n)
     implicit none
@@ -2857,10 +2857,10 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
 
     countdof = ((iorder + 1)*(iorder + 2)*(iorder + 3))/6
 
-    allocate (filter2(1:9), filter3(1:9), dgfr(1:countdof), dgfr3(1:countdof), filt2(0:9), filt3(0:9))
-    allocate (consmatrix(1, 1:idegfree))
-    allocate (gradssl(1:idegfree, 1:nof_variables))
-    allocate (ressolution(1:6*numberofpoints2, 1:nof_variables))
+    allocate(filter2(1:9), filter3(1:9), dgfr(1:countdof), dgfr3(1:countdof), filt2(0:9), filt3(0:9))
+    allocate(consmatrix(1, 1:idegfree))
+    allocate(gradssl(1:idegfree, 1:nof_variables))
+    allocate(ressolution(1:6*numberofpoints2, 1:nof_variables))
 
     do fil_i = 1, iorder
       if (iorder .eq. 2) then
@@ -3003,10 +3003,10 @@ gradssl(1:ielem(n, i)%idegfree, 1:nof_variables) = ilocal_recon5(iconsidered)%gr
       ielem(n, i)%er1er2 = abs(ielem(n, i)%er1dt)/ielem(n, i)%er2dt
       call apply_adda_filter(n, iconsidered)
     end if
-    deallocate (filter2, filter3, dgfr, dgfr3, filt2, filt3)
-    deallocate (consmatrix)
-    deallocate (gradssl)
-    deallocate (ressolution)
+    deallocate(filter2, filter3, dgfr, dgfr3, filt2, filt3)
+    deallocate(consmatrix)
+    deallocate(gradssl)
+    deallocate(ressolution)
   end subroutine adda_filter
   subroutine apply_adda_filter(n, iconsidered)
     implicit none

@@ -135,10 +135,10 @@ contains
     if (dimensiona .eq. 3) then
 
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-        allocate (centerr(1:imaxe, 1:3))
+        allocate(centerr(1:imaxe, 1:3))
       end if
-      allocate (glneigh(1:imaxe, 1:6))
-      allocate (glneighper(1:imaxe, 1:6))
+      allocate(glneigh(1:imaxe, 1:6))
+      allocate(glneighper(1:imaxe, 1:6))
 
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
         centerr(:, :) = -tolbig
@@ -190,11 +190,11 @@ contains
 
       call mpi_barrier(mpi_comm_world, ierror)
 
-      allocate (glneightot(2))
-      allocate (glneights(1:kmaxe, 1:7))
+      allocate(glneightot(2))
+      allocate(glneights(1:kmaxe, 1:7))
 
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-        allocate (centerts(1:kmaxe, 1:3))
+        allocate(centerts(1:kmaxe, 1:3))
       end if
       glneights(:, :) = 0
 
@@ -215,9 +215,9 @@ contains
           tempi = kmaxe
           call mpi_sendrecv(tempi, 1, mpi_integer, i, icpuid, &
                             tempt, 1, mpi_integer, i, i, mpi_comm_world, status, ierror)
-          allocate (glneightr(tempt, 1:7))
+          allocate(glneightr(tempt, 1:7))
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-            allocate (centertr(tempt, 1:3))
+            allocate(centertr(tempt, 1:3))
           end if
           glneightr(:, :) = 0
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
@@ -244,27 +244,27 @@ contains
             end do
 
           end do
-          deallocate (glneightr)
+          deallocate(glneightr)
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-            deallocate (centertr)
+            deallocate(centertr)
           end if
 
         end if
       end do
 
-      deallocate (glneightot)
-      deallocate (glneights)
+      deallocate(glneightot)
+      deallocate(glneights)
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-        deallocate (centerts)
+        deallocate(centerts)
       end if
 
     end if
     if (dimensiona .eq. 2) then
 
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-        allocate (centerr(1:imaxe, 1:2))
+        allocate(centerr(1:imaxe, 1:2))
       end if
-      allocate (glneigh(1:imaxe, 1:4))
+      allocate(glneigh(1:imaxe, 1:4))
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
         centerr(:, :) = -tolbig
       end if
@@ -312,10 +312,10 @@ contains
 
       call mpi_barrier(mpi_comm_world, ierror)
 
-      allocate (glneightot(2))
-      allocate (glneights(1:kmaxe, 1:5))
+      allocate(glneightot(2))
+      allocate(glneights(1:kmaxe, 1:5))
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-        allocate (centerts(1:kmaxe, 1:2))
+        allocate(centerts(1:kmaxe, 1:2))
       end if
       glneights(:, :) = 0
       do k = 1, kmaxe
@@ -336,9 +336,9 @@ contains
           tempi = kmaxe
           call mpi_sendrecv(tempi, 1, mpi_integer, i, icpuid, &
                             tempt, 1, mpi_integer, i, i, mpi_comm_world, status, ierror)
-          allocate (glneightr(tempt, 1:5))
+          allocate(glneightr(tempt, 1:5))
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-            allocate (centertr(tempt, 1:2))
+            allocate(centertr(tempt, 1:2))
           end if
           glneightr(:, :) = 0
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
@@ -365,18 +365,18 @@ contains
             end do
 
           end do
-          deallocate (glneightr)
+          deallocate(glneightr)
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-            deallocate (centertr)
+            deallocate(centertr)
           end if
 
         end if
       end do
 
-      deallocate (glneightot)
-      deallocate (glneights)
+      deallocate(glneightot)
+      deallocate(glneights)
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-        deallocate (centerts)
+        deallocate(centerts)
       end if
 
     end if
@@ -458,12 +458,12 @@ contains
       icpuid = n
       call mpi_barrier(mpi_comm_world, ierror)
 
-      allocate (glneightot(2))
-      allocate (glneights(1:kmaxe, 1:7))
-      allocate (glneightsper(1:kmaxe, 1:7))
+      allocate(glneightot(2))
+      allocate(glneights(1:kmaxe, 1:7))
+      allocate(glneightsper(1:kmaxe, 1:7))
 
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-        allocate (centerts(1:kmaxe, 1:3))
+        allocate(centerts(1:kmaxe, 1:3))
       end if
       glneights(:, :) = 0
       glneightsper(:, :) = 0
@@ -494,10 +494,10 @@ contains
           tempi = kmaxe
           call mpi_sendrecv(tempi, 1, mpi_integer, i, icpuid, &
                             tempt, 1, mpi_integer, i, i, mpi_comm_world, status, ierror)
-          allocate (glneightr(tempt, 1:7))
-          allocate (glneightrper(tempt, 1:7))
+          allocate(glneightr(tempt, 1:7))
+          allocate(glneightrper(tempt, 1:7))
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-            allocate (centertr(tempt, 1:3))
+            allocate(centertr(tempt, 1:3))
             centertr(:, :) = 0.0
           end if
           glneightr(:, :) = 0
@@ -525,18 +525,18 @@ contains
               end if
             end do
           end do
-          deallocate (glneightr)
-          deallocate (glneightrper)
+          deallocate(glneightr)
+          deallocate(glneightrper)
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-            deallocate (centertr)
+            deallocate(centertr)
           end if
         end if
       end do
-      deallocate (glneightot)
-      deallocate (glneights)
-      deallocate (glneightsper)
+      deallocate(glneightot)
+      deallocate(glneights)
+      deallocate(glneightsper)
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-        deallocate (centerts)
+        deallocate(centerts)
       end if
     else
 
@@ -576,10 +576,10 @@ contains
       icpuid = n
       call mpi_barrier(mpi_comm_world, ierror)
 
-      allocate (glneightot(2))
-      allocate (glneights(1:kmaxe, 1:5))
+      allocate(glneightot(2))
+      allocate(glneights(1:kmaxe, 1:5))
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-        allocate (centerts(1:kmaxe, 1:2))
+        allocate(centerts(1:kmaxe, 1:2))
       end if
       glneights(:, :) = 0
       do k = 1, kmaxe
@@ -598,9 +598,9 @@ contains
           tempi = kmaxe
           call mpi_sendrecv(tempi, 1, mpi_integer, i, icpuid, &
                             tempt, 1, mpi_integer, i, i, mpi_comm_world, status, ierror)
-          allocate (glneightr(tempt, 1:5))
+          allocate(glneightr(tempt, 1:5))
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-            allocate (centertr(tempt, 1:2))
+            allocate(centertr(tempt, 1:2))
             centertr(:, :) = 0.0
           end if
           glneightr(:, :) = 0
@@ -625,17 +625,17 @@ contains
             end do
 
           end do
-          deallocate (glneightr)
+          deallocate(glneightr)
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-            deallocate (centertr)
+            deallocate(centertr)
           end if
 
         end if
       end do
-      deallocate (glneightot)
-      deallocate (glneights)
+      deallocate(glneightot)
+      deallocate(glneights)
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-        deallocate (centerts)
+        deallocate(centerts)
       end if
 
     end if
@@ -728,7 +728,7 @@ contains
       close (63)
     end if
 
-    allocate (cand(0:isize - 1)); cand = 0                !1 allocate(cand)
+    allocate(cand(0:isize - 1)); cand = 0                !1 allocate(cand)
 
     do k = 1, kmaxe
       do j = 1, ielem(n, k)%ifca
@@ -758,9 +758,9 @@ contains
       end if
     end do
 
-    !first allocate memory for these additional ones
-    allocate (cands(0:isize - 1), candr(0:isize - 1)); cands = 0; candr = 0.0   !2 allocate(cands,candr,neix)
-    allocate (neix1(ifst))
+    !first allocatememory for these additional ones
+    allocate(cands(0:isize - 1), candr(0:isize - 1)); cands = 0; candr = 0.0   !2 allocate(cands,candr,neix)
+    allocate(neix1(ifst))
     ifst = 0
     do i = 0, isize - 1
       if (cand(i) .gt. 0) then
@@ -779,7 +779,7 @@ contains
     call mpi_barrier(mpi_comm_world, ierror)
 
     n_requests = 0
-    allocate (requests(2*ifst))                                        !3 allocate(requests)
+    allocate(requests(2*ifst))                                        !3 allocate(requests)
     requests(:) = 0
     do i = 0, isize - 1
 
@@ -806,7 +806,7 @@ contains
 
     call mpi_barrier(mpi_comm_world, ierror)
 
-    deallocate (requests)                                                        !33 dallocate(requests)
+    deallocate(requests)                                                        !33 dallocate(requests)
 
     imax_cpu = 0
     do i = 0, isize - 1
@@ -821,7 +821,7 @@ contains
 
     call mpi_allreduce(imax_cpu, imax_cput, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
 
-    allocate (candxs(1:ifst, 1:imax_cput), candxr(1:ifst, 1:imax_cput))                !4 allocate(candxs,candxr)
+    allocate(candxs(1:ifst, 1:imax_cput), candxr(1:ifst, 1:imax_cput))                !4 allocate(candxs,candxr)
     candxs = -1
     candxr = -1
 
@@ -880,18 +880,18 @@ contains
     call mpi_allreduce(imax_cpu, imax_cput, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
 
     if (dimensiona .eq. 3) then
-      allocate (cand2s(1:imax_cput, 6))                                                !5 allocate(cand2s,cand2r)
+      allocate(cand2s(1:imax_cput, 6))                                                !5 allocate(cand2s,cand2r)
 
-      allocate (cand2r(1:ifst2, 1:imax_cput, 1:6))
-      allocate (cand2rt(1:imax_cput, 1:6))
+      allocate(cand2r(1:ifst2, 1:imax_cput, 1:6))
+      allocate(cand2rt(1:imax_cput, 1:6))
       cand2s(:, :) = -100
       cand2r(:, :, :) = -200
 
     else
 
-      allocate (cand2s(imax_cput, 4))
-      allocate (cand2r(ifst2, imax_cput, 4))
-      allocate (cand2rt(1:imax_cput, 1:6))
+      allocate(cand2s(imax_cput, 4))
+      allocate(cand2r(ifst2, imax_cput, 4))
+      allocate(cand2rt(1:imax_cput, 1:6))
       cand2s = -100
       cand2r = -200
 
@@ -939,9 +939,9 @@ contains
     if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
 
       if (dimensiona .eq. 3) then
-        allocate (xand2s(imax_cput, 3))                                                !6 allocate(xand2s,xand2r)
-        allocate (xand2r(ifst2, imax_cput, 3))
-        allocate (xand2rt(imax_cput, 3))
+        allocate(xand2s(imax_cput, 3))                                                !6 allocate(xand2s,xand2r)
+        allocate(xand2r(ifst2, imax_cput, 3))
+        allocate(xand2rt(imax_cput, 3))
         do k = 1, kmaxe
 
           call compute_centre3d(k, cords)
@@ -949,9 +949,9 @@ contains
           xand2s(k, 1:3) = cords(1:3)
         end do
       else
-        allocate (xand2s(imax_cput, 2))
-        allocate (xand2r(ifst2, imax_cput, 2))
-        allocate (xand2rt(imax_cput, 2))
+        allocate(xand2s(imax_cput, 2))
+        allocate(xand2r(ifst2, imax_cput, 2))
+        allocate(xand2rt(imax_cput, 2))
         do k = 1, kmaxe
           call compute_centre2d(k, cords)
           xand2s(k, 1:2) = cords(1:2)
@@ -991,8 +991,8 @@ contains
     end if
     call mpi_barrier(mpi_comm_world, ierror)
 
-    !now deallocate what is not needed
-    deallocate (cands, candr, neix1, candxs, candxr)
+    !now deallocatewhat is not needed
+    deallocate(cands, candr, neix1, candxs, candxr)
 
 !
 
@@ -1004,14 +1004,14 @@ contains
     implicit none
     call mpi_barrier(mpi_comm_world, ierror)
     if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-      if (lowmem .eq. 0) deallocate (xand2s, xand2r, xand2rt)
-      if (lowmem .eq. 1) deallocate (centerr)
+      if (lowmem .eq. 0) deallocate(xand2s, xand2r, xand2rt)
+      if (lowmem .eq. 1) deallocate(centerr)
     end if
-    if (lowmem .eq. 0) deallocate (cand2s, cand2r, cand2rt, cand)
+    if (lowmem .eq. 0) deallocate(cand2s, cand2r, cand2rt, cand)
     if (lowmem .eq. 1) then
-      deallocate (glneigh)
+      deallocate(glneigh)
 
-      if (dimensiona .eq. 3) deallocate (glneighper)
+      if (dimensiona .eq. 3) deallocate(glneighper)
     end if
     call mpi_barrier(mpi_comm_world, ierror)
   end subroutine globaldea
@@ -1022,23 +1022,23 @@ contains
     implicit none
     integer::i, kmaxe, count_block
     integer, allocatable, dimension(:)::xmpic, bin, val
-    allocate (xmpic(0:isize - 1))
+    allocate(xmpic(0:isize - 1))
 
     xmpic = 0
     kmaxe = xmpielrank(n)
 
-    allocate (val(1:kmaxe))
-    allocate (xgo(1:kmaxe))
+    allocate(val(1:kmaxe))
+    allocate(xgo(1:kmaxe))
 
     do i = 1, kmaxe
       xgo(i) = ielem(n, i)%ihexgl
     end do
 
     if (n .eq. 0) then
-      allocate (xmpi_re(1:imaxe))
+      allocate(xmpi_re(1:imaxe))
       xmpi_re = zero
     else
-      allocate (xmpi_re(1))
+      allocate(xmpi_re(1))
 
     end if
 
@@ -1051,9 +1051,9 @@ contains
       xmpil(i) = xmpic(xmpie(i))
     end do
 
-    deallocate (xmpic)
+    deallocate(xmpic)
 
-    allocate (xmpiall(0:isize - 1), offset(0:isize - 1))
+    allocate(xmpiall(0:isize - 1), offset(0:isize - 1))
 
     xmpiall = 0
 
@@ -1072,7 +1072,7 @@ contains
 
     call mpi_gatherv(val(1:kmaxe), kmaxe, mpi_integer, xmpi_re, xmpiall, offset, mpi_integer, 0, mpi_comm_world, ierror)
 
-    deallocate (val)
+    deallocate(val)
 
   end subroutine xmpilocal
 
@@ -1096,7 +1096,7 @@ contains
       end if
     end do
 
-    allocate (xmpiwall(0:isize - 1), woffset(0:isize - 1))
+    allocate(xmpiwall(0:isize - 1), woffset(0:isize - 1))
 
     xmpiwall = 0
 
@@ -1108,11 +1108,11 @@ contains
       woffset(i) = woffset(i - 1) + xmpiwall(i - 1)
     end do
 
-    allocate (val(iloop))
+    allocate(val(iloop))
     if (n .eq. 0) then
-      allocate (xmpi_wre(1:totwalls))
+      allocate(xmpi_wre(1:totwalls))
     else
-      allocate (xmpi_wre(1))
+      allocate(xmpi_wre(1))
 
     end if
 
@@ -1133,7 +1133,7 @@ contains
 
     call mpi_gatherv(val(1:iloop), iloop, mpi_integer, xmpi_wre, xmpiwall, woffset, mpi_integer, 0, mpi_comm_world, ierror)
 
-    deallocate (val)
+    deallocate(val)
 
   end subroutine count_walls
 
@@ -1175,16 +1175,16 @@ contains
     real, allocatable, dimension(:), intent(inout)::vectco
     real, allocatable, dimension(:), intent(inout)::veigl, veigr, rveigl, rveigr
     real, allocatable, dimension(:, :), intent(inout)::eigvl, eigvr
-    allocate (tri(5, 5))
-    allocate (invtri(5, 5))
-    allocate (eigvl(5, 5))
-    allocate (eigvr(5, 5))
-    allocate (vectco(5 + turbulenceequations + passivescalar))
-    allocate (rotvect(5 + turbulenceequations + passivescalar))
-    allocate (veigl(5))
-    allocate (veigr(5))
-    allocate (rveigl(5))
-    allocate (rveigr(5))
+    allocate(tri(5, 5))
+    allocate(invtri(5, 5))
+    allocate(eigvl(5, 5))
+    allocate(eigvr(5, 5))
+    allocate(vectco(5 + turbulenceequations + passivescalar))
+    allocate(rotvect(5 + turbulenceequations + passivescalar))
+    allocate(veigl(5))
+    allocate(veigr(5))
+    allocate(rveigl(5))
+    allocate(rveigr(5))
     tri = 0.0
     invtri = 0.0
     eigvl = 0.0
@@ -1196,13 +1196,13 @@ contains
     rveigl = 0.0
     rveigr = 0.0
   end subroutine allocatevectors
-! !!!!!!!!!!!!!!!!!!subroutine called initially to allocate memory for stencil!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!subroutine called initially to allocatememory for stencil!!!!!!!!!!!!!!!!!
 ! subroutine timecpu(tempcp)
 ! real,intent(inout)::tempcp
 ! call cpu_time(tempcp)
 ! end subroutine timecpu
 
-! !!!!!!!!!!!!!!!!!!subroutine called initially to allocate memory for stencil!!!!!!!!!!!!!!!!!
+! !!!!!!!!!!!!!!!!!!subroutine called initially to allocatememory for stencil!!!!!!!!!!!!!!!!!
   subroutine localstallocation(n, xmpielrank, ilocalstencil, ilocalstencilper, typesten, numneighbours)
 !> @brief
 !> this subroutine memory for stencil allocation for all cells
@@ -1215,10 +1215,10 @@ contains
     integer::kmaxe, i
     kmaxe = xmpielrank(n)
 
-    allocate (ilocalstencil(n:n, kmaxe, typesten, imaxdegfree + 1))
+    allocate(ilocalstencil(n:n, kmaxe, typesten, imaxdegfree + 1))
 
     ilocalstencil(n:n, :, :, :) = 0
-    allocate (ilocalstencilper(n:n, kmaxe, typesten, imaxdegfree + 1))
+    allocate(ilocalstencilper(n:n, kmaxe, typesten, imaxdegfree + 1))
 
     ilocalstencilper(n:n, :, :, :) = 0
 
@@ -1425,34 +1425,34 @@ contains
     do i = 1, kmaxe
 
 !         if (itestcase.eq.4)then
-      allocate (ielem(n, i)%vortex(3)); ielem(n, i)%vortex = zero
-      allocate (ielem(n, i)%avars(nof_variables)); 
+      allocate(ielem(n, i)%vortex(3)); ielem(n, i)%vortex = zero
+      allocate(ielem(n, i)%avars(nof_variables));
 !         end if
 
       select case (ielem(n, i)%ishape)
 
       case (4) !prism
 
-        allocate (ielem(n, i)%nodes_faces(5, 4))
+        allocate(ielem(n, i)%nodes_faces(5, 4))
 
         if (tecplot .eq. 5) then
-          allocate (ielem(n, i)%nodes_faces_v(5, 4))
+          allocate(ielem(n, i)%nodes_faces_v(5, 4))
         end if
 
         if (code_profile .eq. 30) then
-          allocate (ielem(n, i)%nodes_neighbours(5, 30))
+          allocate(ielem(n, i)%nodes_neighbours(5, 30))
           ielem(n, i)%nodes_neighbours = 0
         end if
 
-        allocate (ielem(n, i)%ineighg(5))
-        allocate (ielem(n, i)%types_faces(5))
+        allocate(ielem(n, i)%ineighg(5))
+        allocate(ielem(n, i)%types_faces(5))
 
         ielem(n, i)%types_faces(1:2) = 6; ielem(n, i)%types_faces(3:5) = 5
 
         ielem(n, i)%nodes_faces(1:5, 1:4) = 0
 
         ielem(n, i)%ineighg(1:5) = 0
-        ielem(n, i)%ifca = 5; 
+        ielem(n, i)%ifca = 5;
         ielem(n, i)%vdec = 3
 
         ielem(n, i)%totvolume = 0.0; ielem(n, i)%minedge = 0.0; ielem(n, i)%walldist = 0.0
@@ -1482,41 +1482,41 @@ contains
         ielem(n, i)%nodes_faces(5, 3) = ielem(n, i)%nodes(4)
         ielem(n, i)%nodes_faces(5, 4) = ielem(n, i)%nodes(6)
 
-        allocate (ielem(n, i)%reorient(ielem(n, i)%ifca)); ielem(n, i)%reorient(:) = 0
-        allocate (ielem(n, i)%faceanglex(ielem(n, i)%ifca)); allocate (ielem(n, i)%faceangley(ielem(n, i)%ifca)); 
+        allocate(ielem(n, i)%reorient(ielem(n, i)%ifca)); ielem(n, i)%reorient(:) = 0
+        allocate(ielem(n, i)%faceanglex(ielem(n, i)%ifca)); allocate(ielem(n, i)%faceangley(ielem(n, i)%ifca));
         if (adda .eq. 1) then
-          allocate (ielem(n, i)%facediss(ielem(n, i)%ifca))
+          allocate(ielem(n, i)%facediss(ielem(n, i)%ifca))
           ielem(n, i)%facediss = 1.0d0; ielem(n, i)%diss = 1.0d0
         end if
         if (fastest .eq. 0) then
-          allocate (ielem(n, i)%indexi(ielem(n, i)%ifca)); ielem(n, i)%indexi(:) = 0
+          allocate(ielem(n, i)%indexi(ielem(n, i)%ifca)); ielem(n, i)%indexi(:) = 0
         end if
         if (rungekutta .ge. 2) then
-          allocate (ielem(n, i)%dih(ielem(n, i)%ifca)); ielem(n, i)%dih = zero
+          allocate(ielem(n, i)%dih(ielem(n, i)%ifca)); ielem(n, i)%dih = zero
 !            allocate(ielem(n,i)%dih2(ielem(n,i)%ifca,dims)); ielem(n,i)%dih2=zero
 
         end if
       case (1) !hexahedral
-        allocate (ielem(n, i)%nodes_faces(6, 4))
+        allocate(ielem(n, i)%nodes_faces(6, 4))
 
         if (tecplot .eq. 5) then
-          allocate (ielem(n, i)%nodes_faces_v(6, 4))
+          allocate(ielem(n, i)%nodes_faces_v(6, 4))
         end if
 
         if (code_profile .eq. 30) then
-          allocate (ielem(n, i)%nodes_neighbours(6, 30))
+          allocate(ielem(n, i)%nodes_neighbours(6, 30))
           ielem(n, i)%nodes_neighbours = 0
         end if
 
-        allocate (ielem(n, i)%ineighg(6))
-        allocate (ielem(n, i)%types_faces(6))
+        allocate(ielem(n, i)%ineighg(6))
+        allocate(ielem(n, i)%types_faces(6))
         ielem(n, i)%types_faces(1:6) = 5
         ielem(n, i)%vdec = 6
         ielem(n, i)%totvolume = 0.0; ielem(n, i)%minedge = 0.0; ielem(n, i)%walldist = 0.0
         ielem(n, i)%nodes_faces(:, :) = 0
 
         ielem(n, i)%ineighg = 0
-        ielem(n, i)%ifca = 6; 
+        ielem(n, i)%ifca = 6;
         !first face
         ielem(n, i)%nodes_faces(1, 1) = ielem(n, i)%nodes(2)
         ielem(n, i)%nodes_faces(1, 2) = ielem(n, i)%nodes(1)                        !dec214,243
@@ -1548,42 +1548,42 @@ contains
         ielem(n, i)%nodes_faces(6, 3) = ielem(n, i)%nodes(2)
         ielem(n, i)%nodes_faces(6, 4) = ielem(n, i)%nodes(6)
 
-        allocate (ielem(n, i)%reorient(ielem(n, i)%ifca)); ielem(n, i)%reorient(:) = 0
-        allocate (ielem(n, i)%faceanglex(ielem(n, i)%ifca)); allocate (ielem(n, i)%faceangley(ielem(n, i)%ifca)); 
+        allocate(ielem(n, i)%reorient(ielem(n, i)%ifca)); ielem(n, i)%reorient(:) = 0
+        allocate(ielem(n, i)%faceanglex(ielem(n, i)%ifca)); allocate(ielem(n, i)%faceangley(ielem(n, i)%ifca));
         if (fastest .eq. 0) then
-          allocate (ielem(n, i)%indexi(ielem(n, i)%ifca)); ielem(n, i)%indexi(:) = 0
+          allocate(ielem(n, i)%indexi(ielem(n, i)%ifca)); ielem(n, i)%indexi(:) = 0
         end if
         if (adda .eq. 1) then
-          allocate (ielem(n, i)%facediss(ielem(n, i)%ifca))
+          allocate(ielem(n, i)%facediss(ielem(n, i)%ifca))
           ielem(n, i)%facediss = 1.0d0; ielem(n, i)%diss = 1.0d0
         end if
         if (rungekutta .ge. 2) then
-          allocate (ielem(n, i)%dih(ielem(n, i)%ifca)); ielem(n, i)%dih = zero
+          allocate(ielem(n, i)%dih(ielem(n, i)%ifca)); ielem(n, i)%dih = zero
 !            allocate(ielem(n,i)%dih2(ielem(n,i)%ifca,dims)); ielem(n,i)%dih2=zero
 !
         end if
 
       case (2) !tetrahedral
-        allocate (ielem(n, i)%nodes_faces(4, 3))
+        allocate(ielem(n, i)%nodes_faces(4, 3))
 
         if (tecplot .eq. 5) then
-          allocate (ielem(n, i)%nodes_faces_v(4, 3))
+          allocate(ielem(n, i)%nodes_faces_v(4, 3))
         end if
 
         if (code_profile .eq. 30) then
-          allocate (ielem(n, i)%nodes_neighbours(4, 30))
+          allocate(ielem(n, i)%nodes_neighbours(4, 30))
           ielem(n, i)%nodes_neighbours = 0
         end if
 
-        allocate (ielem(n, i)%ineighg(4))
-        allocate (ielem(n, i)%types_faces(4))
+        allocate(ielem(n, i)%ineighg(4))
+        allocate(ielem(n, i)%types_faces(4))
         ielem(n, i)%types_faces(1:4) = 6
         ielem(n, i)%nodes_faces(:, :) = 0
 
         ielem(n, i)%ineighg = 0
         ielem(n, i)%vdec = 1
         ielem(n, i)%totvolume = 0.0; ielem(n, i)%minedge = 0.0; ielem(n, i)%walldist = 0.0
-        ielem(n, i)%ifca = 4; 
+        ielem(n, i)%ifca = 4;
         !first face
         ielem(n, i)%nodes_faces(1, 1) = ielem(n, i)%nodes(2)
         ielem(n, i)%nodes_faces(1, 2) = ielem(n, i)%nodes(4)
@@ -1604,42 +1604,42 @@ contains
         ielem(n, i)%nodes_faces(4, 2) = ielem(n, i)%nodes(1)
         ielem(n, i)%nodes_faces(4, 3) = ielem(n, i)%nodes(4)
 
-        allocate (ielem(n, i)%faceanglex(ielem(n, i)%ifca)); allocate (ielem(n, i)%faceangley(ielem(n, i)%ifca)); 
-        allocate (ielem(n, i)%reorient(ielem(n, i)%ifca)); ielem(n, i)%reorient(:) = 0
+        allocate(ielem(n, i)%faceanglex(ielem(n, i)%ifca)); allocate(ielem(n, i)%faceangley(ielem(n, i)%ifca));
+        allocate(ielem(n, i)%reorient(ielem(n, i)%ifca)); ielem(n, i)%reorient(:) = 0
 
         if (adda .eq. 1) then
-          allocate (ielem(n, i)%facediss(ielem(n, i)%ifca))
+          allocate(ielem(n, i)%facediss(ielem(n, i)%ifca))
           ielem(n, i)%facediss = 1.0d0; ielem(n, i)%diss = 1.0d0
         end if
 
         if (fastest .eq. 0) then
-          allocate (ielem(n, i)%indexi(ielem(n, i)%ifca)); ielem(n, i)%indexi(:) = 0
+          allocate(ielem(n, i)%indexi(ielem(n, i)%ifca)); ielem(n, i)%indexi(:) = 0
         end if
         if (rungekutta .ge. 2) then
-          allocate (ielem(n, i)%dih(ielem(n, i)%ifca)); ielem(n, i)%dih = zero
+          allocate(ielem(n, i)%dih(ielem(n, i)%ifca)); ielem(n, i)%dih = zero
 !            allocate(ielem(n,i)%dih2(ielem(n,i)%ifca,dims)); ielem(n,i)%dih2=zero
 
         end if
       case (3) !pyramidal
-        allocate (ielem(n, i)%nodes_faces(5, 4))
+        allocate(ielem(n, i)%nodes_faces(5, 4))
         if (tecplot .eq. 5) then
-          allocate (ielem(n, i)%nodes_faces_v(5, 4))
+          allocate(ielem(n, i)%nodes_faces_v(5, 4))
         end if
 
         if (code_profile .eq. 30) then
-          allocate (ielem(n, i)%nodes_neighbours(5, 30))
+          allocate(ielem(n, i)%nodes_neighbours(5, 30))
           ielem(n, i)%nodes_neighbours = 0
         end if
 
-        allocate (ielem(n, i)%ineighg(5))
-        allocate (ielem(n, i)%types_faces(5))
+        allocate(ielem(n, i)%ineighg(5))
+        allocate(ielem(n, i)%types_faces(5))
         ielem(n, i)%types_faces(1) = 5; ielem(n, i)%types_faces(2:5) = 6
         ielem(n, i)%nodes_faces(:, :) = 0
 
         ielem(n, i)%ineighg = 0
         ielem(n, i)%vdec = 2
         ielem(n, i)%totvolume = 0.0; ielem(n, i)%minedge = 0.0; ielem(n, i)%walldist = 0.0
-        ielem(n, i)%ifca = 5; 
+        ielem(n, i)%ifca = 5;
         !first face
         ielem(n, i)%nodes_faces(1, 1) = ielem(n, i)%nodes(4)                !432,421
         ielem(n, i)%nodes_faces(1, 2) = ielem(n, i)%nodes(3)
@@ -1665,33 +1665,33 @@ contains
         ielem(n, i)%nodes_faces(5, 3) = ielem(n, i)%nodes(5)
 
         if (rungekutta .ge. 2) then
-          allocate (ielem(n, i)%dih(ielem(n, i)%ifca)); ielem(n, i)%dih = zero
+          allocate(ielem(n, i)%dih(ielem(n, i)%ifca)); ielem(n, i)%dih = zero
 !            allocate(ielem(n,i)%dih2(ielem(n,i)%ifca,dims)); ielem(n,i)%dih2=zero
 
         end if
 
-        allocate (ielem(n, i)%faceanglex(ielem(n, i)%ifca)); allocate (ielem(n, i)%faceangley(ielem(n, i)%ifca)); 
+        allocate(ielem(n, i)%faceanglex(ielem(n, i)%ifca)); allocate(ielem(n, i)%faceangley(ielem(n, i)%ifca));
         if (adda .eq. 1) then
-          allocate (ielem(n, i)%facediss(ielem(n, i)%ifca))
+          allocate(ielem(n, i)%facediss(ielem(n, i)%ifca))
           ielem(n, i)%facediss = 1.0d0; ielem(n, i)%diss = 1.0d0
         end if
-        allocate (ielem(n, i)%reorient(ielem(n, i)%ifca)); ielem(n, i)%reorient(:) = 0
+        allocate(ielem(n, i)%reorient(ielem(n, i)%ifca)); ielem(n, i)%reorient(:) = 0
         if (fastest .eq. 0) then
-          allocate (ielem(n, i)%indexi(ielem(n, i)%ifca)); ielem(n, i)%indexi(:) = 0
+          allocate(ielem(n, i)%indexi(ielem(n, i)%ifca)); ielem(n, i)%indexi(:) = 0
         end if
 
       case (5) !quadrilateral
-        ielem(n, i)%ifca = 4; 
-        allocate (ielem(n, i)%nodes_faces(4, 2))
+        ielem(n, i)%ifca = 4;
+        allocate(ielem(n, i)%nodes_faces(4, 2))
         if (tecplot .eq. 5) then
-          allocate (ielem(n, i)%nodes_faces_v(4, 2))
+          allocate(ielem(n, i)%nodes_faces_v(4, 2))
         end if
         if (code_profile .eq. 30) then
-          allocate (ielem(n, i)%nodes_neighbours(4, 30))
+          allocate(ielem(n, i)%nodes_neighbours(4, 30))
           ielem(n, i)%nodes_neighbours = 0
         end if
 
-        allocate (ielem(n, i)%ineighg(4))
+        allocate(ielem(n, i)%ineighg(4))
         ielem(n, i)%nodes_faces(:, :) = 0
         ielem(n, i)%vdec = 2
         ielem(n, i)%totvolume = 0.0; ielem(n, i)%minedge = 0.0; ielem(n, i)%walldist = 0.0
@@ -1712,29 +1712,29 @@ contains
         !fourth face
         ielem(n, i)%nodes_faces(4, 1) = ielem(n, i)%nodes(4)
         ielem(n, i)%nodes_faces(4, 2) = ielem(n, i)%nodes(1)
-        allocate (ielem(n, i)%faceanglex(ielem(n, i)%ifca)); allocate (ielem(n, i)%faceangley(ielem(n, i)%ifca)); 
-        allocate (ielem(n, i)%reorient(ielem(n, i)%ifca)); ielem(n, i)%reorient(:) = 0
+        allocate(ielem(n, i)%faceanglex(ielem(n, i)%ifca)); allocate(ielem(n, i)%faceangley(ielem(n, i)%ifca));
+        allocate(ielem(n, i)%reorient(ielem(n, i)%ifca)); ielem(n, i)%reorient(:) = 0
         if (fastest .eq. 0) then
-          allocate (ielem(n, i)%indexi(ielem(n, i)%ifca)); ielem(n, i)%indexi(:) = 0
+          allocate(ielem(n, i)%indexi(ielem(n, i)%ifca)); ielem(n, i)%indexi(:) = 0
         end if
         if (rungekutta .ge. 2) then
-          allocate (ielem(n, i)%dih(ielem(n, i)%ifca)); ielem(n, i)%dih = zero
+          allocate(ielem(n, i)%dih(ielem(n, i)%ifca)); ielem(n, i)%dih = zero
 !            allocate(ielem(n,i)%dih2(ielem(n,i)%ifca,dims)); ielem(n,i)%dih2=zero
 
         end if
       case (6) !triangular
-        ielem(n, i)%ifca = 3; 
-        allocate (ielem(n, i)%nodes_faces(3, 2))
+        ielem(n, i)%ifca = 3;
+        allocate(ielem(n, i)%nodes_faces(3, 2))
         if (tecplot .eq. 5) then
-          allocate (ielem(n, i)%nodes_faces_v(3, 2))
+          allocate(ielem(n, i)%nodes_faces_v(3, 2))
         end if
 
         if (code_profile .eq. 30) then
-          allocate (ielem(n, i)%nodes_neighbours(3, 30))
+          allocate(ielem(n, i)%nodes_neighbours(3, 30))
           ielem(n, i)%nodes_neighbours = 0
         end if
 
-        allocate (ielem(n, i)%ineighg(3))
+        allocate(ielem(n, i)%ineighg(3))
         ielem(n, i)%nodes_faces(:, :) = 0
         ielem(n, i)%vdec = 1
         ielem(n, i)%totvolume = 0.0; ielem(n, i)%minedge = 0.0; ielem(n, i)%walldist = 0.0
@@ -1753,15 +1753,15 @@ contains
         ielem(n, i)%nodes_faces(3, 2) = ielem(n, i)%nodes(1)
 
         if (rungekutta .ge. 2) then
-          allocate (ielem(n, i)%dih(ielem(n, i)%ifca)); ielem(n, i)%dih = zero
+          allocate(ielem(n, i)%dih(ielem(n, i)%ifca)); ielem(n, i)%dih = zero
 !            allocate(ielem(n,i)%dih2(ielem(n,i)%ifca,dims)); ielem(n,i)%dih2=zero
 
         end if
 
-        allocate (ielem(n, i)%faceanglex(ielem(n, i)%ifca)); allocate (ielem(n, i)%faceangley(ielem(n, i)%ifca)); 
-        allocate (ielem(n, i)%reorient(ielem(n, i)%ifca)); ielem(n, i)%reorient(:) = 0
+        allocate(ielem(n, i)%faceanglex(ielem(n, i)%ifca)); allocate(ielem(n, i)%faceangley(ielem(n, i)%ifca));
+        allocate(ielem(n, i)%reorient(ielem(n, i)%ifca)); ielem(n, i)%reorient(:) = 0
         if (fastest .eq. 0) then
-          allocate (ielem(n, i)%indexi(ielem(n, i)%ifca)); ielem(n, i)%indexi(:) = 0
+          allocate(ielem(n, i)%indexi(ielem(n, i)%ifca)); ielem(n, i)%indexi(:) = 0
         end if
 
       end select
@@ -1779,7 +1779,7 @@ contains
 
     do i = 1, imaxn
       if (inoder2(i)%numberofneib .gt. 0) then
-        allocate (inoder2(i)%neibids(inoder2(i)%numberofneib))
+        allocate(inoder2(i)%neibids(inoder2(i)%numberofneib))
         inoder2(i)%neibids(:) = 0
         inoder2(i)%numberofneib = 0
       end if
@@ -1978,13 +1978,13 @@ contains
 
 ! allocate(icons(1:countxsize))   1st
 
-    allocate (iconr(n:n))
-    allocate (iconr(n)%howmanyi(1))
+    allocate(iconr(n:n))
+    allocate(iconr(n)%howmanyi(1))
 
     iconr(n)%procid = n
     iconr(n)%howmanyi(1) = kj                        !this is the total number of neighbours i need
 
-    allocate (iconr(n)%whichi(iconr(n)%howmanyi(1), 6))
+    allocate(iconr(n)%whichi(iconr(n)%howmanyi(1), 6))
     iconr(n)%whichi(:, :) = 0
 !
     kj = 0
@@ -2102,10 +2102,10 @@ contains
 
 !-------------------for debugging only -----------------------------------------!
     if (iperiodicity .eq. 1) then
-      allocate (iconrpm(n:n))
-      allocate (iconrpm(n)%howmanyi(1))
+      allocate(iconrpm(n:n))
+      allocate(iconrpm(n)%howmanyi(1))
       iconrpm(n)%howmanyi(1) = kj
-      allocate (iconrpm(n)%whichi(kj, 3))
+      allocate(iconrpm(n)%whichi(kj, 3))
       iconrpm(n)%whichi(:, :) = 0
       kj = 0
       !
@@ -2127,21 +2127,21 @@ contains
 
       jjj = 0
       !-------------------for debugging only -----------------------------------------!
-      allocate (iconrpa(n:n))
-      allocate (iconrpf(1:isize - 1))
+      allocate(iconrpa(n:n))
+      allocate(iconrpf(1:isize - 1))
 
       do i = 1, isize - 1
-        allocate (iconrpf(i)%howmanyi(1))
+        allocate(iconrpf(i)%howmanyi(1))
         iconrpf(i)%howmanyi(1) = 0
         iconrpf(i)%howmanyi(1) = iconrpm(n)%howmanyi(1) - jjj
-        allocate (iconrpf(i)%whichi(iconrpf(i)%howmanyi(1), 1))
+        allocate(iconrpf(i)%whichi(iconrpf(i)%howmanyi(1), 1))
         iconrpf(i)%whichi(:, :) = 0
       end do
-      allocate (iconrpa(n)%howmanyi(1))
+      allocate(iconrpa(n)%howmanyi(1))
       iconrpa(n)%howmanyi(1) = 0
       iconrpa(n)%howmanyi(1) = iconrpm(n)%howmanyi(1) - jjj
-      allocate (iconrpa(n)%whichi(iconrpm(n)%howmanyi(1) - jjj, 3))
-      allocate (iconrpa(n)%facx(iconrpm(n)%howmanyi(1) - jjj, 3))
+      allocate(iconrpa(n)%whichi(iconrpm(n)%howmanyi(1) - jjj, 3))
+      allocate(iconrpa(n)%facx(iconrpm(n)%howmanyi(1) - jjj, 3))
       iconrpa(n)%whichi(:, :) = 0
       iconrpa(n)%facx(:, :) = 0.d0
       kj = 0
@@ -2179,10 +2179,10 @@ contains
       call mpi_barrier(mpi_comm_world, ierror)
 
       !-------------------for debugging only -----------------------------------------!
-      allocate (iconspo(1:isize - 1))
+      allocate(iconspo(1:isize - 1))
 
       do i = 1, isize - 1
-        allocate (iconspo(i)%howmanythey(1))
+        allocate(iconspo(i)%howmanythey(1))
         iconspo(i)%howmanythey(1) = 0
       end do
       !-------------------for debugging only -----------------------------------------!
@@ -2209,8 +2209,8 @@ contains
 
       call mpi_barrier(mpi_comm_world, ierror)
       do i = 1, isize - 1
-        allocate (iconspo(i)%whichthey(iconspo(i)%howmanythey(1), 1))
-        allocate (iconspo(i)%facx(iconspo(i)%howmanythey(1), 3))
+        allocate(iconspo(i)%whichthey(iconspo(i)%howmanythey(1), 1))
+        allocate(iconspo(i)%facx(iconspo(i)%howmanythey(1), 3))
         iconspo(i)%whichthey(:, :) = 0
         iconspo(i)%facx(:, :) = 0.d0
       end do
@@ -2328,15 +2328,15 @@ contains
       end if
       call mpi_barrier(mpi_comm_world, ierror)
 
-      deallocate (iconrpa)
-      deallocate (iconrpf)
-      deallocate (iconrpm)
-      deallocate (iconspo)
+      deallocate(iconrpa)
+      deallocate(iconrpf)
+      deallocate(iconrpm)
+      deallocate(iconspo)
     end if
 
     call mpi_barrier(mpi_comm_world, ierror)
 
-    deallocate (iconr)
+    deallocate(iconr)
 
 !
 
@@ -2384,12 +2384,12 @@ contains
     end if
     end do
 
-    allocate (iconr(n:n))
-    allocate (icons(1:isize - 1))
-    allocate (iconr(n)%howmanyi(1))
+    allocate(iconr(n:n))
+    allocate(icons(1:isize - 1))
+    allocate(iconr(n)%howmanyi(1))
 
     do i = 1, isize - 1
-      allocate (icons(i)%howmanythey(1))
+      allocate(icons(i)%howmanythey(1))
       icons(i)%howmanythey(1) = 0
     end do
     iconr(n)%procid = n
@@ -2413,12 +2413,12 @@ contains
       end if
     end do
 
-    allocate (iconr(n)%whichi(iconr(n)%howmanyi(1), 4))
+    allocate(iconr(n)%whichi(iconr(n)%howmanyi(1), 4))
     iconr(n)%whichi(:, :) = 0
     do i = 1, isize - 1
-      allocate (icons(i)%whichthey(icons(i)%howmanythey(1), 4))
-      allocate (icons(i)%ret(icons(i)%howmanythey(1)))
-      allocate (icons(i)%retm(iconr(n)%howmanyi(1)))
+      allocate(icons(i)%whichthey(icons(i)%howmanythey(1), 4))
+      allocate(icons(i)%ret(icons(i)%howmanythey(1)))
+      allocate(icons(i)%retm(iconr(n)%howmanyi(1)))
       icons(i)%whichthey(:, :) = 0
       icons(i)%ret(:) = 0
       icons(i)%retm(:) = 0
@@ -2528,10 +2528,10 @@ contains
 !-------------------for debugging only -----------------------------------------!
     if (iperiodicity .eq. 1) then
 
-      allocate (iconrpm(n:n))
-      allocate (iconrpm(n)%howmanyi(1))
+      allocate(iconrpm(n:n))
+      allocate(iconrpm(n)%howmanyi(1))
       iconrpm(n)%howmanyi(1) = kj
-      allocate (iconrpm(n)%whichi(kj, 3))
+      allocate(iconrpm(n)%whichi(kj, 3))
       iconrpm(n)%whichi(:, :) = 0
       kj = 0
       kj = 0
@@ -2549,21 +2549,21 @@ contains
 
       jjj = 0
 !-------------------for debugging only -----------------------------------------!
-      allocate (iconrpa(n:n))
-      allocate (iconrpf(1:isize - 1))
+      allocate(iconrpa(n:n))
+      allocate(iconrpf(1:isize - 1))
 
       do i = 1, isize - 1
-        allocate (iconrpf(i)%howmanyi(1))
+        allocate(iconrpf(i)%howmanyi(1))
         iconrpf(i)%howmanyi(1) = 0
         iconrpf(i)%howmanyi(1) = iconrpm(n)%howmanyi(1) - jjj
-        allocate (iconrpf(i)%whichi(iconrpf(i)%howmanyi(1), 1))
+        allocate(iconrpf(i)%whichi(iconrpf(i)%howmanyi(1), 1))
         iconrpf(i)%whichi(:, :) = 0
       end do
-      allocate (iconrpa(n)%howmanyi(1))
+      allocate(iconrpa(n)%howmanyi(1))
       iconrpa(n)%howmanyi(1) = 0
       iconrpa(n)%howmanyi(1) = iconrpm(n)%howmanyi(1) - jjj
-      allocate (iconrpa(n)%whichi(iconrpm(n)%howmanyi(1) - jjj, 3))
-      allocate (iconrpa(n)%facx(iconrpm(n)%howmanyi(1) - jjj, 2))
+      allocate(iconrpa(n)%whichi(iconrpm(n)%howmanyi(1) - jjj, 3))
+      allocate(iconrpa(n)%facx(iconrpm(n)%howmanyi(1) - jjj, 2))
       iconrpa(n)%whichi(:, :) = 0
       iconrpa(n)%facx(:, :) = 0.d0
       kj = 0
@@ -2597,10 +2597,10 @@ contains
       call mpi_barrier(mpi_comm_world, ierror)
 !
 !-------------------for debugging only -----------------------------------------!
-      allocate (iconspo(1:isize - 1))
+      allocate(iconspo(1:isize - 1))
 
       do i = 1, isize - 1
-        allocate (iconspo(i)%howmanythey(1))
+        allocate(iconspo(i)%howmanythey(1))
         iconspo(i)%howmanythey(1) = 0
       end do
 
@@ -2627,8 +2627,8 @@ contains
 
       call mpi_barrier(mpi_comm_world, ierror)
       do i = 1, isize - 1
-        allocate (iconspo(i)%whichthey(iconspo(i)%howmanythey(1), 1))
-        allocate (iconspo(i)%facx(iconspo(i)%howmanythey(1), 3))
+        allocate(iconspo(i)%whichthey(iconspo(i)%howmanythey(1), 1))
+        allocate(iconspo(i)%facx(iconspo(i)%howmanythey(1), 3))
         iconspo(i)%whichthey(:, :) = 0
         iconspo(i)%facx(:, :) = 0.d0
       end do
@@ -2724,16 +2724,16 @@ contains
         print *, "error detected in boundary conditions matching rules"
       end if
       call mpi_barrier(mpi_comm_world, ierror)
-      deallocate (iconrpa)
-      deallocate (iconrpf)
-      deallocate (iconrpm)
-      deallocate (iconspo)
+      deallocate(iconrpa)
+      deallocate(iconrpf)
+      deallocate(iconrpm)
+      deallocate(iconspo)
     end if
 
     call mpi_barrier(mpi_comm_world, ierror)
 
-    deallocate (icons)
-    deallocate (iconr)
+    deallocate(icons)
+    deallocate(iconr)
 
 
   end subroutine cons2d
@@ -2773,9 +2773,9 @@ contains
       call allsx(stcon, stconc, stcons, stcong, isosa, ifsat, iistart, ix)
 
 
-      if (icompact .ge. 1) then    
+      if (icompact .ge. 1) then
 
-        if (dimensiona .eq. 3) then    
+        if (dimensiona .eq. 3) then
           ibn = ielem(n, k)%ifca
           ilocalallelg3(1, 1:iselem) = zero
 
@@ -2788,7 +2788,7 @@ contains
               x_ste = xand2r(cand(xmpie(candid2)), xmpil(candid2), 1)
               y_ste = xand2r(cand(xmpie(candid2)), xmpil(candid2), 2)
               z_ste = xand2r(cand(xmpie(candid2)), xmpil(candid2), 3)
-              if (iperiodicity .eq. 1) then     
+              if (iperiodicity .eq. 1) then
 
                 if (abs(x_ste - ielem(n, k)%xxc) .gt. xper*oo2) then
                   x_ste = x_ste + (xper*sign(1.0, ielem(n, k)%xxc - xper*oo2))
@@ -2800,7 +2800,7 @@ contains
                   z_ste = z_ste + (zper*sign(1.0, ielem(n, k)%zzc - zper*oo2))
                 end if
 
-              end if         
+              end if
               ilocalallelgd(1, j) = sqrt(((x_ste - ielem(n, k)%xxc)**2) + &
                                          ((y_ste - ielem(n, k)%yyc)**2) + ((z_ste - ielem(n, k)%zzc)**2) + (tolsmall*j))
             else
@@ -3668,7 +3668,7 @@ contains
     case (4)
 
       vext(1, :) = bc(:)
-      vext(2, 1:3) = vext(6, 1:3); vext(3, 1:3) = vext(5, 1:3); vext(4, 1:3) = vext(7, 1:3); 
+      vext(2, 1:3) = vext(6, 1:3); vext(3, 1:3) = vext(5, 1:3); vext(4, 1:3) = vext(7, 1:3);
       vgg(:) = vg(:)
       call computejacobians(n, vext, vva1, deta)
       if (iperiodicity .eq. 1) then
@@ -3698,7 +3698,7 @@ contains
       end if
 
       vext(1, :) = bc(:)
-      vext(2, 1:3) = vext(6, 1:3); vext(3, 1:3) = vext(8, 1:3); vext(4, 1:3) = vext(7, 1:3); 
+      vext(2, 1:3) = vext(6, 1:3); vext(3, 1:3) = vext(8, 1:3); vext(4, 1:3) = vext(7, 1:3);
       call computejacobians(n, vext, vva1, deta)
       if (iperiodicity .eq. 1) then
         if (per_rot .eq. 0) then
@@ -3726,7 +3726,7 @@ contains
       end if
 
       vext(1, :) = bc(:)
-      vext(2, 1:3) = vext(5, 1:3); vext(3, 1:3) = vext(8, 1:3); vext(4, 1:3) = vext(7, 1:3); 
+      vext(2, 1:3) = vext(5, 1:3); vext(3, 1:3) = vext(8, 1:3); vext(4, 1:3) = vext(7, 1:3);
       call computejacobians(n, vext, vva1, deta)
       if (iperiodicity .eq. 1) then
         if (per_rot .eq. 0) then
@@ -3754,7 +3754,7 @@ contains
       end if
 
       vext(1, :) = bc(:)
-      vext(2, 1:3) = vext(5, 1:3); vext(3, 1:3) = vext(8, 1:3); vext(4, 1:3) = vext(6, 1:3); 
+      vext(2, 1:3) = vext(5, 1:3); vext(3, 1:3) = vext(8, 1:3); vext(4, 1:3) = vext(6, 1:3);
       call computejacobians(n, vext, vva1, deta)
       if (iperiodicity .eq. 1) then
         if (per_rot .eq. 0) then
@@ -3928,7 +3928,7 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
 
           stnsha = ielem(n, i)%ifca
           iconsi = i
-          bc(1) = ielem(n, i)%xxc; bc(2) = ielem(n, i)%yyc; bc(3) = ielem(n, i)%zzc; 
+          bc(1) = ielem(n, i)%xxc; bc(2) = ielem(n, i)%yyc; bc(3) = ielem(n, i)%zzc;
           ishyape = ielem(n, i)%ishape
 
           il = 0
@@ -4068,7 +4068,7 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
           stnsha = ielem(n, i)%ifca
           iconsi = i
           iconsi = i
-          bc(1) = ielem(n, i)%xxc; bc(2) = ielem(n, i)%yyc; 
+          bc(1) = ielem(n, i)%xxc; bc(2) = ielem(n, i)%yyc;
           ishyape = ielem(n, i)%ishape
           il = 0
           do iaddx = 1, stnsha        !for all stencils
@@ -4448,7 +4448,7 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
           stnsha = ielem(n, i)%ifca
           iconsi = i
 
-          bc(1) = ielem(n, i)%xxc; bc(2) = ielem(n, i)%yyc; bc(3) = ielem(n, i)%zzc; 
+          bc(1) = ielem(n, i)%xxc; bc(2) = ielem(n, i)%yyc; bc(3) = ielem(n, i)%zzc;
           ishyape = ielem(n, i)%ishape
           do il = 1, stnsha        !for all stencils
             if (ielem(n, i)%types_faces(il) .eq. 5) then
@@ -4486,7 +4486,7 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
 
                     ifg = xmpil((ilocalallelg(n, i, 1, j)))
                     iconsi = ifg
-                    vg(1) = ielem(n, iconsi)%xxc; vg(2) = ielem(n, iconsi)%yyc; vg(3) = ielem(n, iconsi)%zzc; 
+                    vg(1) = ielem(n, iconsi)%xxc; vg(2) = ielem(n, iconsi)%yyc; vg(3) = ielem(n, iconsi)%zzc;
                     n_node = ifno
 
                     call check_condition(n, n_node, bc, vg, vext, is_periodic, isatisfied)
@@ -4563,7 +4563,7 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
           end if
           stnsha = ielem(n, i)%ifca
           iconsi = i
-          bc(1) = ielem(n, i)%xxc; bc(2) = ielem(n, i)%yyc; 
+          bc(1) = ielem(n, i)%xxc; bc(2) = ielem(n, i)%yyc;
           do il = 1, stnsha        !for all stencils
             ifno = 2
             vext(2, 1:2) = inoder(ielem(n, i)%nodes_faces(il, 1))%cord(1:2)
@@ -4892,7 +4892,7 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
     integer, intent(in)::iextend, n
     integer::i, itemd, ilxx
 
-    allocate (iselemt(n:n))
+    allocate(iselemt(n:n))
 
     if (dimensiona .eq. 3) then
     if (iorder .ge. 2) then
@@ -5058,44 +5058,44 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
 !!!!!!!!!!!!!!!!!!!with information such as!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!order of accuracy methods etc!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  subroutine gaussianpoints(igqrules, numberofpoints, numberofpoints2)
+  subroutine gaussian_points(igqrules, numberofpoints, numberofpoints2)
 !> @brief
 !> this subroutine determines quadrature points required for each spatial order of accuracy and for each cell type
     implicit none
     integer, intent(inout)::igqrules, numberofpoints, numberofpoints2
     if (dimensiona .eq. 3) then
       if (igqrules .eq. 1) then
-        qp_hexa = 1; qp_tetra = 1; qp_pyra = 1; qp_prism = 1; 
+        qp_hexa = 1; qp_tetra = 1; qp_pyra = 1; qp_prism = 1;
         qp_quad = 1; qp_triangle = 1
       end if
       if (igqrules .eq. 2) then
 
-        qp_hexa = 8; qp_tetra = 4; qp_pyra = 5; qp_prism = 6; 
+        qp_hexa = 8; qp_tetra = 4; qp_pyra = 5; qp_prism = 6;
         qp_quad = 4; qp_triangle = 3
 
       end if
       if (igqrules .eq. 3) then
-        qp_hexa = 27; qp_tetra = 14; qp_pyra = 15; qp_prism = 18; 
+        qp_hexa = 27; qp_tetra = 14; qp_pyra = 15; qp_prism = 18;
         qp_quad = 9; qp_triangle = 6
 
       end if
       if (igqrules .eq. 4) then
-        qp_hexa = 64; qp_tetra = 24; qp_pyra = 15; qp_prism = 24; 
+        qp_hexa = 64; qp_tetra = 24; qp_pyra = 15; qp_prism = 24;
         qp_quad = 16; qp_triangle = 10
 
       end if
       if (igqrules .eq. 5) then
-        qp_hexa = 125; qp_tetra = 35; qp_pyra = 15; qp_prism = 50; 
+        qp_hexa = 125; qp_tetra = 35; qp_pyra = 15; qp_prism = 50;
         qp_quad = 25; qp_triangle = 15
 
       end if
       if (igqrules .eq. 6) then
-        qp_hexa = 216; qp_tetra = 56; qp_pyra = 15; qp_prism = 60; 
+        qp_hexa = 216; qp_tetra = 56; qp_pyra = 15; qp_prism = 60;
         qp_quad = 36; qp_triangle = 21
 
       end if
       if (igqrules .ge. 7) then
-        qp_hexa = 216; qp_tetra = 56; qp_pyra = 15; qp_prism = 60; 
+        qp_hexa = 216; qp_tetra = 56; qp_pyra = 15; qp_prism = 60;
         qp_quad = 36; qp_triangle = 36
       end if
       if (reduce_comp .eq. 1) then
@@ -5138,7 +5138,7 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
       end if
 
     end if
-  end subroutine gaussianpoints
+  end subroutine gaussian_points
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -5155,7 +5155,7 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
       write (97, *) 'variables="x","y","z"'
 
       write (97, *) 'zone n=', 4, ',e=', 1, ',zonetype = fequadrilateral,', 'datapacking = block'
-      allocate (xx(imaxn), yy(imaxn), zz(imaxn))
+      allocate(xx(imaxn), yy(imaxn), zz(imaxn))
       do i = 1, kmaxe
         if (ielem(n, i)%ishape .eq. 6) then
           do ijd = 1, ielem(n, i)%nonodes
@@ -5651,8 +5651,8 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
     nof_interior = k
     nof_bounded = j
 
-    allocate (el_int(k)); el_int(:) = 0
-    allocate (el_bnd(j)); el_int(:) = 0
+    allocate(el_int(k)); el_int(:) = 0
+    allocate(el_bnd(j)); el_int(:) = 0
 
     j = 0
     k = 0

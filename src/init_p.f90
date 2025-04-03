@@ -43,9 +43,9 @@ module initialisation
       prev_turbequation = 2
     end if
     if (lamps .eq. 1) then
-      allocate (rg(nof_variables + prev_turbequation + 1))
+      allocate(rg(nof_variables + prev_turbequation + 1))
     else
-      allocate (rg(nof_variables + prev_turbequation))
+      allocate(rg(nof_variables + prev_turbequation))
     end if
 
     veccos(1:nof_variables) = 0.0
@@ -297,7 +297,7 @@ module initialisation
     end if
     initialres = 0.0d0
 
-    deallocate (rg)
+    deallocate(rg)
   end subroutine initialise
 
   subroutine assign_initial(iconsidered, inc, voltemp, wequa3d, pox, poy, poz, count_1)

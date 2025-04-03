@@ -85,9 +85,9 @@ contains
                          null, &
                          null, &
                          shrconn)
-        allocate (xbin(imaxn))
-        allocate (ybin(imaxn))
-        allocate (zbin(imaxn))
+        allocate(xbin(imaxn))
+        allocate(ybin(imaxn))
+        allocate(zbin(imaxn))
         if (binio .eq. 0) then
           open (96, file='grid.vrt', form='formatted', status='old', action='read')
           do i = 1, imaxn
@@ -110,10 +110,10 @@ contains
         ierr = tecdat112(imaxn, xbin, 1)
         ierr = tecdat112(imaxn, ybin, 1)
         ierr = tecdat112(imaxn, zbin, 1)
-        deallocate (xbin, ybin, zbin)
+        deallocate(xbin, ybin, zbin)
         if (binio .eq. 0) then
           open (98, file='grid.cel', form='formatted', status='old', action='read')
-          allocate (icon(8, 1))
+          allocate(icon(8, 1))
           icon = 0
           cv = 0
           do k = 1, imaxe
@@ -122,10 +122,10 @@ contains
           end do
           close (98)
           !ierr = tecnod112(icon)
-          deallocate (icon)
+          deallocate(icon)
         else
           open (98, file='grid.cel', form='unformatted', status='old', action='read')
-          allocate (icon(8, 1))
+          allocate(icon(8, 1))
           icon = 0
           cv = 0
           do k = 1, imaxe
@@ -134,7 +134,7 @@ contains
           end do
           close (98)
           !ierr = tecnod112(icon)
-          deallocate (icon)
+          deallocate(icon)
         end if
       end if
     end if
@@ -218,8 +218,8 @@ contains
                          null, &
                          null, &
                          shrconn)
-        allocate (xbin(imaxn))
-        allocate (ybin(imaxn))
+        allocate(xbin(imaxn))
+        allocate(ybin(imaxn))
         if (binio .eq. 0) then
           open (96, file='grid.vrt', form='formatted', status='old', action='read')
           do i = 1, imaxn
@@ -239,10 +239,10 @@ contains
         end if
         ierr = tecdat112(imaxn, xbin, 1)  !!! why not xbin instead of xbin(1) ??
         ierr = tecdat112(imaxn, ybin, 1)
-        deallocate (xbin, ybin)
+        deallocate(xbin, ybin)
         if (binio .eq. 0) then
           open (98, file='grid.cel', form='formatted', status='old', action='read')
-          allocate (icon(4, 1))
+          allocate(icon(4, 1))
           icon = 0
           cv = 0
           do k = 1, imaxe
@@ -250,10 +250,10 @@ contains
             ierr = tecnode112(4, icon)
           end do
           close (98)
-          deallocate (icon)
+          deallocate(icon)
         else
           open (98, file='grid.cel', form='unformatted', status='old', action='read')
-          allocate (icon(4, 1))
+          allocate(icon(4, 1))
           icon = 0
           cv = 0
           do k = 1, imaxe
@@ -261,7 +261,7 @@ contains
             ierr = tecnode112(4, icon)
           end do
           close (98)
-          deallocate (icon)
+          deallocate(icon)
         end if
         ierr = tecend112()
       end if
@@ -298,8 +298,8 @@ contains
     integer:: null(*)
     kmaxe = xmpielrank(n)
     if (n .eq. 0) then
-      allocate (xbin(imaxe))
-      allocate (variables(8))
+      allocate(xbin(imaxe))
+      allocate(variables(8))
       nullptr = 0
       debug = 0
       filetype = 2
@@ -308,7 +308,7 @@ contains
       write (proc3, fmt='(i10)') it
       outfile = "out_"//trim(adjustl(proc3))//".plt"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
     if (itestcase .eq. 3) then
@@ -322,7 +322,7 @@ contains
                                      visdouble)
     end if
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
       imax = imaxn
       jmax = imaxe
       kmax = 0
@@ -363,7 +363,7 @@ contains
       ierr = tecdat112(imaxe, xbin, 1)
       ierr = tecdat112(imaxe, xbin, 1)
       ierr = tecend112()
-      deallocate (xbin, variables, valuelocation)
+      deallocate(xbin, variables, valuelocation)
     end if
     call mpi_barrier(mpi_comm_world, ierror)
   end subroutine outwrite3n
@@ -399,7 +399,7 @@ contains
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(2))
+    allocate(variables(2))
     kmaxe = xmpielrank(n)
     if (n .eq. 0) then
       nullptr = 0
@@ -410,7 +410,7 @@ contains
       write (proc3, fmt='(i10)') it
       outfile = "mov_"//trim(adjustl(proc3))//".plt"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
     call mpi_barrier(mpi_comm_world, ierror)
@@ -425,7 +425,7 @@ contains
                                      visdouble)
     end if
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
       imax = imaxn
       jmax = imaxe
       kmax = 0
@@ -463,11 +463,11 @@ contains
                        null, &
                        shrconn)
 
-      allocate (xbin(imaxe), xbin2(imaxe))
+      allocate(xbin(imaxe), xbin2(imaxe))
     else
-      allocate (xbin2(1))
+      allocate(xbin2(1))
     end if
-    allocate (valuess(kmaxe))
+    allocate(valuess(kmaxe))
     do i = 1, kmaxe
       leftv(1:nof_variables) = u_c(i)%val(1, 1:nof_variables)
       call cons2prim2(n, leftv, rightv, mp_pinfl, mp_pinfr, gammal, gammar)
@@ -492,9 +492,9 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
     if (n .eq. 0) then
       ierr = tecend112()
-      deallocate (xbin, valuelocation, out1)
+      deallocate(xbin, valuelocation, out1)
     end if
-    deallocate (valuess, variables, xbin2)
+    deallocate(valuess, variables, xbin2)
   end subroutine movie
   subroutine outwrite3vb
     use iso_c_binding
@@ -528,7 +528,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(14))
+    allocate(variables(14))
     kmaxe = xmpielrank(n)
     if (n .eq. 0) then
       nullptr = 0
@@ -540,7 +540,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       !proc4=".plt"
       outfile = "out_"//trim(adjustl(proc3))//".plt"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
     call mpi_barrier(mpi_comm_world, ierror)
@@ -659,7 +659,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       end if
     end if
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
       imax = imaxn
       jmax = imaxe
       kmax = 0
@@ -697,11 +697,11 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                        null, &
                        shrconn)
 
-      allocate (xbin(imaxe), xbin2(imaxe))
+      allocate(xbin(imaxe), xbin2(imaxe))
     else
-      allocate (xbin2(1))
+      allocate(xbin2(1))
     end if
-    allocate (valuess(kmaxe))
+    allocate(valuess(kmaxe))
     if (itestcase .le. 2) then
       do i = 1, kmaxe
         valuess(i) = u_c(i)%val(1, 1)!0.0
@@ -755,7 +755,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
             valuess(i) = u_c(i)%val(1, kkd)
           end if
         end do
-		
+
 call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offset, mpi_double_precision, 0, mpi_comm_world, ierror)
         if (n .eq. 0) then
 		  do i = 1, imaxe
@@ -912,9 +912,9 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
     if (n .eq. 0) then
       ierr = tecend112()
-      deallocate (xbin, valuelocation, out1)
+      deallocate(xbin, valuelocation, out1)
     end if
-    deallocate (valuess, variables, xbin2)
+    deallocate(valuess, variables, xbin2)
   end subroutine outwrite3vb
   subroutine outwritetec3dbp
     use iso_c_binding
@@ -948,7 +948,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(15), icon(8, 1))
+    allocate(variables(15), icon(8, 1))
     kmaxe = xmpielrank(n)
     nullptr = 0
     debug = 0
@@ -959,7 +959,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     write (proc5, fmt='(i10)') n
     outfile = "out_"//trim(adjustl(proc3))//"_"//trim(adjustl(proc5))//".plt"!//trim(adjustl(proc4))
     itgfd = len_trim(outfile)
-    allocate (character(len=itgfd) ::out1)
+    allocate(character(len=itgfd) ::out1)
     out1 = outfile(1:itgfd)
     if (itestcase .le. 2) then
       nvar1 = 7
@@ -1064,7 +1064,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         end if
       end if
     end if
-    allocate (valuelocation(nvar1))
+    allocate(valuelocation(nvar1))
     imax = kmaxn
     jmax = kmaxe
     kmax = 0
@@ -1102,8 +1102,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                      valuelocation, &
                      null, &
                      shrconn)
-    allocate (xbin(kmaxn), xbin2(kmaxn), xbin3(kmaxn))
-    allocate (valuess(kmaxe))
+    allocate(xbin(kmaxn), xbin2(kmaxn), xbin3(kmaxn))
+    allocate(valuess(kmaxe))
     do i = 1, kmaxn
       xbin(i) = inoder4(i)%cord(1);
       xbin2(i) = inoder4(i)%cord(2);
@@ -1204,8 +1204,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       ierr = tecnode112(8, icon)
     end do
     ierr = tecend112()
-    deallocate (xbin, valuelocation, out1, xbin2, xbin3, icon)
-    deallocate (valuess, variables)
+    deallocate(xbin, valuelocation, out1, xbin2, xbin3, icon)
+    deallocate(valuess, variables)
   end subroutine outwritetec3dbp
   subroutine outwritetec3dbpav
     use iso_c_binding
@@ -1239,7 +1239,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(15), icon(1, 8))
+    allocate(variables(15), icon(1, 8))
     kmaxe = xmpielrank(n)
     nullptr = 0
     debug = 0
@@ -1251,7 +1251,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     !proc4=".plt"
     outfile = "out_"//trim(adjustl(proc3))//"_"//trim(adjustl(proc5))//".plt"!//trim(adjustl(proc4))
     itgfd = len_trim(outfile)
-    allocate (character(len=itgfd) ::out1)
+    allocate(character(len=itgfd) ::out1)
     out1 = outfile(1:itgfd)
     if (itestcase .le. 2) then
       nvar1 = 7
@@ -1355,7 +1355,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         end if
       end if
     end if
-    allocate (valuelocation(nvar1))
+    allocate(valuelocation(nvar1))
     imax = kmaxn
     jmax = kmaxe
     kmax = 0
@@ -1393,8 +1393,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                      valuelocation, &
                      null, &
                      shrconn)
-    allocate (xbin(kmaxn), xbin2(kmaxn), xbin3(kmaxn))
-    allocate (valuess(kmaxe))
+    allocate(xbin(kmaxn), xbin2(kmaxn), xbin3(kmaxn))
+    allocate(valuess(kmaxe))
     do i = 1, kmaxn
       xbin = inoder4(i)%cord(1);
       xbin2 = inoder4(i)%cord(2);
@@ -1529,9 +1529,9 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end do
 
     ierr = tecend112()
-    deallocate (xbin, valuelocation, out1, xbin2, xbin3, icon)
+    deallocate(xbin, valuelocation, out1, xbin2, xbin3, icon)
 
-    deallocate (valuess, variables)
+    deallocate(valuess, variables)
 
   end subroutine outwritetec3dbpav
 
@@ -1569,7 +1569,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(10))
+    allocate(variables(10))
 
     kmaxe = xmpielrank(n)
 
@@ -1579,7 +1579,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_allreduce(dumg, duml, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
     imaxp = duml
 
-    allocate (icell(imaxp))
+    allocate(icell(imaxp))
     icell = 0
 
     do i = 1, kmaxe
@@ -1587,14 +1587,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end do
 
     if (n .eq. 0) then
-      allocate (icella(imaxp*isize))
+      allocate(icella(imaxp*isize))
       icella = 0
 
     end if
 
     call mpi_gather(icell, imaxp, mpi_integer, icella, imaxp, mpi_integer, 0, mpi_comm_world, ierror)
     call mpi_barrier(mpi_comm_world, ierror)
-    deallocate (icell)
+    deallocate(icell)
 
     if (n .eq. 0) then
 
@@ -1608,7 +1608,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (proc3, fmt='(i10)') it
       outfile = "out_"//trim(adjustl(proc3))//".plt"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
       open (97, file=outfile, form='formatted', status='new', action='write')
     end if
@@ -1707,14 +1707,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (97, *) ', solutiontime=', t
     end if
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
       valuelocation(:) = 0
-      allocate (valuesa(imaxp*isize))
-      allocate (xbin(imaxe))
+      allocate(valuesa(imaxp*isize))
+      allocate(xbin(imaxe))
       valuesa = zero
     end if
     call mpi_barrier(mpi_comm_world, ierror)
-    allocate (valuess(imaxp))
+    allocate(valuess(imaxp))
     valuess = zero
     if (itestcase .le. 2) then
     do i = 1, kmaxe
@@ -1828,14 +1828,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     if (n .eq. 0) then
       close (97)
-      deallocate (xbin, valuesa, valuelocation, icella)
-      deallocate (out1)
+      deallocate(xbin, valuesa, valuelocation, icella)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
-    deallocate (variables)
+    deallocate(variables)
 
   end subroutine outwrite3v
   subroutine outwrite3v2d
@@ -1870,24 +1870,24 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(10))
+    allocate(variables(10))
     kmaxe = xmpielrank(n)
     dumg = kmaxe
     call mpi_barrier(mpi_comm_world, ierror)
     call mpi_allreduce(dumg, duml, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
     imaxp = duml
-    allocate (icell(imaxp))
+    allocate(icell(imaxp))
     icell = 0
     do i = 1, kmaxe
       icell(i) = ielem(n, i)%ihexgl
     end do
     if (n .eq. 0) then
-      allocate (icella(imaxp*isize))
+      allocate(icella(imaxp*isize))
       icella = 0
     end if
     call mpi_gather(icell, imaxp, mpi_integer, icella, imaxp, mpi_integer, 0, mpi_comm_world, ierror)
     call mpi_barrier(mpi_comm_world, ierror)
-    deallocate (icell)
+    deallocate(icell)
     if (n .eq. 0) then
       nullptr = 0
       debug = 0
@@ -1898,7 +1898,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       !proc4=".plt"
       outfile = "out_"//trim(adjustl(proc3))//".plt"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
       open (97, file=outfile, form='formatted', status='new', action='write')
 
@@ -2012,18 +2012,18 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       valuelocation(:) = 0
 
-      allocate (valuesa(imaxp*isize))
-      allocate (xbin(imaxe))
+      allocate(valuesa(imaxp*isize))
+      allocate(xbin(imaxe))
       valuesa = zero
 
     end if
 
     call mpi_barrier(mpi_comm_world, ierror)
-    allocate (valuess(imaxp))
+    allocate(valuess(imaxp))
     valuess = zero
 
     if (itestcase .le. 2) then
@@ -2160,14 +2160,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     if (n .eq. 0) then
       close (97)
-      deallocate (xbin, valuesa, valuelocation, icella)
-      deallocate (out1)
+      deallocate(xbin, valuesa, valuelocation, icella)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
-    deallocate (variables)
+    deallocate(variables)
 
   end subroutine outwrite3v2d
 
@@ -2205,7 +2205,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(10))
+    allocate(variables(10))
 
     kmaxe = xmpielrank(n)
 
@@ -2218,7 +2218,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (proc3, fmt='(i10)') it
       outfile = "out_"//trim(adjustl(proc3))//".plt"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
 
@@ -2332,7 +2332,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       imax = imaxn
       jmax = imaxe
@@ -2375,12 +2375,12 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                        null, &
                        shrconn)
 
-      allocate (xbin(1:imaxe), xbin2(1:imaxe))
+      allocate(xbin(1:imaxe), xbin2(1:imaxe))
     else
-      allocate (xbin2(1))
+      allocate(xbin2(1))
     end if
 
-    allocate (valuess(1:kmaxe))
+    allocate(valuess(1:kmaxe))
 
     if (itestcase .le. 2) then
     do i = 1, kmaxe
@@ -2634,10 +2634,10 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     if (n .eq. 0) then
       ierr = tecend112()
-      deallocate (xbin, valuelocation, out1)
+      deallocate(xbin, valuelocation, out1)
     end if
 
-    deallocate (valuess, variables, xbin2)
+    deallocate(valuess, variables, xbin2)
 
   end subroutine outwrite3vb2d
 
@@ -2695,7 +2695,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     vrtfile = 'grid.vrt'
     bndfile = 'grid.bnd'
 
-    allocate (isent(3))
+    allocate(isent(3))
 
     if (n .eq. 0) then
 
@@ -2816,7 +2816,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     imaxe = isent(1)
     imaxn = isent(2)
     imaxb = isent(3)
-    deallocate (isent)
+    deallocate(isent)
 
   end subroutine open_arbitrary
 
@@ -2891,8 +2891,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     kmaxe = xmpielrank(n)
 
     if (dimensiona .eq. 3) then
-      allocate (inoder(imaxn))
-      allocate (inoder2(imaxn))
+      allocate(inoder(imaxn))
+      allocate(inoder2(imaxn))
       inoder2(1:imaxn)%numberofneib = 0
       inoder(1:imaxn)%itor = 0
       if (binio .eq. 0) then
@@ -2916,39 +2916,39 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
               ielem(n, kk)%ishape = shap
               ielem(n, kk)%ifca = 6
               ielem(n, kk)%nonodes = nodal
-              allocate (ielem(n, kk)%nodes(nodal))
+              allocate(ielem(n, kk)%nodes(nodal))
               ielem(n, kk)%nodes(1:nodal) = idv(1:nodal)
-              allocate (ielem(n, kk)%surf(ielem(n, kk)%ifca))
+              allocate(ielem(n, kk)%surf(ielem(n, kk)%ifca))
 
             end if
             if ((idv(3) .eq. idv(4)) .and. (idv(5) .eq. idv(6)) .and. (idv(6) .eq. idv(7)) .and. (idv(7) .eq. idv(8))) then
               shap = 2; nodal = 4!tetrahedral element
               ielem(n, kk)%ishape = shap
-              allocate (ielem(n, kk)%nodes(nodal))
+              allocate(ielem(n, kk)%nodes(nodal))
               ielem(n, kk)%nonodes = nodal
               ielem(n, kk)%ifca = 4
               ielem(n, kk)%nodes(1:3) = idv(1:3)
               ielem(n, kk)%nodes(4) = idv(5)
-              allocate (ielem(n, kk)%surf(ielem(n, kk)%ifca))
+              allocate(ielem(n, kk)%surf(ielem(n, kk)%ifca))
             end if
             if ((idv(3) .ne. idv(4)) .and. (idv(5) .eq. idv(6)) .and. (idv(6) .eq. idv(7)) .and. (idv(7) .eq. idv(8))) then
               shap = 3; nodal = 5!pyramidal element
               ielem(n, kk)%ishape = shap
-              allocate (ielem(n, kk)%nodes(nodal))
+              allocate(ielem(n, kk)%nodes(nodal))
               ielem(n, kk)%ifca = 5
               ielem(n, kk)%nonodes = nodal
               ielem(n, kk)%nodes(1:nodal) = idv(1:nodal)
-              allocate (ielem(n, kk)%surf(ielem(n, kk)%ifca))
+              allocate(ielem(n, kk)%surf(ielem(n, kk)%ifca))
             end if
             if ((idv(3) .eq. idv(4)) .and. (idv(5) .ne. idv(6)) .and. (idv(7) .eq. idv(8))) then
               shap = 4; nodal = 6!prism element
               ielem(n, kk)%ishape = shap
               ielem(n, kk)%ifca = 5
               ielem(n, kk)%nonodes = nodal
-              allocate (ielem(n, kk)%nodes(nodal))
+              allocate(ielem(n, kk)%nodes(nodal))
               ielem(n, kk)%nodes(1:3) = idv(1:3)
               ielem(n, kk)%nodes(4:6) = idv(5:7)
-              allocate (ielem(n, kk)%surf(ielem(n, kk)%ifca))
+              allocate(ielem(n, kk)%surf(ielem(n, kk)%ifca))
             end if
 
           else
@@ -2975,39 +2975,39 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
               ielem(n, kk)%ishape = shap
               ielem(n, kk)%ifca = 6
               ielem(n, kk)%nonodes = nodal
-              allocate (ielem(n, kk)%nodes(nodal))
+              allocate(ielem(n, kk)%nodes(nodal))
               ielem(n, kk)%nodes(1:nodal) = idv(1:nodal)
-              allocate (ielem(n, kk)%surf(ielem(n, kk)%ifca))
+              allocate(ielem(n, kk)%surf(ielem(n, kk)%ifca))
 
             end if
             if ((idv(3) .eq. idv(4)) .and. (idv(5) .eq. idv(6)) .and. (idv(6) .eq. idv(7)) .and. (idv(7) .eq. idv(8))) then
               shap = 2; nodal = 4!tetrahedral element
               ielem(n, kk)%ishape = shap
-              allocate (ielem(n, kk)%nodes(nodal))
+              allocate(ielem(n, kk)%nodes(nodal))
               ielem(n, kk)%nonodes = nodal
               ielem(n, kk)%ifca = 4
               ielem(n, kk)%nodes(1:3) = idv(1:3)
               ielem(n, kk)%nodes(4) = idv(5)
-              allocate (ielem(n, kk)%surf(ielem(n, kk)%ifca))
+              allocate(ielem(n, kk)%surf(ielem(n, kk)%ifca))
             end if
             if ((idv(3) .ne. idv(4)) .and. (idv(5) .eq. idv(6)) .and. (idv(6) .eq. idv(7)) .and. (idv(7) .eq. idv(8))) then
               shap = 3; nodal = 5!pyramidal element
               ielem(n, kk)%ishape = shap
-              allocate (ielem(n, kk)%nodes(nodal))
+              allocate(ielem(n, kk)%nodes(nodal))
               ielem(n, kk)%ifca = 5
               ielem(n, kk)%nonodes = nodal
               ielem(n, kk)%nodes(1:nodal) = idv(1:nodal)
-              allocate (ielem(n, kk)%surf(ielem(n, kk)%ifca))
+              allocate(ielem(n, kk)%surf(ielem(n, kk)%ifca))
             end if
             if ((idv(3) .eq. idv(4)) .and. (idv(5) .ne. idv(6)) .and. (idv(7) .eq. idv(8))) then
               shap = 4; nodal = 6!prism element
               ielem(n, kk)%ishape = shap
               ielem(n, kk)%ifca = 5
               ielem(n, kk)%nonodes = nodal
-              allocate (ielem(n, kk)%nodes(nodal))
+              allocate(ielem(n, kk)%nodes(nodal))
               ielem(n, kk)%nodes(1:3) = idv(1:3)
               ielem(n, kk)%nodes(4:6) = idv(5:7)
-              allocate (ielem(n, kk)%surf(ielem(n, kk)%ifca))
+              allocate(ielem(n, kk)%surf(ielem(n, kk)%ifca))
             end if
 
           else
@@ -3016,8 +3016,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         end do
       end if
     else
-      allocate (inoder(imaxn))
-      allocate (inoder2(imaxn))
+      allocate(inoder(imaxn))
+      allocate(inoder2(imaxn))
       inoder2(:)%numberofneib = 0
       inoder(:)%itor = 0
       if (binio .eq. 0) then
@@ -3038,19 +3038,19 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
               shap = 5; nodal = 4        !quadrilateral
               ielem(n, kk)%ishape = shap
               ielem(n, kk)%nonodes = nodal
-              allocate (ielem(n, kk)%nodes(nodal))
+              allocate(ielem(n, kk)%nodes(nodal))
               ielem(n, kk)%ifca = 4
               ielem(n, kk)%nodes(1:nodal) = idv(1:nodal)
-              allocate (ielem(n, kk)%surf(ielem(n, kk)%ifca))
+              allocate(ielem(n, kk)%surf(ielem(n, kk)%ifca))
             else
 
               shap = 6; nodal = 3!triangular
               ielem(n, kk)%ishape = shap
-              allocate (ielem(n, kk)%nodes(nodal))
+              allocate(ielem(n, kk)%nodes(nodal))
               ielem(n, kk)%nonodes = nodal
               ielem(n, kk)%ifca = 3
               ielem(n, kk)%nodes(1:nodal) = idv(1:nodal)
-              allocate (ielem(n, kk)%surf(ielem(n, kk)%ifca))
+              allocate(ielem(n, kk)%surf(ielem(n, kk)%ifca))
 
             end if
 
@@ -3077,19 +3077,19 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
               shap = 5; nodal = 4        !quadrilateral
               ielem(n, kk)%ishape = shap
               ielem(n, kk)%nonodes = nodal
-              allocate (ielem(n, kk)%nodes(nodal))
+              allocate(ielem(n, kk)%nodes(nodal))
               ielem(n, kk)%ifca = 4
               ielem(n, kk)%nodes(1:nodal) = idv(1:nodal)
-              allocate (ielem(n, kk)%surf(ielem(n, kk)%ifca))
+              allocate(ielem(n, kk)%surf(ielem(n, kk)%ifca))
             else
 
               shap = 6; nodal = 3!triangular
               ielem(n, kk)%ishape = shap
-              allocate (ielem(n, kk)%nodes(nodal))
+              allocate(ielem(n, kk)%nodes(nodal))
               ielem(n, kk)%nonodes = nodal
               ielem(n, kk)%ifca = 3
               ielem(n, kk)%nodes(1:nodal) = idv(1:nodal)
-              allocate (ielem(n, kk)%surf(ielem(n, kk)%ifca))
+              allocate(ielem(n, kk)%surf(ielem(n, kk)%ifca))
 
             end if
 
@@ -3118,7 +3118,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
           ymax(n) = max(ymax(n), y)
           zmax(n) = max(zmax(n), z)
 
-          allocate (inoder(j)%cord(1:3))
+          allocate(inoder(j)%cord(1:3))
           inoder(j)%cord(1) = x
           inoder(j)%cord(2) = y
           inoder(j)%cord(3) = z
@@ -3141,7 +3141,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
           ymax(n) = max(ymax(n), y)
           zmax(n) = max(zmax(n), z)
 
-          allocate (inoder(j)%cord(1:3))
+          allocate(inoder(j)%cord(1:3))
           inoder(j)%cord(1) = x
           inoder(j)%cord(2) = y
           inoder(j)%cord(3) = z
@@ -3166,7 +3166,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
             xmax(n) = max(xmax(n), x)
             ymax(n) = max(ymax(n), y)
 
-            allocate (inoder(j)%cord(1:2))
+            allocate(inoder(j)%cord(1:2))
             inoder(j)%cord(1) = x
             inoder(j)%cord(2) = y
           else
@@ -3186,7 +3186,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
             xmax(n) = max(xmax(n), x)
             ymax(n) = max(ymax(n), y)
 
-            allocate (inoder(j)%cord(1:2))
+            allocate(inoder(j)%cord(1:2))
             inoder(j)%cord(1) = x
             inoder(j)%cord(2) = y
           else
@@ -3217,7 +3217,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       do j = 1, imaxn
 
         if (inoder(j)%itor .gt. 0) then
-          allocate (inoder2(j)%xne(1)); inoder2(j)%xne(1) = 0
+          allocate(inoder2(j)%xne(1)); inoder2(j)%xne(1) = 0
         end if
 
       end do
@@ -3243,7 +3243,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
         if (inoder(j)%itor .gt. 0) then
         if (inoder2(j)%xne(1) .gt. 0) then
-          allocate (inoder2(j)%xneib(inoder2(j)%xne(1))); inoder2(j)%xneib = 0
+          allocate(inoder2(j)%xneib(inoder2(j)%xne(1))); inoder2(j)%xneib = 0
           inoder2(j)%xne(1) = 0
         end if
         end if
@@ -3309,7 +3309,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         x = x/scaler; y = y/scaler; z = z/scaler
         if (inoder2(j)%numberofneib .eq. 0) then
 
-          allocate (inoder(j)%cord(1:3))
+          allocate(inoder(j)%cord(1:3))
 !                           if ((j.eq.709).or.(j.eq.710).or.(j.eq.693).or.(j.eq.692))then
 
 !                           end if
@@ -3332,7 +3332,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         x = x/scaler; y = y/scaler
         if (inoder2(j)%numberofneib .eq. 0) then
 
-          allocate (inoder(j)%cord(1:2))
+          allocate(inoder(j)%cord(1:2))
           inoder(j)%cord(1) = x
           inoder(j)%cord(2) = y
         end if
@@ -3351,7 +3351,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         x = x/scaler; y = y/scaler; z = z/scaler
         if (inoder2(j)%numberofneib .eq. 0) then
 
-          allocate (inoder(j)%cord(1:3))
+          allocate(inoder(j)%cord(1:3))
 !                           if ((j.eq.709).or.(j.eq.710).or.(j.eq.693).or.(j.eq.692))then
 
 !                           end if
@@ -3374,7 +3374,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         x = x/scaler; y = y/scaler
         if (inoder2(j)%numberofneib .eq. 0) then
 
-          allocate (inoder(j)%cord(1:2))
+          allocate(inoder(j)%cord(1:2))
           inoder(j)%cord(1) = x
           inoder(j)%cord(2) = y
         end if
@@ -3811,7 +3811,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_allreduce(countwall, countwallglobal, 1, mpi_integer, mpi_sum, mpi_comm_world, ierror)
     call mpi_barrier(mpi_comm_world, ierror)
 !  print*,countwallglobal,'total wall elements',n
-    allocate (wallbnd(countwallglobal))
+    allocate(wallbnd(countwallglobal))
 
     countwall = 0
     bndfile = 'grid.bnd'
@@ -3843,7 +3843,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     close (10)
 
 !  print*,countwall,'total wall elements2',n
-    allocate (wallvrt(imaxn))
+    allocate(wallvrt(imaxn))
     if (binio .eq. 0) open (11, file=vrtfile, form='formatted', status='old', action='read')
     if (binio .eq. 1) open (11, file=vrtfile, form='unformatted', status='old', action='read')
 ! read node coordinates and store
@@ -3899,8 +3899,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       end do
     end do
 
-    deallocate (wallbnd)
-    deallocate (wallvrt)
+    deallocate(wallbnd)
+    deallocate(wallvrt)
 
   end subroutine
 
@@ -3941,7 +3941,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_allreduce(countwall, countwallglobal, 1, mpi_integer, mpi_sum, mpi_comm_world, ierror)
     call mpi_barrier(mpi_comm_world, ierror)
 
-    allocate (wallbnd(countwallglobal))
+    allocate(wallbnd(countwallglobal))
 
     countwall = 0
     bndfile = 'grid.bnd'
@@ -3971,7 +3971,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
     close (10)
 
-    allocate (wallvrt(imaxn))
+    allocate(wallvrt(imaxn))
     if (binio .eq. 0) open (11, file=vrtfile, form='formatted', status='old', action='read')
     if (binio .eq. 1) open (11, file=vrtfile, form='unformatted', status='old', action='read')
     if (binio .eq. 0) then
@@ -4008,8 +4008,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         end if
       end do
     end do
-    deallocate (wallbnd)
-    deallocate (wallvrt)
+    deallocate(wallbnd)
+    deallocate(wallvrt)
   end subroutine
   subroutine outwritegridbs
     use iso_c_binding
@@ -4047,7 +4047,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     if ((n .eq. 0) .and. (totwalls .gt. 0)) then
       if (binio .eq. 0) open (96, file='grid.bnd', form='formatted', status='old', action='read')
       if (binio .eq. 1) open (96, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (inog(imaxn))
+      allocate(inog(imaxn))
       inog(:) = 0
       if (binio .eq. 0) then
       do i = 1, imaxb
@@ -4078,13 +4078,13 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         end if
       end do
       itotalb = igf2
-      deallocate (inog)
+      deallocate(inog)
     end if
     else
     if ((n .eq. 0) .and. (totwalls .gt. 0)) then
       if (binio .eq. 0) open (96, file='grid.bnd', form='formatted', status='old', action='read')
       if (binio .eq. 1) open (96, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (inog(imaxn))
+      allocate(inog(imaxn))
       inog(:) = 0
       if (binio .eq. 0) then
       do i = 1, imaxb
@@ -4164,9 +4164,9 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                        null, &
                        null, &
                        shrconn)
-      allocate (xbin(igf2))
-      allocate (ybin(igf2))
-      allocate (zbin(igf2))
+      allocate(xbin(igf2))
+      allocate(ybin(igf2))
+      allocate(zbin(igf2))
       if (binio .eq. 0) open (96, file='grid.vrt', form='formatted', status='old', action='read')
       if (binio .eq. 1) open (96, file='grid.vrt', form='unformatted', status='old', action='read')
       igf2 = 0
@@ -4199,10 +4199,10 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       ierr = tecdat112(igf2, xbin, 1)  !!! why not xbin instead of xbin(1) ??
       ierr = tecdat112(igf2, ybin, 1)
       ierr = tecdat112(igf2, zbin, 1)
-      deallocate (xbin, ybin, zbin)
+      deallocate(xbin, ybin, zbin)
       if (binio .eq. 0) open (98, file='grid.bnd', form='formatted', status='old', action='read')
       if (binio .eq. 1) open (98, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (icon(4, totwalls))
+      allocate(icon(4, totwalls))
       icon = 0
       cv = 0
       igf2 = 0
@@ -4231,8 +4231,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       end if
       close (98)
       ierr = tecnod112(icon)
-      deallocate (icon)
-      deallocate (inog)
+      deallocate(icon)
+      deallocate(inog)
       ierr = tecend112()
     end if
     call mpi_barrier(mpi_comm_world, ierror)
@@ -4274,7 +4274,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     if ((n .eq. 0) .and. (totwalls .gt. 0)) then
       if (binio .eq. 0) open (96, file='grid.bnd', form='formatted', status='old', action='read')
       if (binio .eq. 1) open (96, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (inog(imaxn))
+      allocate(inog(imaxn))
       inog(:) = 0
       if (binio .eq. 0) then
       do i = 1, imaxb
@@ -4305,13 +4305,13 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         end if
       end do
       itotalb = igf2
-      deallocate (inog)
+      deallocate(inog)
     end if
     else
     if ((n .eq. 0) .and. (totwalls .gt. 0)) then
       if (binio .eq. 0) open (96, file='grid.bnd', form='formatted', status='old', action='read')
       if (binio .eq. 1) open (96, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (inog(imaxn))
+      allocate(inog(imaxn))
       inog(:) = 0
       if (binio .eq. 0) then
       do i = 1, imaxb
@@ -4347,9 +4347,9 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (97, *) 'filetype=grid'
       write (97, *) 'variables="x","y","z"'
       write (97, *) 'zone n=', imaxn, ',e=', imaxe, ',zonetype = fequadrilateral,', 'datapacking = block'
-      allocate (xbin(igf2))
-      allocate (ybin(igf2))
-      allocate (zbin(igf2))
+      allocate(xbin(igf2))
+      allocate(ybin(igf2))
+      allocate(zbin(igf2))
       if (binio .eq. 0) then
         open (96, file='grid.vrt', form='formatted', status='old', action='read')
         igf2 = 0
@@ -4383,10 +4383,10 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (97, *) xbin(1:igf2)
       write (97, *) ybin(1:igf2)
       write (97, *) zbin(1:igf2)
-      deallocate (xbin, ybin, zbin)
+      deallocate(xbin, ybin, zbin)
       if (binio .eq. 0) open (98, file='grid.bnd', form='formatted', status='old', action='read')
       if (binio .eq. 1) open (98, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (icon(4, totwalls))
+      allocate(icon(4, totwalls))
       icon = 0
       cv = 0
       igf2 = 0
@@ -4417,8 +4417,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       do i = 1, igf2
         write (97, *) icon(1:4, i)
       end do
-      deallocate (icon)
-      deallocate (inog)
+      deallocate(icon)
+      deallocate(inog)
       close (97)
     end if
     call mpi_barrier(mpi_comm_world, ierror)
@@ -4460,7 +4460,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     if ((n .eq. 0) .and. (totwalls .gt. 0)) then
       if (binio .eq. 0) open (96, file='grid.bnd', form='formatted', status='old', action='read')
       if (binio .eq. 1) open (96, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (inog(imaxn))
+      allocate(inog(imaxn))
       inog(:) = 0
       if (binio .eq. 0) then
       do i = 1, imaxb
@@ -4487,20 +4487,20 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         end if
       end do
       itotalb = igf2
-      deallocate (inog)
+      deallocate(inog)
     end if
     else
     if ((n .eq. 0) .and. (totwalls .gt. 0)) then
       if (binio .eq. 0) open (96, file='grid.bnd', form='formatted', status='old', action='read')
       if (binio .eq. 1) open (96, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (inog(imaxn))
+      allocate(inog(imaxn))
       inog(:) = 0
       if (binio .eq. 0) then
       do i = 1, imaxb
         read (96, *) igf, k, j, l, m, o
         if (o .eq. 4) then
           inog(k) = 1
-          inog(j) = 
+          inog(j) =
         end if
       end do
       else
@@ -4525,8 +4525,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (97, *) 'filetype=grid'
       write (97, *) 'variables="x","y"'
       write (97, *) 'zone n=', imaxn, ',e=', imaxe, ',zonetype = feline,', 'datapacking = block'
-      allocate (xbin(igf2))
-      allocate (ybin(igf2))
+      allocate(xbin(igf2))
+      allocate(ybin(igf2))
       if (binio .eq. 0) then
         open (96, file='grid.vrt', form='formatted', status='old', action='read')
         igf2 = 0
@@ -4556,10 +4556,10 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       end if
       write (97, *) xbin(1:igf2)
       write (97, *) ybin(1:igf2)
-      deallocate (xbin, ybin)
+      deallocate(xbin, ybin)
       if (binio .eq. 0) open (98, file='grid.bnd', form='formatted', status='old', action='read')
       if (binio .eq. 1) open (98, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (icon(2, totwalls))
+      allocate(icon(2, totwalls))
       icon = 0
       cv = 0
       igf2 = 0
@@ -4586,8 +4586,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       do i = 1, igf2
         write (97, *) icon(1:2, i)
       end do
-      deallocate (icon)
-      deallocate (inog)
+      deallocate(icon)
+      deallocate(inog)
       close (97)
     end if
     call mpi_barrier(mpi_comm_world, ierror)
@@ -4630,7 +4630,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     if ((n .eq. 0) .and. (totwalls .gt. 0)) then
       if (binio .eq. 0) open (96, file='grid.bnd', form='formatted', status='old', action='read')
       if (binio .eq. 1) open (96, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (inog(imaxn))
+      allocate(inog(imaxn))
       inog(:) = 0
       if (binio .eq. 0) then
       do i = 1, imaxb
@@ -4657,13 +4657,13 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         end if
       end do
       itotalb = igf2
-      deallocate (inog)
+      deallocate(inog)
     end if
     else
     if ((n .eq. 0) .and. (totwalls .gt. 0)) then
       if (binio .eq. 0) open (96, file='grid.bnd', form='formatted', status='old', action='read')
       if (binio .eq. 1) open (96, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (inog(imaxn))
+      allocate(inog(imaxn))
       inog(:) = 0
       if (binio .eq. 0) then
       do i = 1, imaxb
@@ -4737,8 +4737,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                        null, &
                        null, &
                        shrconn)
-      allocate (xbin(igf2))
-      allocate (ybin(igf2))
+      allocate(xbin(igf2))
+      allocate(ybin(igf2))
       if (binio .eq. 0) then
         open (96, file='grid.vrt', form='formatted', status='old', action='read')
         igf2 = 0
@@ -4768,10 +4768,10 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       end if
       ierr = tecdat112(igf2, xbin, 1)  !!! why not xbin instead of xbin(1) ??
       ierr = tecdat112(igf2, ybin, 1)
-      deallocate (xbin, ybin)
+      deallocate(xbin, ybin)
       if (binio .eq. 0) open (98, file='grid.bnd', form='formatted', status='old', action='read')
       if (binio .eq. 1) open (98, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (icon(2, totwalls))
+      allocate(icon(2, totwalls))
       icon = 0
       cv = 0
       igf2 = 0
@@ -4796,8 +4796,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       end if
       close (98)
       ierr = tecnod112(icon)
-      deallocate (icon)
-      deallocate (inog)
+      deallocate(icon)
+      deallocate(inog)
       ierr = tecend112()
     end if
 
@@ -5049,7 +5049,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (proc3, fmt='(i10)') it
       outfile = "surf_"//trim(adjustl(proc3))//'.plt'
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
 
     end if
@@ -5153,7 +5153,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       imax = itotalb
       jmax = totwalls
@@ -5194,15 +5194,15 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                        null, &
                        shrconn)
 
-      allocate (xbin(totwalls), xbin2(totwalls))
+      allocate(xbin(totwalls), xbin2(totwalls))
 
     else
-      allocate (xbin2(1))
+      allocate(xbin2(1))
 
     end if
 
     totiw = xmpiwall(n)
-    allocate (valuess(xmpiwall(n)))
+    allocate(valuess(xmpiwall(n)))
     call mpi_barrier(mpi_comm_world, ierror)
 
     if (itestcase .le. 2) then
@@ -5361,10 +5361,10 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     if (n .eq. 0) then
       ierr = tecend112()
-      deallocate (valuelocation, out1, xbin)
+      deallocate(valuelocation, out1, xbin)
     end if
 !   if (totiw.gt.0)then
-    deallocate (valuess, xbin2)
+    deallocate(valuess, xbin2)
 !   end if
 
   end subroutine outwrite3vsb
@@ -5421,7 +5421,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       !proc4=".plt"
       outfile = "surf_"//trim(adjustl(proc3))//'.plt'
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
 
@@ -5524,7 +5524,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       imax = itotalb
       jmax = totwalls
@@ -5565,16 +5565,16 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                        null, &
                        shrconn)
 
-      allocate (xbin(totwalls), xbin2(totwalls))
+      allocate(xbin(totwalls), xbin2(totwalls))
 
     else
-      allocate (xbin2(1))
+      allocate(xbin2(1))
 
     end if
 
     totiw = xmpiwall(n)
 !   if (xmpiwall(n).gt.0)then
-    allocate (valuess(xmpiwall(n)))
+    allocate(valuess(xmpiwall(n)))
 !   end if
 
     if (itestcase .le. 2) then
@@ -5725,11 +5725,11 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     if (n .eq. 0) then
       ierr = tecend112()
-      deallocate (xbin, valuelocation, out1)
+      deallocate(xbin, valuelocation, out1)
     end if
 
 !   if (totiw.gt.0)then
-    deallocate (valuess, xbin2)
+    deallocate(valuess, xbin2)
 !   end if
 
   end subroutine outwrite3vsb2d
@@ -5780,7 +5780,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_allreduce(dumg, duml, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
     imaxp = duml
 
-    allocate (icell(imaxp))
+    allocate(icell(imaxp))
     icell = 0
 
     iloop = 0
@@ -5800,7 +5800,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (icella(imaxp*isize))
+      allocate(icella(imaxp*isize))
       icella = 0
 
     end if
@@ -5808,7 +5808,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_gather(icell, imaxp, mpi_integer, icella, imaxp, mpi_integer, 0, mpi_comm_world, ierror)
 
     call mpi_barrier(mpi_comm_world, ierror)
-    deallocate (icell)
+    deallocate(icell)
 
     if (n .eq. 0) then
 
@@ -5823,7 +5823,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       !proc4=".plt"
       outfile = "surf_"//trim(adjustl(proc3))//'.plt'
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
 !         out1=out1//char(0)
 
@@ -5949,18 +5949,18 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       valuelocation(:) = 0
 
-      allocate (valuesa(imaxp*isize))
-      allocate (xbin(totwalls))
+      allocate(valuesa(imaxp*isize))
+      allocate(xbin(totwalls))
       valuesa = 0.0
 
     end if
 
     call mpi_barrier(mpi_comm_world, ierror)
-    allocate (valuess(imaxp))
+    allocate(valuess(imaxp))
     valuess = 0.0
 
     if (itestcase .le. 2) then
@@ -6170,10 +6170,10 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
     if (n .eq. 0) then
 
-      deallocate (xbin, valuesa, valuelocation, icella)
-      deallocate (out1)
+      deallocate(xbin, valuesa, valuelocation, icella)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -6225,7 +6225,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_allreduce(dumg, duml, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
     imaxp = duml
 
-    allocate (icell(imaxp))
+    allocate(icell(imaxp))
     icell = 0
 
     iloop = 0
@@ -6245,7 +6245,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (icella(imaxp*isize))
+      allocate(icella(imaxp*isize))
       icella = 0
 
     end if
@@ -6254,7 +6254,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
 
     call mpi_barrier(mpi_comm_world, ierror)
-    deallocate (icell)
+    deallocate(icell)
 
     if (n .eq. 0) then
 
@@ -6269,7 +6269,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       !proc4=".plt"
       outfile = "surf_"//trim(adjustl(proc3))//'.plt'
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
 !         out1=out1//char(0)
 
@@ -6399,7 +6399,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       imax = itotalb
       jmax = totwalls
@@ -6423,14 +6423,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
       valuelocation(:) = 0
 
-      allocate (valuesa(imaxp*isize))
-      allocate (xbin(totwalls))
+      allocate(valuesa(imaxp*isize))
+      allocate(xbin(totwalls))
       valuesa = 0.0
 
     end if
 
     call mpi_barrier(mpi_comm_world, ierror)
-    allocate (valuess(imaxp))
+    allocate(valuess(imaxp))
     valuess = 0.0
 
     if (itestcase .le. 2) then
@@ -6647,10 +6647,10 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     if (n .eq. 0) then
 
-      deallocate (xbin, valuesa, valuelocation, icella)
-      deallocate (out1)
+      deallocate(xbin, valuesa, valuelocation, icella)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -6690,7 +6690,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(13))
+    allocate(variables(13))
 
     kmaxe = xmpielrank(n)
 
@@ -6706,7 +6706,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (proc3, fmt='(i10)') it
       outfile = "vol_aver_"//trim(adjustl(proc3))//".plt"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
 
     end if
@@ -6722,7 +6722,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                                    visdouble)
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       imax = imaxn
       jmax = imaxe
@@ -6765,11 +6765,11 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                        null, &
                        shrconn)
 
-      allocate (xbin(imaxe), xbin2(imaxe))
+      allocate(xbin(imaxe), xbin2(imaxe))
 
     end if
 
-    allocate (valuess(kmaxe))
+    allocate(valuess(kmaxe))
     valuess = zero
 
     if (rungekutta .eq. 4) then
@@ -6822,10 +6822,10 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     if (n .eq. 0) then
       ierr = tecend112()
-      deallocate (xbin, valuelocation, out1, xbin2)
+      deallocate(xbin, valuelocation, out1, xbin2)
     end if
 
-    deallocate (valuess, variables)
+    deallocate(valuess, variables)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -6865,7 +6865,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(10))
+    allocate(variables(10))
 
     kmaxe = xmpielrank(n)
 
@@ -6875,7 +6875,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_allreduce(dumg, duml, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
     imaxp = duml
 
-    allocate (icell(imaxp))
+    allocate(icell(imaxp))
     icell = 0
 
     do i = 1, kmaxe
@@ -6883,7 +6883,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end do
 
     if (n .eq. 0) then
-      allocate (icella(imaxp*isize))
+      allocate(icella(imaxp*isize))
       icella = 0
 
     end if
@@ -6891,7 +6891,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_gather(icell, imaxp, mpi_integer, icella, imaxp, mpi_integer, 0, mpi_comm_world, ierror)
 
     call mpi_barrier(mpi_comm_world, ierror)
-    deallocate (icell)
+    deallocate(icell)
 
     if (n .eq. 0) then
 
@@ -6906,7 +6906,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       !proc4=".plt"
       outfile = "vol_aver_"//trim(adjustl(proc3))//".plt"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
 !         out1=out1//char(0)
 
@@ -6923,7 +6923,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                                    visdouble)
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       imax = imaxn
       jmax = imaxe
@@ -6966,14 +6966,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                        null, &
                        shrconn)
 
-      allocate (valuesa(imaxp*isize))
-      allocate (xbin(imaxe))
+      allocate(valuesa(imaxp*isize))
+      allocate(xbin(imaxe))
       valuesa = zero
 
     end if
 
     call mpi_barrier(mpi_comm_world, ierror)
-    allocate (valuess(imaxp))
+    allocate(valuess(imaxp))
     valuess = zero
 
     if (rungekutta .eq. 4) then
@@ -7032,14 +7032,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     if (n .eq. 0) then
       ierr = tecend112()
-      deallocate (xbin, valuesa, valuelocation, icella)
-      deallocate (out1)
+      deallocate(xbin, valuesa, valuelocation, icella)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
-    deallocate (variables)
+    deallocate(variables)
 
   end subroutine outwrite3vb2dav
 
@@ -7079,7 +7079,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(13))
+    allocate(variables(13))
 
     kmaxe = xmpielrank(n)
 
@@ -7089,7 +7089,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_allreduce(dumg, duml, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
     imaxp = duml
 
-    allocate (icell(imaxp))
+    allocate(icell(imaxp))
     icell = 0
 
     do i = 1, kmaxe
@@ -7097,7 +7097,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end do
 
     if (n .eq. 0) then
-      allocate (icella(imaxp*isize))
+      allocate(icella(imaxp*isize))
       icella = 0
 
     end if
@@ -7105,7 +7105,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_gather(icell, imaxp, mpi_integer, icella, imaxp, mpi_integer, 0, mpi_comm_world, ierror)
 
     call mpi_barrier(mpi_comm_world, ierror)
-    deallocate (icell)
+    deallocate(icell)
 
     if (n .eq. 0) then
 
@@ -7120,7 +7120,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       !proc4=".plt"
       outfile = "vol_aver_"//trim(adjustl(proc3))//".plt"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
 !         out1=out1//char(0)
       open (97, file=outfile, form='formatted', status='new', action='write')
@@ -7134,16 +7134,16 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_barrier(mpi_comm_world, ierror)
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
-      allocate (valuesa(imaxp*isize))
-      allocate (xbin(imaxe))
+      allocate(valuesa(imaxp*isize))
+      allocate(xbin(imaxe))
       valuesa = zero
 
     end if
 
     call mpi_barrier(mpi_comm_world, ierror)
-    allocate (valuess(imaxp))
+    allocate(valuess(imaxp))
     valuess = zero
 
     do kkd = 1, 5
@@ -7195,14 +7195,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end do
 
     if (n .eq. 0) then
-      deallocate (xbin, valuesa, valuelocation, icella)
-      deallocate (out1)
+      deallocate(xbin, valuesa, valuelocation, icella)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
-    deallocate (variables)
+    deallocate(variables)
 
   end subroutine outwrite3vav
 
@@ -7250,7 +7250,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(10))
+    allocate(variables(10))
 
     kmaxe = xmpielrank(n)
 
@@ -7260,7 +7260,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_allreduce(dumg, duml, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
     imaxp = duml
 
-    allocate (icell(imaxp))
+    allocate(icell(imaxp))
     icell = 0
 
     do i = 1, kmaxe
@@ -7268,13 +7268,13 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end do
 
     if (n .eq. 0) then
-      allocate (icella(imaxp*isize))
+      allocate(icella(imaxp*isize))
       icella = 0
 
     end if
     call mpi_gather(icell, imaxp, mpi_integer, icella, imaxp, mpi_integer, 0, mpi_comm_world, ierror)
     call mpi_barrier(mpi_comm_world, ierror)
-    deallocate (icell)
+    deallocate(icell)
     if (n .eq. 0) then
       nullptr = 0
       debug = 0
@@ -7285,7 +7285,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
       outfile = "vol_aver_"//trim(adjustl(proc3))//".plt"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
 !         out1=out1//char(0)
       open (97, file=outfile, form='formatted', status='new', action='write')
@@ -7304,7 +7304,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     nvar1 = 7
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       imax = imaxn
       jmax = imaxe
@@ -7325,14 +7325,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
       valuelocation(:) = 0
 
-      allocate (valuesa(imaxp*isize))
-      allocate (xbin(imaxe))
+      allocate(valuesa(imaxp*isize))
+      allocate(xbin(imaxe))
       valuesa = zero
 
     end if
 
     call mpi_barrier(mpi_comm_world, ierror)
-    allocate (valuess(imaxp))
+    allocate(valuess(imaxp))
     valuess = zero
 
     do kkd = 1, 4
@@ -7384,12 +7384,12 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end do
 
     if (n .eq. 0) then
-      deallocate (xbin, valuesa, valuelocation, icella)
-      deallocate (out1)
+      deallocate(xbin, valuesa, valuelocation, icella)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
     call mpi_barrier(mpi_comm_world, ierror)
-    deallocate (variables)
+    deallocate(variables)
   end subroutine outwrite3v2dav
 
   subroutine outwrite3vsbav
@@ -7436,7 +7436,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (proc3, fmt='(i10)') it
       outfile = "surf_av"//trim(adjustl(proc3))//'.plt'
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
     if (itestcase .le. 2) then
@@ -7537,7 +7537,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       imax = itotalb
       jmax = totwalls
@@ -7578,12 +7578,12 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                        null, &
                        shrconn)
 
-      allocate (xbin(totwalls), xbin2(totwalls))
+      allocate(xbin(totwalls), xbin2(totwalls))
 
     end if
 
     totiw = xmpiwall(n)
-    allocate (valuess(xmpiwall(n)))
+    allocate(valuess(xmpiwall(n)))
     if (rungekutta .eq. 4) then
       ind1 = 7
 
@@ -7755,9 +7755,9 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     if (n .eq. 0) then
       ierr = tecend112()
-      deallocate (xbin, valuelocation, out1, xbin2)
+      deallocate(xbin, valuelocation, out1, xbin2)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
   end subroutine outwrite3vsbav
 
@@ -7807,7 +7807,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (proc3, fmt='(i10)') it
       outfile = "surf_av"//trim(adjustl(proc3))//'.plt'
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
     if (itestcase .le. 2) then
@@ -7907,7 +7907,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
       imax = itotalb
       jmax = totwalls
       kmax = 0
@@ -7947,12 +7947,12 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
                        null, &
                        shrconn)
 
-      allocate (xbin(totwalls), xbin2(totwalls))
+      allocate(xbin(totwalls), xbin2(totwalls))
 
     end if
 
     totiw = xmpiwall(n)
-    allocate (valuess(xmpiwall(n)))
+    allocate(valuess(xmpiwall(n)))
     if (itestcase .le. 2) then
 
       if (totiw .gt. 0) then
@@ -8082,11 +8082,11 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     if (n .eq. 0) then
       ierr = tecend112()
-      deallocate (xbin, valuelocation, out1, xbin2)
+      deallocate(xbin, valuelocation, out1, xbin2)
     end if
 
 !   if (totiw.gt.0)then
-    deallocate (valuess)
+    deallocate(valuess)
 !   end if
 
   end subroutine outwrite3vsb2dav
@@ -8132,7 +8132,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_barrier(mpi_comm_world, ierror)
     call mpi_allreduce(dumg, duml, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
     imaxp = duml
-    allocate (icell(imaxp))
+    allocate(icell(imaxp))
     icell = 0
     iloop = 0
     if (totiw .gt. 0) then
@@ -8151,12 +8151,12 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (icella(imaxp*isize))
+      allocate(icella(imaxp*isize))
       icella = 0
     end if
     call mpi_gather(icell, imaxp, mpi_integer, icella, imaxp, mpi_integer, 0, mpi_comm_world, ierror)
     call mpi_barrier(mpi_comm_world, ierror)
-    deallocate (icell)
+    deallocate(icell)
     if (n .eq. 0) then
       nullptr = 0
       debug = 0
@@ -8166,7 +8166,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (proc3, fmt='(i10)') it
       outfile = "surf_av"//trim(adjustl(proc3))//'.plt'
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
       open (97, file=outfile, form='formatted', status='new', action='write')
     end if
@@ -8286,18 +8286,18 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       valuelocation(:) = 0
 
-      allocate (valuesa(imaxp*isize))
-      allocate (xbin(totwalls))
+      allocate(valuesa(imaxp*isize))
+      allocate(xbin(totwalls))
       valuesa = 0.0
 
     end if
 
     call mpi_barrier(mpi_comm_world, ierror)
-    allocate (valuess(imaxp))
+    allocate(valuess(imaxp))
     valuess = 0.0
 
     if (itestcase .le. 2) then
@@ -8512,10 +8512,10 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     if (n .eq. 0) then
 
-      deallocate (xbin, valuesa, valuelocation, icella)
-      deallocate (out1)
+      deallocate(xbin, valuesa, valuelocation, icella)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -8568,7 +8568,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_allreduce(dumg, duml, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
     imaxp = duml
 
-    allocate (icell(imaxp))
+    allocate(icell(imaxp))
     icell = 0
 
     iloop = 0
@@ -8589,7 +8589,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (icella(imaxp*isize))
+      allocate(icella(imaxp*isize))
       icella = 0
 
     end if
@@ -8598,7 +8598,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
 
     call mpi_barrier(mpi_comm_world, ierror)
-    deallocate (icell)
+    deallocate(icell)
 
     if (n .eq. 0) then
 
@@ -8613,7 +8613,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       !proc4=".plt"
       outfile = "surf_av"//trim(adjustl(proc3))//'.plt'
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
 
       open (97, file=outfile, form='formatted', status='new', action='write')
@@ -8728,7 +8728,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (n .eq. 0) then
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       imax = itotalb
       jmax = totwalls
@@ -8747,14 +8747,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
       valuelocation(:) = 0
 
-      allocate (valuesa(imaxp*isize))
-      allocate (xbin(totwalls))
+      allocate(valuesa(imaxp*isize))
+      allocate(xbin(totwalls))
       valuesa = 0.0
 
     end if
 
     call mpi_barrier(mpi_comm_world, ierror)
-    allocate (valuess(imaxp))
+    allocate(valuess(imaxp))
     valuess = 0.0
 
     if (itestcase .le. 2) then
@@ -8966,10 +8966,10 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     if (n .eq. 0) then
 
-      deallocate (xbin, valuesa, valuelocation, icella)
-      deallocate (out1)
+      deallocate(xbin, valuesa, valuelocation, icella)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -9452,9 +9452,9 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     icpuid = n
     call mpi_barrier(mpi_comm_world, ierror)
     if (dg .eq. 1) then
-      allocate (dispt(kmaxe), array2(kmaxe*(nof_variables + turbulenceequations + passivescalar)*(idegfree + 1)))
+      allocate(dispt(kmaxe), array2(kmaxe*(nof_variables + turbulenceequations + passivescalar)*(idegfree + 1)))
     else
-      allocate (dispt(kmaxe), array2(kmaxe*(nof_variables + turbulenceequations + passivescalar)))
+      allocate(dispt(kmaxe), array2(kmaxe*(nof_variables + turbulenceequations + passivescalar)))
     end if
 
     if (dg .eq. 1) then
@@ -9523,7 +9523,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_type_create_indexed_block(kmaxe, n_end, dispt, mpi_double_precision, datatype, ierror)
     call mpi_type_commit(datatype, ierror)
 
-    allocate (array(1:nof_variables + turbulenceequations + passivescalar))
+    allocate(array(1:nof_variables + turbulenceequations + passivescalar))
 
     call mpi_file_open(mpi_comm_world, restfile, mpi_mode_wronly + mpi_mode_create, mpi_info_null, fh, ierror)
 
@@ -9573,7 +9573,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_file_close(fh, ierror)
     call mpi_type_free(datatype, ierror)
 
-    deallocate (array, dispt, array2)
+    deallocate(array, dispt, array2)
     call mpi_barrier(mpi_comm_world, ierror)
 
   end subroutine checkpoint
@@ -9600,10 +9600,10 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     iloopx = iloop
 
     if (iloopx .gt. 0) then
-      allocate (wall_l(1:iloopx, 1:4))
+      allocate(wall_l(1:iloopx, 1:4))
 
     else
-      allocate (wall_l(0, 0))
+      allocate(wall_l(0, 0))
     end if
 
     iloop = 0
@@ -9636,10 +9636,10 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     call mpi_allreduce(iloopx, iwmaxe, 1, mpi_integer, mpi_sum, mpi_comm_world, ierror)
 
-    allocate (wallshape_g(1:iwmaxe)); wallshape_g = 0
+    allocate(wallshape_g(1:iwmaxe)); wallshape_g = 0
 
     if (iloopx .gt. 0) then
-      allocate (wallshape(1:iloopx)); wallshape = 0
+      allocate(wallshape(1:iloopx)); wallshape = 0
 
       do i = 1, iloopx
         if (wall_l(i, 3) .eq. 2) then        !line
@@ -9656,11 +9656,11 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       end do
 
     else
-      allocate (wallshape(0:0)); wallshape = 0
+      allocate(wallshape(0:0)); wallshape = 0
     end if
 
     !we need the total with an offset
-    allocate (wallcx_g(0:isize - 1), offsetwc_g(0:isize - 1))
+    allocate(wallcx_g(0:isize - 1), offsetwc_g(0:isize - 1))
     wallcx_g(:) = 0
     offsetwc_g(0:isize - 1) = 0
 
@@ -9677,14 +9677,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       wallshape_g(offsetwc_g(n) + 1:offsetwc_g(n) + wallcx_g(n)) = wallshape(1:iloopx)
     end if
 
-    allocate (wallshape_g2(1:iwmaxe)); wallshape_g2 = 0
+    allocate(wallshape_g2(1:iwmaxe)); wallshape_g2 = 0
 
     call mpi_allreduce(wallshape_g, wallshape_g2, iwmaxe, mpi_integer, mpi_max, mpi_comm_world, ierror)
 
     if (iloopx .gt. 0) then
-      allocate (typ_nodesn_w(1:iloopx)); typ_nodesn_w(:) = 0
+      allocate(typ_nodesn_w(1:iloopx)); typ_nodesn_w(:) = 0
     else
-      allocate (typ_nodesn_w(0:0)); typ_nodesn_w(:) = 0
+      allocate(typ_nodesn_w(0:0)); typ_nodesn_w(:) = 0
     end if
     typ_countn_w = 0
     if (iloopx .gt. 0) then
@@ -9698,7 +9698,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       end do
     end if
 
-    allocate (nodes_offsetw(1:iwmaxe), nodes_offsetw2(1:iwmaxe))
+    allocate(nodes_offsetw(1:iwmaxe), nodes_offsetw2(1:iwmaxe))
 
     call mpi_allreduce(typ_countn_w, typ_countn_global_w, 1, mpi_integer, mpi_sum, mpi_comm_world, ierror)
 
@@ -9719,12 +9719,12 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end do
 
     if (iloopx .gt. 0) then
-      allocate (nodes_offset_localw(1:iloopx)); nodes_offset_localw = 0
-      allocate (nodes_offset_local2w(1:iloopx)); nodes_offset_local2w = 0
+      allocate(nodes_offset_localw(1:iloopx)); nodes_offset_localw = 0
+      allocate(nodes_offset_local2w(1:iloopx)); nodes_offset_local2w = 0
 
     else
-      allocate (nodes_offset_localw(0:0)); nodes_offset_localw = 0
-      allocate (nodes_offset_local2w(0:0)); nodes_offset_local2w = 0
+      allocate(nodes_offset_localw(0:0)); nodes_offset_localw = 0
+      allocate(nodes_offset_local2w(0:0)); nodes_offset_local2w = 0
     end if
 
     if (iloopx .gt. 0) then
@@ -9753,14 +9753,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     varg_max = max(write_variables_w, write_variables_av_w)
 
     if (iloopx .gt. 0) then
-      allocate (wdispart1(1:iloopx), wrarray_part1(1:iloopx, 1:varg_max))        !
+      allocate(wdispart1(1:iloopx), wrarray_part1(1:iloopx, 1:varg_max))        !
 
       do i = 1, iloopx
         wdispart1(i) = (wall_l(i, 4) - 1)*1
       end do
       wpart1_end = 1
     else
-      allocate (wdispart1(1), wrarray_part1(1, 1:write_variables_w))        !
+      allocate(wdispart1(1), wrarray_part1(1, 1:write_variables_w))        !
       wrarray_part1(1, :) = 0
       wdispart1(1) = 0!
       wpart1_end = 0
@@ -9768,7 +9768,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (iloopx .gt. 0) then
-      allocate (wdispart2(1:iloopx), wiarray_part2(1:typ_countn_w))                !
+      allocate(wdispart2(1:iloopx), wiarray_part2(1:typ_countn_w))                !
       do i = 1, iloopx
         wdispart2(i) = nodes_offset_localw(i)
       end do
@@ -9776,7 +9776,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       wpart2_end = wnodes_part
 
     else
-      allocate (wdispart2(1), wiarray_part2(1))        !
+      allocate(wdispart2(1), wiarray_part2(1))        !
       wiarray_part2(1) = 0
       wdispart2(1) = 0!(totwallsc-1)*wnodes_part        !maybe total number of values written
       wpart2_end = 0
@@ -9795,7 +9795,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end if
 
     if (iloopx .gt. 0) then
-      allocate (wdispart5(1:iloopx), wiarray_part5(1:iloopx))
+      allocate(wdispart5(1:iloopx), wiarray_part5(1:iloopx))
 
       do i = 1, iloopx
         wdispart5(i) = (wall_l(i, 4) - 1)*1
@@ -9806,7 +9806,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       end do
 
     else
-      allocate (wdispart5(1), wiarray_part5(1))
+      allocate(wdispart5(1), wiarray_part5(1))
       wdispart5(1) = 0!totwallsc-1
       wiarray_part5(1) = 0
 
@@ -9815,7 +9815,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     if (iloopx .gt. 0) then
 
 !        !the types of elements of the nodes of  the boundary cells
-      allocate (wdispart3(1:iloopx), wiarray_part3(1:iloopx))
+      allocate(wdispart3(1:iloopx), wiarray_part3(1:iloopx))
 
       do i = 1, iloopx
         wdispart3(i) = (wall_l(i, 4) - 1)*1
@@ -9823,13 +9823,13 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       end do
       wpart3_end = 1
     else
-      allocate (wdispart3(1), wiarray_part3(1))
+      allocate(wdispart3(1), wiarray_part3(1))
       wdispart3(1) = 0!totwallsc-1
       wiarray_part3(1) = 0
       wpart3_end = 0
     end if
 
-    allocate (wdispart4(1:kmaxn_p), wrarray_part4(1:kmaxn_p*temp_cord))                !
+    allocate(wdispart4(1:kmaxn_p), wrarray_part4(1:kmaxn_p*temp_cord))                !
     wpart4_end = temp_cord
 
     do i = 1, kmaxn_p
@@ -9909,14 +9909,14 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
       nodes_part = 8
     end if
     varg_max = max(write_variables, write_variables_av)
-    allocate (dispart1(1:kmaxe), rarray_part1(1:kmaxe, 1:varg_max))        !
+    allocate(dispart1(1:kmaxe), rarray_part1(1:kmaxe, 1:varg_max))        !
 
     do i = 1, kmaxe
       dispart1(i) = (xgo(i) - 1)*(1)
     end do
     part1_end = 1
 
-    allocate (typ_nodesn(1:kmaxe)); typ_nodesn(:) = 0
+    allocate(typ_nodesn(1:kmaxe)); typ_nodesn(:) = 0
     typ_countn = 0
     do i = 1, kmaxe
       if (ielem(n, i)%ishape .eq. 1) then        !hexa
@@ -9959,7 +9959,7 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
 
 !                 print*,typ_countn,typ_countn_global,"check here",imaxe*6
 
-    allocate (dispart2(1:kmaxe), iarray_part2(1:typ_countn))                !
+    allocate(dispart2(1:kmaxe), iarray_part2(1:typ_countn))                !
     do i = 1, kmaxe
 !                         dispart2(i)=(xgo(i)-1)*(nodes_part)
 !                          dispart2(i)=(xgo(i)-1)*(typ_nodesn(i))
@@ -9977,7 +9977,7 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
       k = k + typ_nodesn(i)
     end do
 
-    allocate (dispart5(1:kmaxe), iarray_part5(1:kmaxe))
+    allocate(dispart5(1:kmaxe), iarray_part5(1:kmaxe))
     do i = 1, kmaxe
       dispart5(i) = (xgo(i) - 1)*(1)
     end do
@@ -9986,7 +9986,7 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
       iarray_part5(i) = nodes_offset_local2(i)!(xgo(i))*typ_nodesn(i)
     end do
 
-    allocate (dispart3(1:kmaxe), iarray_part3(1:kmaxe))
+    allocate(dispart3(1:kmaxe), iarray_part3(1:kmaxe))
     do i = 1, kmaxe
       dispart3(i) = (xgo(i) - 1)*(1)
 
@@ -10013,7 +10013,7 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
 
     part3_end = 1
 
-    allocate (dispart4(1:kmaxn_p), rarray_part4(1:kmaxn_p*temp_cord))
+    allocate(dispart4(1:kmaxn_p), rarray_part4(1:kmaxn_p*temp_cord))
 
     part4_end = temp_cord
     do i = 1, kmaxn_p
@@ -10077,9 +10077,9 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
     temp_cord = 3
 
     varg_max = max(write_variables, write_variables_av)
-    allocate (sol_vtu(1:kmaxe, 1:varg_max)); sol_vtu = 0        !
+    allocate(sol_vtu(1:kmaxe, 1:varg_max)); sol_vtu = 0        !
 
-    allocate (typ_nodesn(1:kmaxe)); typ_nodesn(:) = 0
+    allocate(typ_nodesn(1:kmaxe)); typ_nodesn(:) = 0
     typ_countn = 0
     do i = 1, kmaxe
       if (ielem(n, i)%ishape .eq. 1) then        !hexa
@@ -10113,7 +10113,7 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
       end if
     end do
 
-    allocate (offset_vtu(1:kmaxe), connect_vtu(1:typ_countn))
+    allocate(offset_vtu(1:kmaxe), connect_vtu(1:typ_countn))
     !
     k = 0
     do i = 1, kmaxe
@@ -10133,7 +10133,7 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
       k = k + typ_nodesn(i)
     end do
 
-    allocate (type_vtu(1:kmaxe))
+    allocate(type_vtu(1:kmaxe))
     do i = 1, kmaxe
       if (ielem(n, i)%ishape .eq. 1) then        !hexa
         type_vtu(i) = 12
@@ -10156,7 +10156,7 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
 
     end do
 
-    allocate (nodes_vtu(1:kmaxn*temp_cord))
+    allocate(nodes_vtu(1:kmaxn*temp_cord))
 
     k = 1
     do i = 1, kmaxn
@@ -10192,7 +10192,7 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
 
     iloopx = iloop
 
-    allocate (wallcount_cpu_l(0:isize - 1), wallcount_cpu_g(0:isize - 1)); wallcount_cpu_l = 0; wallcount_cpu_g = 0
+    allocate(wallcount_cpu_l(0:isize - 1), wallcount_cpu_g(0:isize - 1)); wallcount_cpu_l = 0; wallcount_cpu_g = 0
 
     wallcount_cpu_l(n) = iloopx
 
@@ -10201,10 +10201,10 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
     call mpi_barrier(mpi_comm_world, ierror)
 
     if (iloopx .gt. 0) then
-      allocate (wall_l(1:iloopx, 1:4))
+      allocate(wall_l(1:iloopx, 1:4))
 
     else
-      allocate (wall_l(0, 0))
+      allocate(wall_l(0, 0))
     end if
 
     iloop = 0
@@ -10235,15 +10235,15 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
 
     varg_max = max(write_variables_w, write_variables_av_w)
     if (iloopx .gt. 0) then
-      allocate (sol_vtu_w(1:iloopx, 1:varg_max)); sol_vtu = 0        !
+      allocate(sol_vtu_w(1:iloopx, 1:varg_max)); sol_vtu = 0        !
     else
-      allocate (sol_vtu_w(0:0, 1:varg_max)); sol_vtu = 0        !
+      allocate(sol_vtu_w(0:0, 1:varg_max)); sol_vtu = 0        !
     end if
 
     if (iloopx .gt. 0) then
-      allocate (typ_nodesn_w(1:iloopx), type_vtu_w(1:iloopx)); typ_nodesn_w(:) = 0; type_vtu_w = 0
+      allocate(typ_nodesn_w(1:iloopx), type_vtu_w(1:iloopx)); typ_nodesn_w(:) = 0; type_vtu_w = 0
     else
-      allocate (typ_nodesn_w(0:0), type_vtu_w(0:0)); typ_nodesn_w(:) = 0; type_vtu_w = 0
+      allocate(typ_nodesn_w(0:0), type_vtu_w(0:0)); typ_nodesn_w(:) = 0; type_vtu_w = 0
     end if
 
     typ_countn_w = 0
@@ -10272,9 +10272,9 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
     end if
 
     if (iloopx .gt. 0) then
-      allocate (offset_vtu_w(1:iloopx), connect_vtu_w(1:typ_countn_w))
+      allocate(offset_vtu_w(1:iloopx), connect_vtu_w(1:typ_countn_w))
     else
-      allocate (offset_vtu_w(0:0), connect_vtu_w(0:0))
+      allocate(offset_vtu_w(0:0), connect_vtu_w(0:0))
     end if
     !
 
@@ -10300,10 +10300,10 @@ deallocate(wallshape_g,wallshape,wallcx_g,offsetwc_g,wallshape_g2,typ_nodesn_w,n
     end if
 
     if (iloopx .gt. 0) then
-      allocate (nodes_vtu_w(1:kmaxn*temp_cord))
+      allocate(nodes_vtu_w(1:kmaxn*temp_cord))
 
     else
-      allocate (nodes_vtu_w(0:0))
+      allocate(nodes_vtu_w(0:0))
     end if
 
     if (iloopx .gt. 0) then
@@ -10563,7 +10563,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     write (proc3, fmt='(i10)') it
     filex = "out_"//trim(adjustl(proc3))//".vtu"
     itrimm = len_trim(filex)
-    allocate (character(len=itrimm)::vtu)
+    allocate(character(len=itrimm)::vtu)
     vtu = filex(1:itrimm)
 !                             end if
 
@@ -10845,7 +10845,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       close (300)
     end if
 
-    deallocate (vtu)
+    deallocate(vtu)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -10896,7 +10896,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     write (proc3, fmt='(i10)') it
     filex = "vol_aver"//trim(adjustl(proc3))//".vtu"
     itrimm = len_trim(filex)
-    allocate (character(len=itrimm)::vtu)
+    allocate(character(len=itrimm)::vtu)
     vtu = filex(1:itrimm)
 !                             end if
 
@@ -11139,7 +11139,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       close (300)
     end if
 
-    deallocate (vtu)
+    deallocate(vtu)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -11186,7 +11186,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     write (proc5, fmt='(i10)') n
     filex = "out_"//trim(adjustl(proc3))//"_"//trim(adjustl(proc5))//".vtu"
     itrimm = len_trim(filex)
-    allocate (character(len=itrimm)::vtu)
+    allocate(character(len=itrimm)::vtu)
     vtu = filex(1:itrimm)
 !                             end if
 
@@ -11356,7 +11356,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     buffer = '</vtkfile>'//lf; write (300) trim(buffer)
     close (300)
 
-    deallocate (vtu)
+    deallocate(vtu)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -11366,7 +11366,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       write (proc5, fmt='(i10)') n
       filex = "par_"//trim(adjustl(proc3))//".pvtu"
       itrimm = len_trim(filex)
-      allocate (character(len=itrimm)::vtu)
+      allocate(character(len=itrimm)::vtu)
       vtu = filex(1:itrimm)
 
       lf = char(10)
@@ -11411,7 +11411,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       buffer = '</vtkfile>'//lf; write (300) trim(buffer)
       close (300)
 
-      deallocate (vtu)
+      deallocate(vtu)
 
     end if
 
@@ -11462,7 +11462,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       write (proc5, fmt='(i10)') n
       filex = "surf_"//trim(adjustl(proc3))//"_"//trim(adjustl(proc5))//".vtu"
       itrimm = len_trim(filex)
-      allocate (character(len=itrimm)::vtu)
+      allocate(character(len=itrimm)::vtu)
       vtu = filex(1:itrimm)
 
       if (movement .eq. 1) then
@@ -11649,7 +11649,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       buffer = '</vtkfile>'//lf; write (300) trim(buffer)
       close (300)
 
-      deallocate (vtu)
+      deallocate(vtu)
 
     end if
 
@@ -11661,7 +11661,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       write (proc5, fmt='(i10)') n
       filex = "par_surf_"//trim(adjustl(proc3))//".pvtu"
       itrimm = len_trim(filex)
-      allocate (character(len=itrimm)::vtu)
+      allocate(character(len=itrimm)::vtu)
       vtu = filex(1:itrimm)
 
       lf = char(10)
@@ -11707,7 +11707,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       buffer = '</vtkfile>'//lf; write (300) trim(buffer)
       close (300)
 
-      deallocate (vtu)
+      deallocate(vtu)
 
     end if
 
@@ -11764,7 +11764,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       write (proc5, fmt='(i10)') n
       filex = "surf_av_"//trim(adjustl(proc3))//"_"//trim(adjustl(proc5))//".vtu"
       itrimm = len_trim(filex)
-      allocate (character(len=itrimm)::vtu)
+      allocate(character(len=itrimm)::vtu)
       vtu = filex(1:itrimm)
 
       if (movement .eq. 1) then
@@ -11949,7 +11949,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       buffer = '</vtkfile>'//lf; write (300) trim(buffer)
       close (300)
 
-      deallocate (vtu)
+      deallocate(vtu)
 
     end if
 
@@ -11961,7 +11961,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       write (proc5, fmt='(i10)') n
       filex = "par_surf_av_"//trim(adjustl(proc3))//".pvtu"
       itrimm = len_trim(filex)
-      allocate (character(len=itrimm)::vtu)
+      allocate(character(len=itrimm)::vtu)
       vtu = filex(1:itrimm)
 
       lf = char(10)
@@ -12007,7 +12007,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       buffer = '</vtkfile>'//lf; write (300) trim(buffer)
       close (300)
 
-      deallocate (vtu)
+      deallocate(vtu)
 
     end if
 
@@ -12062,7 +12062,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     write (proc5, fmt='(i10)') n
     filex = "vol_aver_"//trim(adjustl(proc3))//"_"//trim(adjustl(proc5))//".vtu"
     itrimm = len_trim(filex)
-    allocate (character(len=itrimm)::vtu)
+    allocate(character(len=itrimm)::vtu)
     vtu = filex(1:itrimm)
     !                             end if
 
@@ -12204,7 +12204,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     buffer = '</vtkfile>'//lf; write (300) trim(buffer)
     close (300)
 
-    deallocate (vtu)
+    deallocate(vtu)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -12214,7 +12214,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       write (proc5, fmt='(i10)') n
       filex = "par_vol_aver_"//trim(adjustl(proc3))//".pvtu"
       itrimm = len_trim(filex)
-      allocate (character(len=itrimm)::vtu)
+      allocate(character(len=itrimm)::vtu)
       vtu = filex(1:itrimm)
 
       lf = char(10)
@@ -12259,7 +12259,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       buffer = '</vtkfile>'//lf; write (300) trim(buffer)
       close (300)
 
-      deallocate (vtu)
+      deallocate(vtu)
 
     end if
 
@@ -12312,7 +12312,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     write (proc3, fmt='(i10)') it
     filex = "surf_"//trim(adjustl(proc3))//".vtu"
     itrimm = len_trim(filex)
-    allocate (character(len=itrimm)::vtu)
+    allocate(character(len=itrimm)::vtu)
     vtu = filex(1:itrimm)
 
     if (movement .eq. 1) then
@@ -12607,7 +12607,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       close (300)
     end if
 
-    deallocate (vtu)
+    deallocate(vtu)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -12658,7 +12658,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     write (proc3, fmt='(i10)') it
     filex = "surf_av"//trim(adjustl(proc3))//".vtu"
     itrimm = len_trim(filex)
-    allocate (character(len=itrimm)::vtu)
+    allocate(character(len=itrimm)::vtu)
     vtu = filex(1:itrimm)
 
     if (movement .eq. 1) then
@@ -12950,7 +12950,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       close (300)
     end if
 
-    deallocate (vtu)
+    deallocate(vtu)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -13009,7 +13009,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     call mpi_allreduce(dumg, duml, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
     imaxp = duml
 
-    allocate (icell(imaxp))
+    allocate(icell(imaxp))
     icell = 0
 
     do i = 1, kmaxe
@@ -13017,7 +13017,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     end do
 
     if (n .eq. 0) then
-      allocate (icella(imaxp*isize))
+      allocate(icella(imaxp*isize))
       icella = 0
 
     end if
@@ -13025,15 +13025,15 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     call mpi_gather(icell, imaxp, mpi_integer, icella, imaxp, mpi_integer, 0, mpi_comm_world, ierror)
 
 !     call mpi_barrier(mpi_comm_world,ierror)
-    deallocate (icell)
+    deallocate(icell)
 
     if (n .eq. 0) then
-      allocate (valuesa(imaxp*isize))
-      allocate (xbin(imaxe, 5 + turbulenceequations + passivescalar))
+      allocate(valuesa(imaxp*isize))
+      allocate(xbin(imaxe, 5 + turbulenceequations + passivescalar))
       valuesa = zero
     end if
 
-    allocate (valuess(imaxp)); valuess = zero
+    allocate(valuess(imaxp)); valuess = zero
 
     if (turbulence .eq. 1) then
     do jj = 1, 5 + turbulenceequations + passivescalar
@@ -13082,11 +13082,11 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
         write (1086) xbin(i, 1:nof_variables + turbulenceequations + passivescalar)
       end do
 
-      deallocate (xbin, icella, valuesa)
+      deallocate(xbin, icella, valuesa)
       close (1086)
     end if
 
-    deallocate (valuess)
+    deallocate(valuess)
 
   end subroutine checkpointv2
 
@@ -13115,9 +13115,9 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     call mpi_barrier(mpi_comm_world, ierror)
 
     if (dg .eq. 1) then
-      allocate (dispt(kmaxe), array2(kmaxe*(nof_variables + turbulenceequations + passivescalar)*(idegfree + 1)))
+      allocate(dispt(kmaxe), array2(kmaxe*(nof_variables + turbulenceequations + passivescalar)*(idegfree + 1)))
     else
-      allocate (dispt(kmaxe), array2(kmaxe*(nof_variables + turbulenceequations + passivescalar)))        !i allocate in memory the pattern of access of data in terms of displacement, and in terms of blocklength, and finaly an array with this processor data
+      allocate(dispt(kmaxe), array2(kmaxe*(nof_variables + turbulenceequations + passivescalar)))        !i allocatein memory the pattern of access of data in terms of displacement, and in terms of blocklength, and finaly an array with this processor data
     end if
 
     if (dg .eq. 1) then
@@ -13194,7 +13194,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     call mpi_type_create_indexed_block(kmaxe, n_end, dispt, mpi_double_precision, datatype, ierror)
     call mpi_type_commit(datatype, ierror)
 
-    allocate (array(1:nof_variables + turbulenceequations + passivescalar))
+    allocate(array(1:nof_variables + turbulenceequations + passivescalar))
 
     call mpi_file_open(mpi_comm_world, restfile, mpi_mode_wronly + mpi_mode_create, mpi_info_null, fh, ierror)
 
@@ -13240,7 +13240,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     call mpi_file_write_all(fh, array2, kmaxe*n_end, mpi_double_precision, mpi_status_ignore, ierror)
     call mpi_file_close(fh, ierror)
     call mpi_type_free(datatype, ierror)
-    deallocate (array, dispt, array2)
+    deallocate(array, dispt, array2)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -13275,7 +13275,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
       ind1 = 5
     end if
 
-    allocate (dispt(kmaxe), array2(kmaxe*(nof_variables + turbulenceequations + passivescalar + 6 + passivescalar)))
+    allocate(dispt(kmaxe), array2(kmaxe*(nof_variables + turbulenceequations + passivescalar + 6 + passivescalar)))
     do i = 1, kmaxe
       dispt(i) = (xgo(i) - 1)*(nof_variables + turbulenceequations + passivescalar + 6 + passivescalar)
     end do
@@ -13320,7 +13320,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     call mpi_file_close(fh, ierror)
     call mpi_type_free(datatype, ierror)
 
-    deallocate (dispt, array2)
+    deallocate(dispt, array2)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -13362,9 +13362,9 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
 
 !$omp master
     if (dg .eq. 1) then
-      allocate (dispt(kmaxe), array2(kmaxe*(nof_variables + prev_turbequation + passivescalar)*(idegfree + 1)))
+      allocate(dispt(kmaxe), array2(kmaxe*(nof_variables + prev_turbequation + passivescalar)*(idegfree + 1)))
     else
-      allocate (dispt(kmaxe), array2(kmaxe*(nof_variables + prev_turbequation + passivescalar)))
+      allocate(dispt(kmaxe), array2(kmaxe*(nof_variables + prev_turbequation + passivescalar)))
     end if
 
     if (dg .eq. 1) then
@@ -13494,14 +13494,14 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     end if
 
     call mpi_barrier(mpi_comm_world, ierror)
-    deallocate (dispt, array2)
+    deallocate(dispt, array2)
 
     if (averaging .eq. 1) then
 
       if (average_restart .eq. 1) then
 
         disp_in_file = 0
-        allocate (dispt(kmaxe), array2(kmaxe*(nof_variables + prev_turbequation + passivescalar + 6 + passivescalar)))
+        allocate(dispt(kmaxe), array2(kmaxe*(nof_variables + prev_turbequation + passivescalar + 6 + passivescalar)))
         do i = 1, kmaxe
           dispt(i) = (xgo(i) - 1)*(nof_variables + prev_turbequation + passivescalar + 6 + passivescalar)
         end do
@@ -13540,7 +13540,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
         end if
 
         call mpi_barrier(mpi_comm_world, ierror)
-        deallocate (dispt, array2)
+        deallocate(dispt, array2)
 
       else
         do i = 1, kmaxe
@@ -13586,7 +13586,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     call mpi_allreduce(dumg, duml, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
     imaxp = duml
 
-    allocate (icell(imaxp))
+    allocate(icell(imaxp))
     icell = 0
 
     do i = 1, kmaxe
@@ -13594,7 +13594,7 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     end do
 
     if (n .eq. 0) then
-      allocate (icella(imaxp*isize))
+      allocate(icella(imaxp*isize))
       icella = 0
 
     end if
@@ -13602,15 +13602,15 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
     call mpi_gather(icell, imaxp, mpi_integer, icella, imaxp, mpi_integer, 0, mpi_comm_world, ierror)
 
     call mpi_barrier(mpi_comm_world, ierror)
-    deallocate (icell)
+    deallocate(icell)
 
     if (n .eq. 0) then
-      allocate (valuesa(imaxp*isize))
-      allocate (xbin(imaxe, (4 + turbulenceequations + passivescalar + 3 + passivescalar)))
+      allocate(valuesa(imaxp*isize))
+      allocate(xbin(imaxe, (4 + turbulenceequations + passivescalar + 3 + passivescalar)))
       valuesa = 0.0
 
     end if
-    allocate (valuess(imaxp))
+    allocate(valuess(imaxp))
     valuess = 0.0
 
     do jj = 1, 4 + turbulenceequations + passivescalar + 3 + passivescalar
@@ -13656,12 +13656,12 @@ integer(kind=mpi_offset_kind) :: disp_in_file, tmp,disp_init,offset_temp,bytes,t
 !     end do
       end do
 
-      deallocate (xbin, icella, valuesa)
+      deallocate(xbin, icella, valuesa)
 
       close (1086)
     end if
 
-    deallocate (valuess)
+    deallocate(valuess)
 
   end subroutine checkpointav2d
 
@@ -14535,7 +14535,7 @@ if ((allres(1).lt.reslimit).and.(allres(2).lt.reslimit).and.(allres(3).lt.reslim
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(12))
+    allocate(variables(12))
 
     kmaxe = xmpielrank(n)
     nvar1 = 2
@@ -14547,7 +14547,7 @@ if ((allres(1).lt.reslimit).and.(allres(2).lt.reslimit).and.(allres(3).lt.reslim
       !proc4=".plt"
       outfile = "out_"//trim(adjustl(proc3))//".vtk"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
 
@@ -14563,7 +14563,7 @@ if ((allres(1).lt.reslimit).and.(allres(2).lt.reslimit).and.(allres(3).lt.reslim
       write (400 + n, *) t
       write (400 + n, '(a6,2x,i10,2x,a6)') "points", imaxn, "double"
 
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       valuelocation(:) = 0
       valuelocation(1:2) = 1
@@ -14614,10 +14614,10 @@ if ((allres(1).lt.reslimit).and.(allres(2).lt.reslimit).and.(allres(3).lt.reslim
       write (400 + n, *)
       write (400 + n, '(a9,2x,i10)') "cell_data", imaxe
 
-      allocate (xbin(imaxe), xbin2(imaxe))
+      allocate(xbin(imaxe), xbin2(imaxe))
 
     end if
-    allocate (valuess(kmaxe))
+    allocate(valuess(kmaxe))
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -14680,14 +14680,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     if (n .eq. 0) then
       close (400 + n)
 
-      deallocate (xbin, valuesa, xbin2, valuelocation, icella)
-      deallocate (out1)
+      deallocate(xbin, valuesa, xbin2, valuelocation, icella)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
-    deallocate (variables)
+    deallocate(variables)
 
   end subroutine outwritepara3d
 
@@ -14739,7 +14739,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(12))
+    allocate(variables(12))
     nvar1 = 2
     kmaxe = xmpielrank(n)
 
@@ -14750,7 +14750,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       !proc4=".plt"
       outfile = "out_"//trim(adjustl(proc3))//".vtk"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
 
@@ -14769,7 +14769,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (str1(1:15), '(i15)') imaxn
       write (400 + n) "points "//str1//" double"//lf
 
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       valuelocation(:) = 0
       valuelocation(1:2) = 1
@@ -14834,14 +14834,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 !
 !
 
-      allocate (xbin(imaxe), xbin2(imaxe))
+      allocate(xbin(imaxe), xbin2(imaxe))
 
 !
     end if
 !
 !
 
-    allocate (valuess(kmaxe))
+    allocate(valuess(kmaxe))
 
     call mpi_barrier(mpi_comm_world, ierror)
 !
@@ -14947,14 +14947,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     if (n .eq. 0) then
       close (400 + n)
 
-      deallocate (xbin, valuelocation, xbin2)
-      deallocate (out1)
+      deallocate(xbin, valuelocation, xbin2)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
-    deallocate (variables)
+    deallocate(variables)
 
   end subroutine outwritepara3db
 
@@ -15006,7 +15006,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(12))
+    allocate(variables(12))
     nvar1 = 2
     kmaxe = xmpielrank(n)
 
@@ -15017,7 +15017,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       !proc4=".plt"
       outfile = "mov_"//trim(adjustl(proc3))//".vtk"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
 
@@ -15036,7 +15036,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (str1(1:15), '(i15)') imaxn
       write (400 + n) "points "//str1//" double"//lf
 
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       valuelocation(:) = 0
       valuelocation(1:2) = 1
@@ -15101,14 +15101,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 !
 !
 
-      allocate (xbin(imaxe), xbin2(imaxe))
+      allocate(xbin(imaxe), xbin2(imaxe))
 
 !
     end if
 !
 !
 
-    allocate (valuess(kmaxe))
+    allocate(valuess(kmaxe))
 
     call mpi_barrier(mpi_comm_world, ierror)
 !
@@ -15187,14 +15187,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     if (n .eq. 0) then
       close (400 + n)
 
-      deallocate (xbin, valuelocation, xbin2)
-      deallocate (out1)
+      deallocate(xbin, valuelocation, xbin2)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
-    deallocate (variables)
+    deallocate(variables)
 
   end subroutine movie_para
 
@@ -15243,7 +15243,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: null(*)
     character(len=:), allocatable  :: str_imaxn, str_imaxe, str_imaxe2, str_time
     character(1) :: c
-    allocate (variables(12))
+    allocate(variables(12))
     nvar1 = 2
     kmaxe = xmpielrank(n)
 
@@ -15255,7 +15255,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (proc5, fmt='(i10)')
       outfile = "out_"//trim(adjustl(proc3))//".vtk"
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
 
@@ -15339,11 +15339,11 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       ! the data is cell centered. use celldatatopointdata in paraview for warp by scalar
       write (400 + n) "cell_data "//str_imaxe, new_line(c)
 
-      allocate (xbin(imaxe), xbin2(imaxe))
+      allocate(xbin(imaxe), xbin2(imaxe))
       !
     end if
 
-    allocate (valuess(kmaxe))
+    allocate(valuess(kmaxe))
     call mpi_barrier(mpi_comm_world, ierror)
 
     do j = 1, nof_variables
@@ -15415,13 +15415,13 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       ! close file
       close (400 + n)
 
-      deallocate (xbin, xbin2)
-      deallocate (out1)
+      deallocate(xbin, xbin2)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
     call mpi_barrier(mpi_comm_world, ierror)
-    deallocate (variables)
+    deallocate(variables)
 
   end subroutine outwritepara2db
 
@@ -15459,13 +15459,13 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: null(*)
     kmaxe = xmpielrank(n)
 
-    allocate (xbin(kmaxe))
+    allocate(xbin(kmaxe))
     write (proc3, fmt='(i10)') it
     write (proc5, fmt='(i10)') n
     !proc4=".plt
     outfile = "out_"//trim(adjustl(proc3))//"_"//trim(adjustl(proc5))//".vtk"!//trim(adjustl(proc4))
     itgfd = len_trim(outfile)
-    allocate (character(len=itgfd) ::out1)
+    allocate(character(len=itgfd) ::out1)
     out1 = outfile(1:itgfd)
 
     lf = char(10)
@@ -15576,7 +15576,7 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
     end if
 
     close (400 + n)
-    deallocate (xbin, out1)
+    deallocate(xbin, out1)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -15622,13 +15622,13 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
       ind1 = 5
     end if
 
-    allocate (xbin(kmaxe))
+    allocate(xbin(kmaxe))
     write (proc3, fmt='(i10)') it
     write (proc5, fmt='(i10)') n
     !proc4=".plt
     outfile = "out_av"//trim(adjustl(proc3))//"_"//trim(adjustl(proc5))//".vtk"!//trim(adjustl(proc4))
     itgfd = len_trim(outfile)
-    allocate (character(len=itgfd) ::out1)
+    allocate(character(len=itgfd) ::out1)
     out1 = outfile(1:itgfd)
 
     lf = char(10)
@@ -15739,7 +15739,7 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
     end do
 
     close (400 + n)
-    deallocate (xbin, out1)
+    deallocate(xbin, out1)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
@@ -15793,7 +15793,7 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(12))
+    allocate(variables(12))
     nvar1 = 2
 
     if (n .eq. 0) then
@@ -15803,7 +15803,7 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
       !proc4=".plt"
       outfile = "surf_"//trim(adjustl(proc3))//".vtk"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
 
@@ -15812,7 +15812,7 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
     if ((n .eq. 0) .and. (totwalls .gt. 0)) then
     if (binio .eq. 0) then
       open (96, file='grid.bnd', form='formatted', status='old', action='read')
-      allocate (inog(imaxn))
+      allocate(inog(imaxn))
       inog(:) = 0
       do i = 1, imaxb
         read (96, *) igf, k, j, l, m, o
@@ -15826,7 +15826,7 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
       close (96)
     else
       open (96, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (inog(imaxn))
+      allocate(inog(imaxn))
       inog(:) = 0
       do i = 1, imaxb
         read (96) igf, k, j, l, m, o
@@ -15862,7 +15862,7 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
     write (str1(1:15), '(i15)') igf2
     write (400 + n) "points "//str1//" double"//lf
 
-    allocate (valuelocation(nvar1))
+    allocate(valuelocation(nvar1))
 
     if (binio .eq. 0) then
       open (96, file='grid.vrt', form='formatted', status='old', action='read')
@@ -15901,7 +15901,7 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
     if (binio .eq. 1) then
       open (98, file='grid.bnd', form='unformatted', status='old', action='read')
     end if
-    allocate (icon(4, totwalls))
+    allocate(icon(4, totwalls))
     icon = 0
     cv = 0
     igf2 = 0
@@ -15947,8 +15947,8 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
       write (400 + n) 4, icon(1, i) - 1, icon(2, i) - 1, icon(3, i) - 1, icon(4, i) - 1
     end do
 
-    deallocate (icon)
-    deallocate (inog)
+    deallocate(icon)
+    deallocate(inog)
 
 ! write(str1(1:15),'(i15)') imaxe
 ! write(str2(1:15),'(i15)') (imaxe*8)+imaxe
@@ -15971,13 +15971,13 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
 !
 !
 !
-    allocate (xbin(totwalls), xbin2(totwalls))
+    allocate(xbin(totwalls), xbin2(totwalls))
 
     end if
 
     totiw = xmpiwall(n)
     if (xmpiwall(n) .gt. 0) then
-      allocate (valuess(xmpiwall(n)))
+      allocate(valuess(xmpiwall(n)))
     end if
 !
 
@@ -16051,15 +16051,15 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
 
     if (n .eq. 0) then
 
-      deallocate (xbin, xbin2, valuelocation)
-      deallocate (out1)
+      deallocate(xbin, xbin2, valuelocation)
+      deallocate(out1)
       close (400 + n)
     end if
     if (totiw .gt. 0) then
-      deallocate (valuess)
+      deallocate(valuess)
     end if
 
-    deallocate (variables)
+    deallocate(variables)
 
   end subroutine outwritepara3dsb
 
@@ -16111,7 +16111,7 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(12))
+    allocate(variables(12))
     nvar1 = 2
     kmaxe = xmpielrank(n)
 
@@ -16128,7 +16128,7 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
       !proc4=".plt"
       outfile = "out_av"//trim(adjustl(proc3))//".vtk"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
 
@@ -16147,7 +16147,7 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
       write (str1(1:15), '(i15)') imaxn
       write (400 + n) "points "//str1//" double"//lf
 
-      allocate (valuelocation(nvar1))
+      allocate(valuelocation(nvar1))
 
       valuelocation(:) = 0
       valuelocation(1:2) = 1
@@ -16212,14 +16212,14 @@ write(400+n)8,el_connect(i,1)-1,el_connect(i,2)-1,el_connect(i,3)-1,el_connect(i
 !
 !
 
-      allocate (xbin(imaxe), xbin2(imaxe))
+      allocate(xbin(imaxe), xbin2(imaxe))
 
 !
     end if
 !
 !
 
-    allocate (valuess(kmaxe))
+    allocate(valuess(kmaxe))
 
     call mpi_barrier(mpi_comm_world, ierror)
 !
@@ -16312,14 +16312,14 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     if (n .eq. 0) then
       close (400 + n)
 
-      deallocate (xbin, xbin2, valuelocation)
-      deallocate (out1)
+      deallocate(xbin, xbin2, valuelocation)
+      deallocate(out1)
     end if
-    deallocate (valuess)
+    deallocate(valuess)
 
     call mpi_barrier(mpi_comm_world, ierror)
 
-    deallocate (variables)
+    deallocate(variables)
 
   end subroutine outwritepara3dbav
 
@@ -16371,7 +16371,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer:: icellmax, jcellmax, kcellmax, nfconns, fnmode, shrconn
     pointer(nullptr, null)
     integer:: null(*)
-    allocate (variables(12))
+    allocate(variables(12))
     nvar1 = 2
 
     if (rungekutta .eq. 4) then
@@ -16387,7 +16387,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       !proc4=".plt"
       outfile = "surf_"//trim(adjustl(proc3))//".vtk"!//trim(adjustl(proc4))
       itgfd = len_trim(outfile)
-      allocate (character(len=itgfd) ::out1)
+      allocate(character(len=itgfd) ::out1)
       out1 = outfile(1:itgfd)
     end if
 
@@ -16396,7 +16396,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     if ((n .eq. 0) .and. (totwalls .gt. 0)) then
     if (binio .eq. 0) then
       open (96, file='grid.bnd', form='formatted', status='old', action='read')
-      allocate (inog(imaxn))
+      allocate(inog(imaxn))
       inog(:) = 0
       do i = 1, imaxb
         read (96, *) igf, k, j, l, m, o
@@ -16410,7 +16410,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       close (96)
     else
       open (96, file='grid.bnd', form='unformatted', status='old', action='read')
-      allocate (inog(imaxn))
+      allocate(inog(imaxn))
       inog(:) = 0
       do i = 1, imaxb
         read (96) igf, k, j, l, m, o
@@ -16446,7 +16446,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     write (str1(1:15), '(i15)') igf2
     write (400 + n) "points "//str1//" double"//lf
 
-    allocate (valuelocation(nvar1))
+    allocate(valuelocation(nvar1))
 
     if (binio .eq. 0) then
       open (96, file='grid.vrt', form='formatted', status='old', action='read')
@@ -16485,7 +16485,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     if (binio .eq. 1) then
       open (98, file='grid.bnd', form='unformatted', status='old', action='read')
     end if
-    allocate (icon(4, totwalls))
+    allocate(icon(4, totwalls))
     icon = 0
     cv = 0
     igf2 = 0
@@ -16531,8 +16531,8 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       write (400 + n) 4, icon(1, i) - 1, icon(2, i) - 1, icon(3, i) - 1, icon(4, i) - 1
     end do
 
-    deallocate (icon)
-    deallocate (inog)
+    deallocate(icon)
+    deallocate(inog)
 
 
     write (400 + n) "cell_types"//str1//lf
@@ -16545,13 +16545,13 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 !
 !
 !
-    allocate (xbin(totwalls), xbin2(totwalls))
+    allocate(xbin(totwalls), xbin2(totwalls))
 
     end if
 
     totiw = xmpiwall(n)
     if (xmpiwall(n) .gt. 0) then
-      allocate (valuess(xmpiwall(n)))
+      allocate(valuess(xmpiwall(n)))
     end if
 !
 
@@ -16656,15 +16656,15 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     if (n .eq. 0) then
 
-      deallocate (xbin, valuelocation, xbin2)
-      deallocate (out1)
+      deallocate(xbin, valuelocation, xbin2)
+      deallocate(out1)
       close (400 + n)
     end if
     if (totiw .gt. 0) then
-      deallocate (valuess)
+      deallocate(valuess)
     end if
 
-    deallocate (variables)
+    deallocate(variables)
 
   end subroutine outwritepara3dsbav
 
@@ -16676,11 +16676,11 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     integer, allocatable, dimension(:)::list_nin, list_nout
 
     kmaxe = xmpielrank(n)
-    allocate (ndlc_array1(kmaxe*8)); ndlc_array1(:) = 0
+    allocate(ndlc_array1(kmaxe*8)); ndlc_array1(:) = 0
 
     ndlc_count1 = 0
 
-    allocate (list_nin(1:imaxn), list_nout(1:imaxn))
+    allocate(list_nin(1:imaxn), list_nout(1:imaxn))
     list_nin(:) = -10
     list_nout(:) = -10
 
@@ -16703,7 +16703,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       end if
     end do
 
-    deallocate (list_nin)
+    deallocate(list_nin)
 
 !find only the uniques first
 
@@ -16718,13 +16718,13 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
 
     kmaxn = ndlc_count1
 
-    allocate (inoder4(1:kmaxn));
+    allocate(inoder4(1:kmaxn));
     do i = 1, kmaxn
-      allocate (inoder4(i)%cord(1:dims))
-      allocate (inoder4(i)%bct(1:3)); inoder4(i)%bct(:) = 0
+      allocate(inoder4(i)%cord(1:dims))
+      allocate(inoder4(i)%bct(1:3)); inoder4(i)%bct(:) = 0
     end do
 
-    allocate (my_nodesl(1:countfnodes), my_nodesg(countfnodes))
+    allocate(my_nodesl(1:countfnodes), my_nodesg(countfnodes))
     countfnodes = 0
     do i = 1, kmaxn
 
@@ -16739,7 +16739,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       end if
     end do
 
-    allocate (xmpiall_v(0:isize - 1), offset_v(0:isize - 1))
+    allocate(xmpiall_v(0:isize - 1), offset_v(0:isize - 1))
 
     xmpiall_v = 0
 
@@ -16764,7 +16764,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       else
         indfc = 3
       end if
-      allocate (ielem(n, i)%nodes_v(1:indfc))
+      allocate(ielem(n, i)%nodes_v(1:indfc))
       else
       if (ielem(n, i)%ishape .eq. 1) then !hexa
         indfc = 8
@@ -16779,7 +16779,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         indfc = 6
       end if
 
-      allocate (ielem(n, i)%nodes_v(1:indfc))
+      allocate(ielem(n, i)%nodes_v(1:indfc))
       end if
 
       end if
@@ -16893,13 +16893,13 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       end do
     end do
 
-    deallocate (inoder, ndlc_array1, list_nout)
+    deallocate(inoder, ndlc_array1, list_nout)
 
     if (tecplot .eq. 3) then
 
       if (dimensiona .eq. 3) then
 
-        allocate (el_connect(1:kmaxe, 1:8))
+        allocate(el_connect(1:kmaxe, 1:8))
         do i = 1, kmaxe
           if (ielem(n, i)%ishape .eq. 1) then!hexa
             el_connect(i, 1:8) = ielem(n, i)%nodes(1:8)
@@ -16977,7 +16977,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_allreduce(dumg, duml, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
     imaxp = duml
 
-    allocate (icell(imaxp))
+    allocate(icell(imaxp))
     icell = 0
 
     do i = 1, kmaxe
@@ -16985,22 +16985,22 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end do
 
     if (n .eq. 0) then
-      allocate (icella(imaxp*isize))
+      allocate(icella(imaxp*isize))
       icella = 0
 
     end if
 
     call mpi_gather(icell, imaxp, mpi_integer, icella, imaxp, mpi_integer, 0, mpi_comm_world, ierror)
 
-    deallocate (icell)
+    deallocate(icell)
 
     if (n .eq. 0) then
-      allocate (valuesa(imaxp*isize))
-      allocate (xbin(imaxe, 5 + turbulenceequations + passivescalar))
+      allocate(valuesa(imaxp*isize))
+      allocate(xbin(imaxe, 5 + turbulenceequations + passivescalar))
       valuesa = zero
     end if
 
-    allocate (valuess(imaxp)); valuess = zero
+    allocate(valuess(imaxp)); valuess = zero
 
     do jj = 1, 5
       do i = 1, kmaxe
@@ -17028,11 +17028,11 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
         write (1086) xbin(i, 1:nof_variables)
       end do
 
-      deallocate (xbin, icella, valuesa)
+      deallocate(xbin, icella, valuesa)
       close (1086)
     end if
 
-    deallocate (valuess)
+    deallocate(valuess)
 
   end subroutine checkpointv4
 
@@ -17066,7 +17066,7 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     call mpi_allreduce(dumg, duml, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
     imaxp = duml
 
-    allocate (icell(imaxp))
+    allocate(icell(imaxp))
     icell = 0
 
     do i = 1, kmaxe
@@ -17074,29 +17074,29 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
     end do
 
     if (n .eq. 0) then
-      allocate (icella(imaxp*isize))
+      allocate(icella(imaxp*isize))
       icella = 0
 
     else
-      allocate (icella(1))
+      allocate(icella(1))
 
     end if
 
     call mpi_gather(icell, imaxp, mpi_integer, icella, imaxp, mpi_integer, 0, mpi_comm_world, ierror)
 
-    deallocate (icell)
+    deallocate(icell)
 
     if (n .eq. 0) then
-      allocate (valuesa(imaxp*isize))
+      allocate(valuesa(imaxp*isize))
 
-      allocate (xbin(imaxe, 3))
+      allocate(xbin(imaxe, 3))
       valuesa = zero
     else
-      allocate (valuesa(1), xbin(1, 3))
+      allocate(valuesa(1), xbin(1, 3))
 
     end if
 
-    allocate (valuess(imaxp)); valuess = zero
+    allocate(valuess(imaxp)); valuess = zero
 
     do jj = 1, 3
       do i = 1, kmaxe
@@ -17133,9 +17133,9 @@ call mpi_gatherv(valuess, xmpiall(n), mpi_double_precision, xbin2, xmpiall, offs
       close (1086)
     end if
 
-    deallocate (xbin, icella, valuesa)
+    deallocate(xbin, icella, valuesa)
 
-    deallocate (valuess)
+    deallocate(valuess)
 
   end subroutine checkpointv3
 

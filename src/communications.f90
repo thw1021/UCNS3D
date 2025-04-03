@@ -10,9 +10,9 @@ module communications
 
 contains
   subroutine renumber_neighbours(n, ielem, xmpie, xmpielrank, iexchanger, iexchanges)
-    !> @brief
-    !> this subroutine renumbers the neighbours indexing for cross referencing between different cpus
-    !> it is a process that is performed once the beginning of each run
+    ! @brief
+    ! this subroutine renumbers the neighbours indexing for cross referencing between different cpus
+    ! it is a process that is performed once the beginning of each run
     implicit none
     type(element_number), allocatable, dimension(:, :), intent(inout)::ielem
     integer, intent(in)::n
@@ -26,14 +26,16 @@ contains
     kmaxe = xmpielrank(n)
     do i = 1, kmaxe
       if (ielem(n, i)%interior .eq. 1) then
-        allocate (ielem(n, i)%ineighn(ielem(n, i)%ifca))
-        allocate (ielem(n, i)%ineighb(ielem(n, i)%ifca))
-        allocate (ielem(n, i)%ineigh(ielem(n, i)%ifca))
-        ielem(n, i)%ineigh(:) = 0; ielem(n, i)%ineighn(:) = 0; ielem(n, i)%ineighb(:) = n
+        allocate(ielem(n, i)%ineighn(ielem(n, i)%ifca))
+        allocate(ielem(n, i)%ineighb(ielem(n, i)%ifca))
+        allocate(ielem(n, i)%ineigh(ielem(n, i)%ifca))
+        ielem(n, i)%ineigh(:) = 0; ielem(n, i)%ineighn(:) = 0
+        ielem(n, i)%ineighb(:) = n
       else
-        allocate (ielem(n, i)%ineighn(ielem(n, i)%ifca))
-        allocate (ielem(n, i)%ineigh(ielem(n, i)%ifca))
-        ielem(n, i)%ineighn(:) = 0; ielem(n, i)%ineigh(:) = 0;
+        allocate(ielem(n, i)%ineighn(ielem(n, i)%ifca))
+        allocate(ielem(n, i)%ineigh(ielem(n, i)%ifca))
+        ielem(n, i)%ineighn(:) = 0
+        ielem(n, i)%ineigh(:) = 0
       end if
     end do
 
@@ -156,30 +158,30 @@ contains
   end subroutine renumber_neighbours
 
   subroutine solex_alloc(n)
-    !> @brief
-    !> this subroutine allocates the memory for the halo cells of the direct side neighbours only
-    !> and is therefore used for lower-order schemes
+    ! @brief
+    ! this subroutine allocates the memory for the halo cells of the direct side neighbours only
+    ! and is therefore used for lower-order schemes
     implicit none
     integer, intent(in)::n
     integer::i, j, k, l, m, e, kmaxe, ineedt, tneedt, icpuid
     real, dimension(1:dimensiona)::cords
     ineedt = iexchanger(1)%tot
     tneedt = iexchanges(1)%tot
-    allocate (solchanger(ineedt))
-    allocate (solchanges(tneedt))
+    allocate(solchanger(ineedt))
+    allocate(solchanges(tneedt))
 
     do i = 1, ineedt
       solchanger(i)%procid = iexchanger(i)%procid
-      allocate (solchanger(i)%centres(iexchanger(i)%muchineed(1), dims))
+      allocate(solchanger(i)%centres(iexchanger(i)%muchineed(1), dims))
       solchanger(i)%centres(:, :) = 0.d0
-      allocate (solchanger(i)%sol(iexchanger(i)%muchineed(1), nof_variables + turbulenceequations + passivescalar))
+      allocate(solchanger(i)%sol(iexchanger(i)%muchineed(1), nof_variables + turbulenceequations + passivescalar))
       solchanger(i)%sol(:, :) = 0.0d0
     end do
     do i = 1, tneedt
       solchanges(i)%procid = iexchanges(i)%procid
-      allocate (solchanges(i)%centres(iexchanges(i)%muchtheyneed(1), dims))
+      allocate(solchanges(i)%centres(iexchanges(i)%muchtheyneed(1), dims))
       solchanges(i)%centres(:, :) = 0.0d0
-      allocate (solchanges(i)%sol(iexchanges(i)%muchtheyneed(1), nof_variables + turbulenceequations + passivescalar))
+      allocate(solchanges(i)%sol(iexchanges(i)%muchtheyneed(1), nof_variables + turbulenceequations + passivescalar))
       solchanges(i)%sol(:, :) = 0.0d0
     end do
 
@@ -208,15 +210,14 @@ contains
         end if
       end do
     end do
-
   end subroutine solex_alloc
 
   subroutine estabexhange(n, ielem, imaxe, xmpie, xmpin, xmpielrank, ilocalstencil, iexchanger, &
                           iexchanges, irecexr, irecexs, numneighbours, ischeme, isize, iperiodicity, typesten, xmpil)
-!> @brief
-!> this subroutine is establishing the communication patterns for all the mpi processes and in particular for
-!> the halo cells of the reconstruction stencils and it must be noted that each cell can have a different number of stencils
-!> of different size
+    ! @brief
+    ! this subroutine is establishing the communication patterns for all the mpi processes and in particular for
+    ! the halo cells of the reconstruction stencils and it must be noted that each cell can have a different number of stencils
+    ! of different size
 
     implicit none
     type(element_number), allocatable, dimension(:, :), intent(inout)::ielem
@@ -251,6 +252,7 @@ contains
     real, dimension(1:1)::dumts
     integer::stencounter, stencounter2, stensame, iiflag, tempsten2, iiflag2, kxk, ix, icx, icf, ifdn, ifdn2
     integer, dimension(0:isize - 1)::ihmste
+
     integer::i, j, ji, k, lm, kmaxn, kk, kmaxe, iaa, l, ingt, ik, tempint, temp2, itarget, isty5, i86, i87, i65, inum_points, iin
     kmaxe = xmpielrank(n)
     listofpr(:) = 0
@@ -261,9 +263,10 @@ contains
     else
       ifdn = 2
     end if
+
     do k = 1, kmaxe
       if (ielem(n, k)%interior .eq. 1) then
-        allocate (ielem(n, k)%q_face(ielem(n, k)%ifca))
+        allocate(ielem(n, k)%q_face(ielem(n, k)%ifca))
         do l = 1, ielem(n, k)%ifca
           if (dimensiona .eq. 3) then
             if (ielem(n, k)%types_faces(l) .eq. 5) then
@@ -274,7 +277,7 @@ contains
           else
             inum_points = qp_line_n
           end if
-          allocate (ielem(n, k)%q_face(l)%q_mapl(inum_points))
+          allocate(ielem(n, k)%q_face(l)%q_mapl(inum_points))
           ielem(n, k)%q_face(l)%q_mapl(:) = 0
         end do
       end if
@@ -294,7 +297,7 @@ contains
               else
                 inum_points = qp_line_n
               end if
-            listofpr(xmpie(ielem(n, k)%ineighg(l))) = listofpr(xmpie(ielem(n, k)%ineighg(l))) + inum_points
+              listofpr(xmpie(ielem(n, k)%ineighg(l))) = listofpr(xmpie(ielem(n, k)%ineighg(l))) + inum_points
             end if
           end if
         end do
@@ -307,10 +310,10 @@ contains
         howmany = howmany + 1
       end if
     end do
-    allocate (ilistgog(howmany))
-    allocate (ilistside(howmany))
-    allocate (ilistq(howmany))
-    allocate (ilistglo(howmany))
+    allocate(ilistgog(howmany))
+    allocate(ilistside(howmany))
+    allocate(ilistq(howmany))
+    allocate(ilistglo(howmany))
 
     kk = 0
     do k = 0, isize - 1
@@ -322,17 +325,19 @@ contains
         ilistside(kk)%imuch = listofpr(k)
         ilistq(kk)%procid = k
         ilistq(kk)%imuch = listofpr(k)
-        allocate (ilistgog(kk)%globarray(listofpr(k)))
-        allocate (ilistside(kk)%globarray(listofpr(k)))
-        allocate (ilistside(kk)%nodex(listofpr(k), ifdn))
-        allocate (ilistglo(kk)%globarray(listofpr(k)))
-        allocate (ilistq(kk)%globarray(listofpr(k)))
+        allocate(ilistgog(kk)%globarray(listofpr(k)))
+        allocate(ilistside(kk)%globarray(listofpr(k)))
+        allocate(ilistside(kk)%nodex(listofpr(k), ifdn))
+        allocate(ilistglo(kk)%globarray(listofpr(k)))
+        allocate(ilistq(kk)%globarray(listofpr(k)))
         ilistgog(kk)%globarray(:) = 0
-        ilistside(kk)%globarray(:) = 0; ilistside(kk)%nodex(:, :) = 0
+        ilistside(kk)%globarray(:) = 0
+        ilistside(kk)%nodex(:, :) = 0
         ilistglo(kk)%globarray(:) = 0
         ilistq(kk)%globarray(:) = 0
       end if
     end do
+
     kk = 0
     do ingt = 0, isize - 1
       if (listofpr(ingt) .gt. 0) then
@@ -346,12 +351,15 @@ contains
                   if (xmpie(ielem(n, k)%ineighg(l)) .eq. ilistgog(kk)%procid) then
                     if (dimensiona .eq. 3) then
                       if (ielem(n, k)%types_faces(l) .eq. 5) then
-                        inum_points = qp_quad_n; ifdn2 = 4
+                        inum_points = qp_quad_n
+                        ifdn2 = 4
                       else
-                        inum_points = qp_triangle_n; ifdn2 = 3
+                        inum_points = qp_triangle_n
+                        ifdn2 = 3
                       end if
                     else
-                      inum_points = qp_line_n; ifdn2 = 2
+                      inum_points = qp_line_n
+                      ifdn2 = 2
                     end if
                     do iin = iaa + 1, iaa + inum_points
                       ilistgog(kk)%globarray(iin) = (ielem(n, k)%ineighg(l))
@@ -371,8 +379,8 @@ contains
     end do
 
     sendwh(:) = 0
-    allocate (iexchanger(howmany))
-    allocate (iexchanger1(howmany))
+    allocate(iexchanger(howmany))
+    allocate(iexchanger1(howmany))
     iexchanger(:)%tot = howmany
     iexchanger1(:)%tot = howmany
 
@@ -386,18 +394,19 @@ contains
 
     do i = 1, howmany
       if (iexchanger(i)%procid .ne. n) then
-        allocate (iexchanger(i)%muchineed(1))
+        allocate(iexchanger(i)%muchineed(1))
         iexchanger(i)%muchineed(:) = 0
         iexchanger(i)%muchineed(1) = listofpr(iexchanger(i)%procid)
-        allocate (iexchanger1(i)%whatineed(iexchanger(i)%muchineed(1)))        !element number global
-        allocate (iexchanger1(i)%localref(iexchanger(i)%muchineed(1)))
-        allocate (iexchanger1(i)%sideineed(iexchanger(i)%muchineed(1)))
-        allocate (iexchanger1(i)%nodex(iexchanger(i)%muchineed(1), ifdn))
-        allocate (iexchanger1(i)%qineed(iexchanger(i)%muchineed(1)))
-        allocate (iexchanger1(i)%sideineedn(iexchanger(i)%muchineed(1)))
+        allocate(iexchanger1(i)%whatineed(iexchanger(i)%muchineed(1)))        !element number global
+        allocate(iexchanger1(i)%localref(iexchanger(i)%muchineed(1)))
+        allocate(iexchanger1(i)%sideineed(iexchanger(i)%muchineed(1)))
+        allocate(iexchanger1(i)%nodex(iexchanger(i)%muchineed(1), ifdn))
+        allocate(iexchanger1(i)%qineed(iexchanger(i)%muchineed(1)))
+        allocate(iexchanger1(i)%sideineedn(iexchanger(i)%muchineed(1)))
         iexchanger1(i)%whatineed(:) = 0        !element number global
         iexchanger1(i)%localref(:) = 0
-        iexchanger1(i)%sideineed(:) = 0; iexchanger1(i)%nodex(:, :) = 0
+        iexchanger1(i)%sideineed(:) = 0
+        iexchanger1(i)%nodex(:, :) = 0
         iexchanger1(i)%sideineedn(:) = 0
         iexchanger1(i)%qineed(:) = 0
       end if
@@ -414,7 +423,7 @@ contains
         end if
       end if
     end do
-    deallocate (ilistgog)
+    deallocate(ilistgog)
     call mpi_barrier(mpi_comm_world, ierror)
     icpuid = n
     do i = 1, howmany
@@ -432,28 +441,29 @@ contains
       end if
     end do
 
-    allocate (iexchanges(temp2))
-    allocate (iexchanges1(temp2))
+    allocate(iexchanges(temp2))
+    allocate(iexchanges1(temp2))
     iexchanges(:)%tot = temp2
     kk = 0
     do i = 0, isize - 1
       if (sendwh(i) .gt. 0) then
         kk = kk + 1
         iexchanges(kk)%procid = i
-        allocate (iexchanges(kk)%muchtheyneed(1))
+        allocate(iexchanges(kk)%muchtheyneed(1))
         iexchanges(kk)%muchtheyneed(:) = 0
         iexchanges(kk)%muchtheyneed(1) = sendwh(i)
-        allocate (iexchanges1(kk)%whattheyneed(iexchanges(kk)%muchtheyneed(1)))
-        allocate (iexchanges(kk)%localref(iexchanges(kk)%muchtheyneed(1)))
-        allocate (iexchanges(kk)%sidetheyneed(iexchanges(kk)%muchtheyneed(1)))
-        allocate (iexchanges1(kk)%sidetheyneedn(iexchanges(kk)%muchtheyneed(1)))
-        allocate (iexchanges1(kk)%nodex(iexchanges(kk)%muchtheyneed(1), ifdn))
-        allocate (iexchanges1(kk)%qtheyneed(iexchanges(kk)%muchtheyneed(1)))
-        allocate (iexchanges(kk)%qtheyneed(iexchanges(kk)%muchtheyneed(1)))
+        allocate(iexchanges1(kk)%whattheyneed(iexchanges(kk)%muchtheyneed(1)))
+        allocate(iexchanges(kk)%localref(iexchanges(kk)%muchtheyneed(1)))
+        allocate(iexchanges(kk)%sidetheyneed(iexchanges(kk)%muchtheyneed(1)))
+        allocate(iexchanges1(kk)%sidetheyneedn(iexchanges(kk)%muchtheyneed(1)))
+        allocate(iexchanges1(kk)%nodex(iexchanges(kk)%muchtheyneed(1), ifdn))
+        allocate(iexchanges1(kk)%qtheyneed(iexchanges(kk)%muchtheyneed(1)))
+        allocate(iexchanges(kk)%qtheyneed(iexchanges(kk)%muchtheyneed(1)))
         iexchanges1(kk)%whattheyneed(:) = 0
         iexchanges(kk)%localref(:) = 0
         iexchanges(kk)%sidetheyneed(:) = 0
-        iexchanges1(kk)%sidetheyneedn(:) = 0; iexchanges1(kk)%nodex(:, :) = 0
+        iexchanges1(kk)%sidetheyneedn(:) = 0
+        iexchanges1(kk)%nodex(:, :) = 0
         iexchanges1(kk)%qtheyneed(:) = 0
         iexchanges(kk)%qtheyneed(:) = 0
       end if
@@ -499,7 +509,6 @@ contains
                             iexchanges(k)%muchtheyneed(1), mpi_integer, iexchanger(i)%procid, &
                             icpuid, mpi_comm_world, status, ierror)
           iexchanges(k)%qtheyneed(1:iexchanges(k)%muchtheyneed(1)) = iexchanges1(k)%qtheyneed(1:iexchanges(k)%muchtheyneed(1))
-
         end if
       end do
     end do
@@ -526,14 +535,13 @@ contains
                             iexchanges(k)%procid, iexchanger1(i)%sideineed(1:iexchanger(i)%muchineed(1)), &
                             iexchanger(i)%muchineed(1), mpi_integer, iexchanges(k)%procid, &
                             icpuid, mpi_comm_world, status, ierror)
-
         end if
       end do
     end do
 
     call mpi_barrier(mpi_comm_world, ierror)
 
-    deallocate (ilistside, ilistq)
+    deallocate(ilistside, ilistq)
     do i = 1, temp2
       do k = 1, iexchanges(i)%muchtheyneed(1)
         if (xmpie(iexchanges1(i)%whattheyneed(k)) .eq. n) then
@@ -556,7 +564,7 @@ contains
 
     if (ischeme .gt. 1) then
       stencounter = 0
-      allocate (totstenc2(imaxe))
+      allocate(totstenc2(imaxe))
       totstenc2 = 0
       do i = 1, kmaxe
         do k = 1, typesten
@@ -592,10 +600,10 @@ contains
         end if
       end do
 
-      allocate (stenred(kxk))
-      allocate (stenredproc(kxk))
+      allocate(stenred(kxk))
+      allocate(stenredproc(kxk))
       stencounter = kxk
-      allocate (totstenc(stencounter))
+      allocate(totstenc(stencounter))
       totstenc = 0
       kxk = 0
       do i = 1, imaxe
@@ -605,7 +613,7 @@ contains
         end if
       end do
 
-      deallocate (totstenc2)
+      deallocate(totstenc2)
       stenred = 0
       stenredproc = 0
       ihmste = 0
@@ -616,7 +624,7 @@ contains
           stenred(kxk) = totstenc(i)
         end if
       end do
-      deallocate (totstenc)
+      deallocate(totstenc)
 
       do i = 1, kxk
         stenredproc(i) = xmpie(stenred(i))
@@ -640,14 +648,14 @@ contains
         end if
       end do
       call mpi_barrier(mpi_comm_world, ierror)
-      allocate (iliststen(ix))
+      allocate(iliststen(ix))
       ix = 0
       do i = 0, isize - 1
         if (i .ne. n) then
           if (ihmste(i) .gt. 0) then
             ix = ix + 1
             iliststen(ix)%procid = i
-            allocate (iliststen(ix)%listsarray(ihmste(i)))
+            allocate(iliststen(ix)%listsarray(ihmste(i)))
             iliststen(ix)%listsarray(:) = 0
             icf = 0
             do icx = 1, kxk
@@ -659,8 +667,8 @@ contains
           end if
         end if
       end do
-      allocate (irecexr(ix))
-      allocate (irecexr1(ix))
+      allocate(irecexr(ix))
+      allocate(irecexr1(ix))
       irecexr(:)%tot = 0
       irecexr(:)%tot = ix
       icx = 0
@@ -668,12 +676,12 @@ contains
         if (ihmste(i) .gt. 0) then
           icx = icx + 1
           irecexr(icx)%procid = i
-          allocate (irecexr(icx)%muchineed(1))
+          allocate(irecexr(icx)%muchineed(1))
           irecexr(icx)%muchineed(:) = 0
           irecexr(icx)%muchineed(1) = ihmste(i)
-          allocate (irecexr1(icx)%whatineed(irecexr(icx)%muchineed(1)))
-          allocate (irecexr1(icx)%localref(irecexr(icx)%muchineed(1)))
-          allocate (irecexr1(icx)%ishape(irecexr(icx)%muchineed(1)))
+          allocate(irecexr1(icx)%whatineed(irecexr(icx)%muchineed(1)))
+          allocate(irecexr1(icx)%localref(irecexr(icx)%muchineed(1)))
+          allocate(irecexr1(icx)%ishape(irecexr(icx)%muchineed(1)))
           irecexr1(icx)%whatineed(:) = 0
           irecexr1(icx)%localref(:) = 0
           irecexr1(icx)%ishape(:) = 0
@@ -716,21 +724,21 @@ contains
       end do
 
       call mpi_barrier(mpi_comm_world, ierror)
-      allocate (irecexs(temp2))
-      allocate (irecexs1(temp2))
+      allocate(irecexs(temp2))
+      allocate(irecexs1(temp2))
+
       irecexs(:)%tot = temp2
       kk = 0
-
       do i = 0, isize - 1
         if (sendstwh(i) .gt. 0) then
           kk = kk + 1
           irecexs(kk)%procid = i
-          allocate (irecexs(kk)%muchtheyneed(1))
+          allocate(irecexs(kk)%muchtheyneed(1))
           irecexs(kk)%muchtheyneed(:) = 0
           irecexs(kk)%muchtheyneed(1) = sendstwh(i)
-          allocate (irecexs1(kk)%whattheyneed(irecexs(kk)%muchtheyneed(1)))
-          allocate (irecexs(kk)%localref(irecexs(kk)%muchtheyneed(1)))
-          allocate (irecexs1(kk)%ishape(irecexs(kk)%muchtheyneed(1)))
+          allocate(irecexs1(kk)%whattheyneed(irecexs(kk)%muchtheyneed(1)))
+          allocate(irecexs(kk)%localref(irecexs(kk)%muchtheyneed(1)))
+          allocate(irecexs1(kk)%ishape(irecexs(kk)%muchtheyneed(1)))
           irecexs1(kk)%whattheyneed(:) = 0
           irecexs(kk)%localref(:) = 0
           irecexs1(kk)%ishape(:) = 0
@@ -838,26 +846,23 @@ contains
                               irecexs(iavt)%muchtheyneed(1), mpi_integer, irecexs(iavt)%procid, icpuid, irecexr1(iavc)%localref(1:irecexr(iavc)%muchineed(1)), &
                               irecexr(iavc)%muchineed(1), mpi_integer, irecexr(iavc)%procid, irecexr(iavc)%procid, mpi_comm_world, status, ierror)
             call mpi_sendrecv(irecexs1(iavt)%ishape(1:irecexs(iavt)%muchtheyneed(1)), irecexs(iavt)%muchtheyneed(1), &
-                              mpi_integer, irecexs(iavt)%procid, icpuid, irecexr1(iavc)%ishape(1:irecexr(iavc)%muchineed(1)), irecexr(iavc)%muchineed(1) &
-                              , mpi_integer, irecexr(iavc)%procid, irecexr(iavc)%procid, mpi_comm_world, status, ierror)
+                              mpi_integer, irecexs(iavt)%procid, icpuid, irecexr1(iavc)%ishape(1:irecexr(iavc)%muchineed(1)), irecexr(iavc)%muchineed(1), &
+                              mpi_integer, irecexr(iavc)%procid, irecexr(iavc)%procid, mpi_comm_world, status, ierror)
           end if
         end if        ! i.ne.n
       end do
       call mpi_barrier(mpi_comm_world, ierror)
-      deallocate (stenred)
-      deallocate (stenredproc)
-      deallocate (iliststen)
+      deallocate(stenred)
+      deallocate(stenredproc)
+      deallocate(iliststen)
     end if
-
-    deallocate (ilistglo)
-
+    deallocate(ilistglo)
   end subroutine estabexhange
 
   subroutine exchange_lower(n)
-!> @brief
-!> this subroutine is exchanging the variables of all the halo cells for direct side neighbours only
-!> and is primarily used by lower order schemes
-
+    ! @brief
+    ! this subroutine is exchanging the variables of all the halo cells for direct side neighbours only
+    ! and is primarily used by lower order schemes
     implicit none
     integer, intent(in)::n
     integer::i, k, ineedt, tneedt, icpuid, itest
@@ -866,25 +871,20 @@ contains
     itest = nof_variables + turbulenceequations + passivescalar
 
     if ((turbulence .gt. 0) .or. (passivescalar .gt. 0)) then
-!$omp do
       do i = 1, tneedt
         do k = 1, iexchanges(i)%muchtheyneed(1)
           solchanges(i)%sol(k, 1:nof_variables) = u_c(iexchanges(i)%localref(k))%val(1, 1:nof_variables)
           solchanges(i)%sol(k,nof_variables+1:nof_variables+turbulenceequations+passivescalar)=u_ct(iexchanges(i)%localref(k))%val(1,1:turbulenceequations+passivescalar)
         end do
       end do
-!$omp end do
     else
-!$omp do
       do i = 1, tneedt
         do k = 1, iexchanges(i)%muchtheyneed(1)
           solchanges(i)%sol(k, 1:nof_variables) = u_c(iexchanges(i)%localref(k))%val(1, 1:nof_variables)
         end do
       end do
-!$omp end do
     end if
-!$omp barrier
-!$omp master
+
     icpuid = n
     do i = 1, ineedt
       do k = 1, tneedt
@@ -897,14 +897,12 @@ contains
         end if
       end do
     end do
-!$omp end master
-!$omp barrier
 
   end subroutine exchange_lower
 
   subroutine exchange_higher(n)
-!> @brief
-!> this subroutine is exchanging the variables of all the halo cells for all the reconstruction stencils
+    ! @brief
+    ! this subroutine is exchanging the variables of all the halo cells for all the reconstruction stencils
     implicit none
     integer, intent(in)::n
     integer::i, j, k, l, m, o, p, q, ineedt, tneedt, indl, tndl, icpuid, itest, itee, iteedum, itemp1, itemp2, iavc, iavt
@@ -916,29 +914,22 @@ contains
     tneedt = irecexs(1)%tot
 
     if ((turbulence .gt. 0) .or. (passivescalar .gt. 0)) then
-!$omp do
       do i = 1, tneedt
         do k = 1, irecexs(i)%muchtheyneed(1)
           iexsolhis(i)%sol(k, 1:nof_variables) = u_c(irecexs(i)%localref(k))%val(1, 1:nof_variables)
                   iexsolhis(i)%sol(k,nof_variables+1:nof_variables+turbulenceequations+passivescalar)=u_ct(irecexs(i)%localref(k))%val(1,1:turbulenceequations+passivescalar)
-
         end do
       end do
-!$omp end do
     else
-!$omp do
       do i = 1, tneedt
         do k = 1, irecexs(i)%muchtheyneed(1)
           iexsolhis(i)%sol(k,1:nof_variables+turbulenceequations+passivescalar)=u_c(irecexs(i)%localref(k))%val(1,1:nof_variables+turbulenceequations+passivescalar)
         end do
       end do
-!$omp end do
     end if
-!$omp barrier
-!$omp master
 
     n_requests = 0
-    allocate (requests(jtotal*2))
+    allocate(requests(jtotal*2))
     requests(:) = 0
     icpuid = n
 
@@ -946,16 +937,14 @@ contains
       if ((jtot(k, 1) .eq. -1) .and. (jtot(k, 2) .ne. -1)) then
         n_requests = n_requests + 1
         iavc = jtot(k, 2)
-        call mpi_isend( &
-                        dumts(1:1), & !sendbuf
+        call mpi_isend( dumts(1:1), & !sendbuf
                         1, mpi_double_precision, & !sendcount, sendtype
                         jtot(k, 3), 0, & !destination, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                       )
         n_requests = n_requests + 1
         iavc = jtot(k, 2)
-        call mpi_irecv( &
-                        iexsolhir(iavc)%sol(1:irecexr(iavc)%muchineed(1), 1:itest), & !recvbuf
+        call mpi_irecv( iexsolhir(iavc)%sol(1:irecexr(iavc)%muchineed(1), 1:itest), & !recvbuf
                         irecexr(iavc)%muchineed(1)*itest, mpi_double_precision, & !recvcount, recvtype
                         iexsolhir(iavc)%procid, 0, & !source, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
@@ -965,16 +954,14 @@ contains
       if ((jtot(k, 1) .ne. -1) .and. (jtot(k, 2) .eq. -1)) then
         n_requests = n_requests + 1
         iavt = jtot(k, 1)
-        call mpi_isend( &
-                        iexsolhis(iavt)%sol(1:irecexs(iavt)%muchtheyneed(1), 1:itest), & !sendbuf
+        call mpi_isend( iexsolhis(iavt)%sol(1:irecexs(iavt)%muchtheyneed(1), 1:itest), & !sendbuf
                         irecexs(iavt)%muchtheyneed(1)*itest, mpi_double_precision, & !sendcount, sendtype
                         iexsolhis(iavt)%procid, 0, & !destination, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                       )
         n_requests = n_requests + 1
         iavt = jtot(k, 1)
-        call mpi_irecv( &
-                        dumts(1:1), & !recvbuf
+        call mpi_irecv( dumts(1:1), & !recvbuf
                         1, mpi_double_precision, & !recvcount, recvtype
                         jtot(k, 3), 0, & !source, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
@@ -985,16 +972,14 @@ contains
         n_requests = n_requests + 1
         iavt = jtot(k, 1)
         iavc = jtot(k, 2)
-        call mpi_isend( &
-                        iexsolhis(iavt)%sol(1:irecexs(iavt)%muchtheyneed(1), 1:itest), & !sendbuf
+        call mpi_isend( iexsolhis(iavt)%sol(1:irecexs(iavt)%muchtheyneed(1), 1:itest), & !sendbuf
                         irecexs(iavt)%muchtheyneed(1)*itest, mpi_double_precision, & !sendcount, sendtype
                         iexsolhis(iavt)%procid, 0, & !destination, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                       )
         n_requests = n_requests + 1
         iavc = jtot(k, 2)
-        call mpi_irecv( &
-                        iexsolhir(iavc)%sol(1:irecexr(iavc)%muchineed(1), 1:itest), & !recvbuf
+        call mpi_irecv( iexsolhir(iavc)%sol(1:irecexr(iavc)%muchineed(1), 1:itest), & !recvbuf
                         irecexr(iavc)%muchineed(1)*itest, mpi_double_precision, & !recvcount, recvtype
                         iexsolhir(iavc)%procid, 0, & !source, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
@@ -1002,15 +987,12 @@ contains
       end if
     end do
     call mpi_waitall(n_requests, requests, mpi_statuses_ignore, ierror)
-    deallocate (requests)
-!$omp end master
-!$omp barrier
-
+    deallocate(requests)
   end subroutine exchange_higher
 
   subroutine exchange_adda_diss(n)
-!> @brief
-!> this subroutine is exchanging the variables of all the halo cells for all the reconstruction stencils
+    ! @brief
+    ! this subroutine is exchanging the variables of all the halo cells for all the reconstruction stencils
     implicit none
     integer, intent(in)::n
     integer::i, j, k, l, m, o, p, q, ineedt, tneedt, indl, tndl, icpuid, itest, itee, iteedum, itemp1, itemp2, iavc, iavt
@@ -1021,19 +1003,14 @@ contains
     ineedt = irecexr(1)%tot
     tneedt = irecexs(1)%tot
 
-!$omp do
     do i = 1, tneedt
       do k = 1, irecexs(i)%muchtheyneed(1)
         iexsolhisd(i)%sol(k, 1) = ielem(n, irecexs(i)%localref(k))%diss
       end do
     end do
-!$omp end do
-
-!$omp barrier
-!$omp master
 
     n_requests = 0
-    allocate (requests(jtotal*2))
+    allocate(requests(jtotal*2))
     requests(:) = 0
     icpuid = n
 
@@ -1041,16 +1018,14 @@ contains
       if ((jtot(k, 1) .eq. -1) .and. (jtot(k, 2) .ne. -1)) then
         n_requests = n_requests + 1
         iavc = jtot(k, 2)
-        call mpi_isend( &
-                        dumts(1:1), & !sendbuf
+        call mpi_isend( dumts(1:1), & !sendbuf
                         1, mpi_double_precision, & !sendcount, sendtype
                         jtot(k, 3), 0, & !destination, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                       )
         n_requests = n_requests + 1
         iavc = jtot(k, 2)
-        call mpi_irecv( &
-                        iexsolhird(iavc)%sol(1:irecexr(iavc)%muchineed(1), 1), & !recvbuf
+        call mpi_irecv( iexsolhird(iavc)%sol(1:irecexr(iavc)%muchineed(1), 1), & !recvbuf
                         irecexr(iavc)%muchineed(1)*itest, mpi_double_precision, & !recvcount, recvtype
                         iexsolhir(iavc)%procid, 0, & !source, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
@@ -1059,16 +1034,14 @@ contains
       if ((jtot(k, 1) .ne. -1) .and. (jtot(k, 2) .eq. -1)) then
         n_requests = n_requests + 1
         iavt = jtot(k, 1)
-        call mpi_isend( &
-                        iexsolhisd(iavt)%sol(1:irecexs(iavt)%muchtheyneed(1), 1), & !sendbuf
+        call mpi_isend( iexsolhisd(iavt)%sol(1:irecexs(iavt)%muchtheyneed(1), 1), & !sendbuf
                         irecexs(iavt)%muchtheyneed(1)*itest, mpi_double_precision, & !sendcount, sendtype
                         iexsolhis(iavt)%procid, 0, & !destination, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                       )
         n_requests = n_requests + 1
         iavt = jtot(k, 1)
-        call mpi_irecv( &
-                        dumts(1:1), & !recvbuf
+        call mpi_irecv( dumts(1:1), & !recvbuf
                         1, mpi_double_precision, & !recvcount, recvtype
                         jtot(k, 3), 0, & !source, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
@@ -1078,34 +1051,27 @@ contains
         n_requests = n_requests + 1
         iavt = jtot(k, 1)
         iavc = jtot(k, 2)
-        call mpi_isend( &
-                        iexsolhisd(iavt)%sol(1:irecexs(iavt)%muchtheyneed(1), 1:itest), & !sendbuf
+        call mpi_isend( iexsolhisd(iavt)%sol(1:irecexs(iavt)%muchtheyneed(1), 1:itest), & !sendbuf
                         irecexs(iavt)%muchtheyneed(1)*itest, mpi_double_precision, & !sendcount, sendtype
                         iexsolhis(iavt)%procid, 0, & !destination, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                       )
         n_requests = n_requests + 1
         iavc = jtot(k, 2)
-        call mpi_irecv( &
-                        iexsolhird(iavc)%sol(1:irecexr(iavc)%muchineed(1), 1:itest), & !recvbuf
+        call mpi_irecv( iexsolhird(iavc)%sol(1:irecexr(iavc)%muchineed(1), 1:itest), & !recvbuf
                         irecexr(iavc)%muchineed(1)*itest, mpi_double_precision, & !recvcount, recvtype
                         iexsolhir(iavc)%procid, 0, & !source, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                       )
       end if
     end do
-
     call mpi_waitall(n_requests, requests, mpi_statuses_ignore, ierror)
-    deallocate (requests)
-
-!$omp end master
-!$omp barrier
-
+    deallocate(requests)
   end subroutine exchange_adda_diss
 
   subroutine exchange_higher_av(n)
-!> @brief
-!> this subroutine is exchanging the averaged variables of all the halo cells for all the reconstruction stencils
+    ! @brief
+    ! this subroutine is exchanging the averaged variables of all the halo cells for all the reconstruction stencils
     implicit none
     integer, intent(in)::n
     integer::i, j, k, l, m, o, p, q, ineedt, tneedt, indl, tndl, icpuid, itest, itee, iteedum, itemp1, itemp2, iavc, iavt
@@ -1123,47 +1089,37 @@ contains
     tneedt = irecexs(1)%tot
 
     if ((turbulence .gt. 0) .or. (passivescalar .gt. 0)) then
-!$omp do
       do i = 1, tneedt
         do k = 1, irecexs(i)%muchtheyneed(1)
           iexsolhis(i)%sol(k, 1:nof_variables) = u_c(irecexs(i)%localref(k))%val(ind1, 1:nof_variables)
                   iexsolhis(i)%sol(k,nof_variables+1:nof_variables+turbulenceequations+passivescalar)=u_ct(irecexs(i)%localref(k))%val(ind1,1:turbulenceequations+passivescalar)
         end do
       end do
-!$omp end do
     else
-!$omp do
       do i = 1, tneedt
         do k = 1, irecexs(i)%muchtheyneed(1)
                   iexsolhis(i)%sol(k,1:nof_variables+turbulenceequations+passivescalar)=u_c(irecexs(i)%localref(k))%val(ind1,1:nof_variables+turbulenceequations+passivescalar)
         end do
       end do
-!$omp end do
     end if
 
-!$omp barrier
-!$omp master
     n_requests = 0
-    allocate (requests(jtotal*2))
+    allocate(requests(jtotal*2))
     requests(:) = 0
     icpuid = n
 
     do k = 1, jtotal
-
       if ((jtot(k, 1) .eq. -1) .and. (jtot(k, 2) .ne. -1)) then
-
         n_requests = n_requests + 1
         iavc = jtot(k, 2)
-        call mpi_isend( &
-                        dumts(1:1), & !sendbuf
+        call mpi_isend( dumts(1:1), & !sendbuf
                         1, mpi_double_precision, & !sendcount, sendtype
                         jtot(k, 3), 0, & !destination, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                       )
         n_requests = n_requests + 1
         iavc = jtot(k, 2)
-        call mpi_irecv( &
-                        iexsolhir(iavc)%sol(1:irecexr(iavc)%muchineed(1), 1:itest), & !recvbuf
+        call mpi_irecv( iexsolhir(iavc)%sol(1:irecexr(iavc)%muchineed(1), 1:itest), & !recvbuf
                         irecexr(iavc)%muchineed(1)*itest, mpi_double_precision, & !recvcount, recvtype
                         iexsolhir(iavc)%procid, 0, & !source, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
@@ -1173,16 +1129,14 @@ contains
       if ((jtot(k, 1) .ne. -1) .and. (jtot(k, 2) .eq. -1)) then
         n_requests = n_requests + 1
         iavt = jtot(k, 1)
-        call mpi_isend( &
-                        iexsolhis(iavt)%sol(1:irecexs(iavt)%muchtheyneed(1), 1:itest), & !sendbuf
+        call mpi_isend( iexsolhis(iavt)%sol(1:irecexs(iavt)%muchtheyneed(1), 1:itest), & !sendbuf
                         irecexs(iavt)%muchtheyneed(1)*itest, mpi_double_precision, & !sendcount, sendtype
                         iexsolhis(iavt)%procid, 0, & !destination, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                       )
         n_requests = n_requests + 1
         iavt = jtot(k, 1)
-        call mpi_irecv( &
-                        dumts(1:1), & !recvbuf
+        call mpi_irecv( dumts(1:1), & !recvbuf
                         1, mpi_double_precision, & !recvcount, recvtype
                         jtot(k, 3), 0, & !source, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
@@ -1193,16 +1147,14 @@ contains
         n_requests = n_requests + 1
         iavt = jtot(k, 1)
         iavc = jtot(k, 2)
-        call mpi_isend( &
-                        iexsolhis(iavt)%sol(1:irecexs(iavt)%muchtheyneed(1), 1:itest), & !sendbuf
+        call mpi_isend( iexsolhis(iavt)%sol(1:irecexs(iavt)%muchtheyneed(1), 1:itest), & !sendbuf
                         irecexs(iavt)%muchtheyneed(1)*itest, mpi_double_precision, & !sendcount, sendtype
                         iexsolhis(iavt)%procid, 0, & !destination, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                       )
         n_requests = n_requests + 1
         iavc = jtot(k, 2)
-        call mpi_irecv( &
-                        iexsolhir(iavc)%sol(1:irecexr(iavc)%muchineed(1), 1:itest), & !recvbuf
+        call mpi_irecv( iexsolhir(iavc)%sol(1:irecexr(iavc)%muchineed(1), 1:itest), & !recvbuf
                         irecexr(iavc)%muchineed(1)*itest, mpi_double_precision, & !recvcount, recvtype
                         iexsolhir(iavc)%procid, 0, & !source, tag
                         mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
@@ -1211,17 +1163,13 @@ contains
     end do
 
     call mpi_waitall(n_requests, requests, mpi_statuses_ignore, ierror)
-    deallocate (requests)
-
-!$omp end master
-!$omp barrier
-
+    deallocate(requests)
   end subroutine exchange_higher_av
 
   subroutine exchange_higher_pre(n)
-!> @brief
-!> this subroutine is establishing the communication pattern and allocating the appropriate memory for
-!> exchanging the variables of all the halo cells for all the reconstruction stencils
+    ! @brief
+    ! this subroutine is establishing the communication pattern and allocating the appropriate memory for
+    ! exchanging the variables of all the halo cells for all the reconstruction stencils
     implicit none
     integer, intent(in)::n
     integer::i, j, k, l, m, o, p, q, ineedt, tneedt, indl, tndl, icpuid, itest, itee, iteedum, itemp1, itemp2, iavc, iavt
@@ -1231,26 +1179,19 @@ contains
     tneedt = irecexs(1)%tot
 
     if ((turbulence .gt. 0) .or. (passivescalar .gt. 0)) then
-!$omp do
       do i = 1, tneedt
         do k = 1, irecexs(i)%muchtheyneed(1)
           iexsolhis(i)%sol(k, 1:nof_variables) = u_c(irecexs(i)%localref(k))%val(1, 1:nof_variables)
                   iexsolhis(i)%sol(k,nof_variables+1:nof_variables+turbulenceequations+passivescalar)=u_ct(irecexs(i)%localref(k))%val(1,1:turbulenceequations+passivescalar)
         end do
       end do
-!$omp end do
     else
-!$omp do
       do i = 1, tneedt
         do k = 1, irecexs(i)%muchtheyneed(1)
                   iexsolhis(i)%sol(k,1:nof_variables+turbulenceequations+passivescalar)=u_c(irecexs(i)%localref(k))%val(1,1:nof_variables+turbulenceequations+passivescalar)
         end do
       end do
-!$omp end do
     end if
-
-!$omp barrier
-!$omp master
 
     jtotal = 0; jtotal1 = 0; jtotal2 = 0; jtotal3 = 0
     icpuid = n
@@ -1299,7 +1240,7 @@ contains
         end if
       end if
     end do
-    allocate (jtot1(jtotal1, 3), jtot2(jtotal2, 3), jtot3(jtotal3, 3), jtot(jtotal1 + jtotal2 + jtotal3, 3))
+    allocate(jtot1(jtotal1, 3), jtot2(jtotal2, 3), jtot3(jtotal3, 3), jtot(jtotal1 + jtotal2 + jtotal3, 3))
     jtot1(:, :) = -1; jtot2(:, :) = -1; jtot3(:, :) = -1; jtot(:, :) = -1
     jtotal = 0; jtotal1 = 0; jtotal2 = 0; jtotal3 = 0
     icpuid = n
@@ -1326,10 +1267,6 @@ contains
 11001   continue
         if ((iavt .eq. 10000) .and. (iavc .ne. 10000)) then
           !message 1
-!                                 jtotal1=jtotal1+1
-!                                 jtot1(jtotal1,1)=-1
-!                                 jtot1(jtotal1,2)=j
-
           jtotal = jtotal + 1
           jtot(jtotal, 1) = -1
           jtot(jtotal, 2) = k
@@ -1340,9 +1277,6 @@ contains
         end if
         if ((iavt .ne. 10000) .and. (iavc .eq. 10000)) then
           !message 1
-!                                 jtotal2=jtotal2+1
-!                                 jtot1(jtotal2,1)=k
-!                                 jtot1(jtotal2,2)=-1
           jtotal = jtotal + 1
           jtot(jtotal, 1) = j
           jtot(jtotal, 2) = -1
@@ -1353,9 +1287,6 @@ contains
         end if
         if ((iavt .ne. 10000) .and. (iavc .ne. 10000)) then
           !message 1
-!                                 jtotal3=jtotal3+1
-!                                 jtot3(jtotal3,1)=j
-!                                 jtot3(jtotal3,2)=k
           jtotal = jtotal + 1
           jtot(jtotal, 1) = j
           jtot(jtotal, 2) = k
@@ -1366,16 +1297,12 @@ contains
         end if
       end if
     end do
-
-!$omp end master
-!$omp barrier
-
   end subroutine exchange_higher_pre
 
   subroutine exhboundhigher(n)
-!> @brief
-!> this subroutine is communicating the boundary extrapolated values for the variables and their gradients
-!> for the gaussian quadrature points of direct-side neighbours between mpi processes
+    ! @brief
+    ! this subroutine is communicating the boundary extrapolated values for the variables and their gradients
+    ! for the gaussian quadrature points of direct-side neighbours between mpi processes
     implicit none
     integer, intent(in)::n
     integer::i, j, k, l, m, o, p, q, ineedt, tneedt, indl, tndl, icpuid, ittt, iex, imulti, k_cnt, nvar
@@ -1414,18 +1341,15 @@ contains
     end if
 
     if (itestcase .le. 3) then
-!$omp do
       do i = 1, tndl
         do k = 1, iexchanges(i)%muchtheyneed(1)
           iexboundhis(i)%facesol(k,1:nof_variables)=ilocal_recon3(iexchanges(i)%localref(k))%uleft(1:nof_variables,iexchanges(i)%sidetheyneed(k),iexchanges(i)%qtheyneed(k))
         end do
       end do
-!$omp end do
     end if
 
     if (itestcase .eq. 4) then
       if (turbulence .ne. 1) then
-!$omp do
         do i = 1, tndl
           do k = 1, iexchanges(i)%muchtheyneed(1)
             iexboundhis(i)%facesol(k,1:nof_variables)=ilocal_recon3(iexchanges(i)%localref(k))%uleft(1:nof_variables,iexchanges(i)%sidetheyneed(k),iexchanges(i)%qtheyneed(k))
@@ -1438,9 +1362,7 @@ contains
             end do
           end do
         end do
-!$omp end do
       else
-!$omp do
         do i = 1, tndl
           do k = 1, iexchanges(i)%muchtheyneed(1)
             iexboundhis(i)%facesol(k,1:nof_variables)=ilocal_recon3(iexchanges(i)%localref(k))%uleft(1:nof_variables,iexchanges(i)%sidetheyneed(k),iexchanges(i)%qtheyneed(k))
@@ -1460,17 +1382,13 @@ contains
             end do
           end do
         end do
-!$omp end do
       end if
     end if
-!$omp barrier
 
 !-------------------for debugging only -----------------------------------------!
-!$omp master
-!call mpi_barrier(mpi_comm_world,ierror)
 
     n_requests = 0
-    allocate (requests(2*indl))
+    allocate(requests(2*indl))
     requests(:) = 0
     icpuid = n
 
@@ -1480,15 +1398,13 @@ contains
         j = j + 1
       end do
       n_requests = n_requests + 1
-      call mpi_isend( &
-                      iexboundhis(j)%facesol(1:iexchanges(j)%muchtheyneed(1), 1:i_cnt), & !sendbuf
+      call mpi_isend( iexboundhis(j)%facesol(1:iexchanges(j)%muchtheyneed(1), 1:i_cnt), & !sendbuf
                       iexchanges(j)%muchtheyneed(1)*i_cnt, mpi_double_precision, & !sendcount, sendtype
                       iexboundhis(j)%procid, 0, & !destination, tag
                       mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                     )
       n_requests = n_requests + 1
-      call mpi_irecv( &
-                      iexboundhir(k)%facesol(1:iexchanger(k)%muchineed(1), 1:i_cnt), & !recvbuf
+      call mpi_irecv( iexboundhir(k)%facesol(1:iexchanger(k)%muchineed(1), 1:i_cnt), & !recvbuf
                       iexchanger(k)%muchineed(1)*i_cnt, mpi_double_precision, & !recvcount, recvtype
                       iexboundhir(k)%procid, 0, & !source, tag
                       mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
@@ -1496,17 +1412,13 @@ contains
     end do
 
     call mpi_waitall(n_requests, requests, mpi_statuses_ignore, ierror)
-    deallocate (requests)
-!$omp end master
-!$omp barrier
-
+    deallocate(requests)
   end subroutine exhboundhigher
 
   subroutine exhboundhigher2(n)
-!> @brief
-!> this subroutine is communicating the boundary extrapolated values for the variables and their gradients
-!> for the gaussian quadrature points of direct-side neighbours between mpi processes for the implicit time stepping
-
+    ! @brief
+    ! this subroutine is communicating the boundary extrapolated values for the variables and their gradients
+    ! for the gaussian quadrature points of direct-side neighbours between mpi processes for the implicit time stepping
     implicit none
     integer, intent(in)::n
     integer::i, j, k, l, m, o, p, q, ineedt, tneedt, indl, tndl, icpuid, ittt, iex, imulti, k_cnt, nvar
@@ -1532,7 +1444,6 @@ contains
 
     imulti = iex
     if (itestcase .le. 3) then
-!$omp do
       do i = 1, tndl
         do k = 1, iexchanges(i)%muchtheyneed(1)
           if (relax .eq. 3) then
@@ -1546,10 +1457,8 @@ contains
           end if
         end do
       end do
-!$omp end do
     end if
     if (itestcase .eq. 4) then
-!$omp do
       do i = 1, tndl
         do k = 1, iexchanges(i)%muchtheyneed(1)
           if ((turbulence .gt. 0) .or. (passivescalar .gt. 0)) then
@@ -1594,11 +1503,8 @@ contains
           end if ! turbulence
         end do
       end do
-!$omp end do
     end if
 
-!$omp barrier
-!$omp master
     icpuid = n
     if (itestcase .le. 3) then
       do k = 1, indl
@@ -1627,15 +1533,12 @@ contains
         end do
       end do
     end if
-!$omp end master
-!$omp barrier
-
   end subroutine exhboundhigher2
 
   subroutine exhboundhigherlu(n)
-!> @brief
-!> this subroutine is communicating the boundary extrapolated values for the variables and their gradients
-!> for the gaussian quadrature points of direct-side neighbours between mpi processes for the implicit time stepping
+    ! @brief
+    ! this subroutine is communicating the boundary extrapolated values for the variables and their gradients
+    ! for the gaussian quadrature points of direct-side neighbours between mpi processes for the implicit time stepping
 
     implicit none
     integer, intent(in)::n
@@ -1662,17 +1565,14 @@ contains
 
     imulti = iex
     if (itestcase .le. 3) then
-!$omp do
       do i = 1, tndl
         do k = 1, iexchanges(i)%muchtheyneed(1)
           iexboundhisi(i)%facesol(k, 1:iex) = impdu(iexchanges(i)%localref(k), 1:iex)
         end do
       end do
-!$omp end do
     end if
 
     if (itestcase .eq. 4) then
-!$omp do
       do i = 1, tndl
         do k = 1, iexchanges(i)%muchtheyneed(1)
           if ((turbulence .gt. 0) .or. (passivescalar .gt. 0)) then
@@ -1693,11 +1593,8 @@ contains
           end if ! turbulence
         end do
       end do
-!$omp end do
     end if
 
-!$omp barrier
-!$omp master
     icpuid = n
     if (itestcase .le. 3) then
       do k = 1, indl
@@ -1726,8 +1623,6 @@ contains
         end do
       end do
     end if
-!$omp end master
-!$omp barrier
 
   end subroutine exhboundhigherlu
 
@@ -1739,10 +1634,10 @@ contains
     integer:: n_requests
     integer, dimension(:), allocatable:: requests
     real::pr_t31, pr_t32, pr_t33, pr_t34, pr_t35, temp_prin, temp_prout
+
     cinout2 = 0
     indl = iexchanger(1)%tot
     tndl = iexchanges(1)%tot
-
     pr_t31 = zero
     pr_t32 = zero
     pr_t33 = zero
@@ -1771,18 +1666,15 @@ contains
     end if
 
     if (itestcase .le. 3) then
-!$omp do
       do i = 1, tndl
         do k = 1, iexchanges(i)%muchtheyneed(1)
           iexboundhis(i)%facesol_m(k, 1) = ielem(n, (iexchanges(i)%localref(k)))%mood
         end do
       end do
-!$omp end do
     end if
 
     if (itestcase .eq. 4) then
       if (turbulence .ne. 1) then
-!$omp do
         do i = 1, tndl
           do k = 1, iexchanges(i)%muchtheyneed(1)
             iexboundhis(i)%facesol(k,1:nof_variables)=ilocal_recon3(iexchanges(i)%localref(k))%uleft(1:nof_variables,iexchanges(i)%sidetheyneed(k),iexchanges(i)%qtheyneed(k))
@@ -1795,9 +1687,7 @@ contains
             end do
           end do
         end do
-!$omp end do
       else
-!$omp do
         do i = 1, tndl
           do k = 1, iexchanges(i)%muchtheyneed(1)
             iexboundhis(i)%facesol(k,1:nof_variables)=ilocal_recon3(iexchanges(i)%localref(k))%uleft(1:nof_variables,iexchanges(i)%sidetheyneed(k),iexchanges(i)%qtheyneed(k))
@@ -1817,15 +1707,11 @@ contains
             end do
           end do
         end do
-!$omp end do
       end if
     end if
 
-!$omp barrier
-!$omp master
-
     n_requests = 0
-    allocate (requests(2*indl))
+    allocate(requests(2*indl))
     icpuid = n
 
     do k = 1, indl
@@ -1850,16 +1736,13 @@ contains
     end do
 
     call mpi_waitall(n_requests, requests, mpi_statuses_ignore, ierror)
-    deallocate (requests)
-!$omp end master
-!$omp barrier
-
+    deallocate(requests)
   end subroutine exhboundhigher_mood
 
   subroutine exhboundhigher_dg(n)
-!> @brief
-!> this subroutine is communicating the boundary extrapolated values for the variables and their gradients
-!> for the gaussian quadrature points of direct-side neighbours between mpi processes
+    ! @brief
+    ! this subroutine is communicating the boundary extrapolated values for the variables and their gradients
+    ! for the gaussian quadrature points of direct-side neighbours between mpi processes
     implicit none
     integer, intent(in)::n
     integer::i, j, k, l, m, o, p, q, ineedt, tneedt, indl, tndl, icpuid, ittt, iex, imulti, k_cnt, nvar
@@ -1867,10 +1750,10 @@ contains
     integer:: n_requests
     integer, dimension(:), allocatable:: requests
     real::pr_t31, pr_t32, pr_t33, pr_t34, pr_t35, temp_prin, temp_prout
+
     cinout2 = 0
     indl = iexchanger(1)%tot
     tndl = iexchanges(1)%tot
-
     pr_t31 = zero
     pr_t32 = zero
     pr_t33 = zero
@@ -1885,23 +1768,16 @@ contains
     end if
 
     i_cnt = nof_variables
-!$omp do
     do i = 1, tndl
       do k = 1, iexchanges(i)%muchtheyneed(1)
         iexboundhis(i)%facesol_dg(k,1:nof_variables)=ilocal_recon3(iexchanges(i)%localref(k))%uleft_dg(1:nof_variables,iexchanges(i)%sidetheyneed(k),iexchanges(i)%qtheyneed(k))
       end do
     end do
-!$omp end do
-
-!$omp barrier
 
 !-------------------for debugging only -----------------------------------------!
 
-!$omp master
-!call mpi_barrier(mpi_comm_world,ierror)
-
     n_requests = 0
-    allocate (requests(2*indl))
+    allocate(requests(2*indl))
     requests(:) = 0
     icpuid = n
 
@@ -1911,33 +1787,26 @@ contains
         j = j + 1
       end do
       n_requests = n_requests + 1
-      call mpi_isend( &
-                      iexboundhis(j)%facesol_dg(1:iexchanges(j)%muchtheyneed(1), 1:i_cnt), & !sendbuf
+      call mpi_isend( iexboundhis(j)%facesol_dg(1:iexchanges(j)%muchtheyneed(1), 1:i_cnt), & !sendbuf
                       iexchanges(j)%muchtheyneed(1)*i_cnt, mpi_double_precision, & !sendcount, sendtype
                       iexboundhis(j)%procid, 0, & !destination, tag
                       mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                     )
       n_requests = n_requests + 1
-      call mpi_irecv( &
-                      iexboundhir(k)%facesol_dg(1:iexchanger(k)%muchineed(1), 1:i_cnt), & !recvbuf
+      call mpi_irecv( iexboundhir(k)%facesol_dg(1:iexchanger(k)%muchineed(1), 1:i_cnt), & !recvbuf
                       iexchanger(k)%muchineed(1)*i_cnt, mpi_double_precision, & !recvcount, recvtype
                       iexboundhir(k)%procid, 0, & !source, tag
                       mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                     )
     end do
-
     call mpi_waitall(n_requests, requests, mpi_statuses_ignore, ierror)
-
-    deallocate (requests)
-!$omp end master
-!$omp barrier
-
+    deallocate(requests)
   end subroutine exhboundhigher_dg
 
   subroutine exhboundhigher_dg2(n)
-!> @brief
-!> this subroutine is communicating the boundary extrapolated values for the variables and their gradients
-!> for the gaussian quadrature points of direct-side neighbours between mpi processes
+    ! @brief
+    ! this subroutine is communicating the boundary extrapolated values for the variables and their gradients
+    ! for the gaussian quadrature points of direct-side neighbours between mpi processes
     implicit none
     integer, intent(in)::n
     integer::i, j, k, l, m, o, p, q, ineedt, tneedt, indl, tndl, icpuid, ittt, iex, imulti, k_cnt, nvar
@@ -1977,7 +1846,6 @@ contains
 
     if (itestcase .le. 3) then
       if ((governingequations .eq. -1) .and. (br2_yn .eq. 1)) then
-!$omp do
         do i = 1, tndl
           do k = 1, iexchanges(i)%muchtheyneed(1)
             iexboundhis(i)%facesol_dg(k,1:nof_variables)=ilocal_recon3(iexchanges(i)%localref(k))%uleft_dg(1:nof_variables,iexchanges(i)%sidetheyneed(k),iexchanges(i)%qtheyneed(k))
@@ -1990,21 +1858,17 @@ contains
             end do
           end do
         end do
-!$omp end do
       else
-!$omp do
         do i = 1, tndl
           do k = 1, iexchanges(i)%muchtheyneed(1)
                 iexboundhis(i)%facesol_dg(k,1:nof_variables)=ilocal_recon3(iexchanges(i)%localref(k))%uleft_dg(1:nof_variables,iexchanges(i)%sidetheyneed(k),iexchanges(i)%qtheyneed(k))
           end do
         end do
-!$omp end do
       end if
     end if
 
     if (itestcase .eq. 4) then
       if (turbulence .ne. 1) then
-!$omp do
         do i = 1, tndl
           do k = 1, iexchanges(i)%muchtheyneed(1)
             iexboundhis(i)%facesol_dg(k,1:nof_variables)=ilocal_recon3(iexchanges(i)%localref(k))%uleft_dg(1:nof_variables,iexchanges(i)%sidetheyneed(k),iexchanges(i)%qtheyneed(k))
@@ -2017,9 +1881,7 @@ contains
             end do
           end do
         end do
-!$omp end do
       else
-!$omp do
         do i = 1, tndl
           do k = 1, iexchanges(i)%muchtheyneed(1)
             iexboundhis(i)%facesol_dg(k,1:nof_variables)=ilocal_recon3(iexchanges(i)%localref(k))%uleft_dg(1:nof_variables,iexchanges(i)%sidetheyneed(k),iexchanges(i)%qtheyneed(k))
@@ -2039,19 +1901,13 @@ contains
             end do
           end do
         end do
-!$omp end do
       end if
     end if
 
-!$omp barrier
-
 !-------------------for debugging only -----------------------------------------!
 
-!$omp master
-!call mpi_barrier(mpi_comm_world,ierror)
-
     n_requests = 0
-    allocate (requests(2*indl))
+    allocate(requests(2*indl))
     requests(:) = 0
     icpuid = n
 
@@ -2075,13 +1931,8 @@ contains
                       mpi_comm_world, requests(n_requests), ierror & !communicator, request handle, error
                     )
     end do
-
     call mpi_waitall(n_requests, requests, mpi_statuses_ignore, ierror)
-
-    deallocate (requests)
-!$omp end master
-!$omp barrier
-
+    deallocate(requests)
   end subroutine exhboundhigher_dg2
 
 end module communications

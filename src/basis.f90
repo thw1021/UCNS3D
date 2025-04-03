@@ -7,8 +7,8 @@ module basis
 
 contains
   function basis_rec(n, x1, y1, z1, number, iconsidered, number_of_dog, icompwrt)
-  ! @brief
-  ! this function returns the value of the basis function for a specific polynomial order and coordinates
+    ! @brief
+    ! this function returns the value of the basis function for a specific polynomial order and coordinates
     implicit none
     integer, intent(in)::n
     integer, intent(in)::number, iconsidered, number_of_dog, icompwrt
@@ -27,7 +27,6 @@ contains
           sb(1) = x1
           sb(2) = y1
           sb(3) = z1
-
         case (2)
           ! second order functions (3rd-order of accuracy 4-9)
           sb(1) = x1
@@ -153,7 +152,6 @@ contains
           sb(53) = (x1)*(z1**4)
           sb(54) = (y1)*(z1**4)
           sb(55) = (z1**5)
-
           ! sixth order functions (7th-order of accuracy 56-83)
         case (6)
           sb(1) = x1
@@ -239,7 +237,6 @@ contains
           sb(81) = (x1)*(z1**5)
           sb(82) = (y1)*(z1**5)
           sb(83) = (z1**6)
-
         case (7)
           ! seventh order functions (8th-order of accuracy 84-119)
           sb(1) = x1
@@ -362,7 +359,7 @@ contains
           sb(118) = (y1)*(z1**6)
           sb(119) = (z1**7)
         case (8)
-          !eighth order functions (9th-order of accuracy 85-164)
+          ! eighth order functions (9th-order of accuracy 85-164)
           sb(1) = x1
           sb(2) = y1
           sb(3) = z1
@@ -528,7 +525,7 @@ contains
           sb(163) = (y1)*(z1**7)
           sb(164) = (z1**8)
         case (9)
-          !ninth order functions (10th-order of accuracy 165-219)
+          ! ninth order functions (10th-order of accuracy 165-219)
           sb(1) = x1
           sb(2) = y1
           sb(3) = z1
@@ -1518,7 +1515,6 @@ contains
           sb(17) = (y1**2*z1)/(2.0d0*hxc**3)
           sb(18) = (y1*z1**2)/(2.0d0*hxc**3)
           sb(19) = z1**3/(6.0d0*hxc**3)
-
         case (4)
           ! fourth order functions (5th-order of accuracy 20-34)
           sb(1) = x1/hxc

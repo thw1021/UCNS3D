@@ -18,7 +18,7 @@ module dg_functions
     icompwrt = -2
     number = ielem(n, iconsidered)%iorder
     number_of_dog = ielem(n, iconsidered)%idegfree
-    allocate (basis_temp(1:number_of_dog))
+    allocate(basis_temp(1:number_of_dog))
     if (dimensiona .eq. 2) then
       basis_temp = basis_rec2d(n, x1, y1, number, iconsidered, number_of_dog, icompwrt)
     else
@@ -28,7 +28,7 @@ module dg_functions
       dg_sol(i_var) = u_c(iconsidered)%valdg(1,i_var,1)+ dot_product(basis_temp(1:number_of_dog),u_c(iconsidered)%valdg(1,i_var,2:number_of_dog+1))
     end do
     icompwrt = 0
-    deallocate (basis_temp)
+    deallocate(basis_temp)
   end function dg_sol
 
   function dg_solface(n, facex, pointx, iconsidered, number_of_dog)
@@ -48,7 +48,7 @@ module dg_functions
     if (dimensiona .eq. 3) then
       z1 = ilocal_recon3(iconsidered)%qpoints(facex, pointx, 3)
     end if
-    allocate (basis_temp(1:number_of_dog))
+    allocate(basis_temp(1:number_of_dog))
     number = ielem(n, iconsidered)%iorder
     if (dimensiona .eq. 2) then
       basis_temp = basis_rec2d(n, x1, y1, number, iconsidered, number_of_dog, icompwrt)
@@ -58,7 +58,7 @@ module dg_functions
     do i_var = 1, nof_variables
       dg_solface(i_var) = u_c(iconsidered)%valdg(1,i_var,1) + dot_product(basis_temp(1:number_of_dog),u_c(iconsidered)%valdg(1,i_var,2:number_of_dog+1))
     end do
-    deallocate (basis_temp)
+    deallocate(basis_temp)
     icompwrt = 0
   end function dg_solface
 
@@ -72,7 +72,7 @@ module dg_functions
     real, allocatable, dimension(:, :)::basis_temp
     real, dimension(1:nof_variables, 1:dimensiona)::dg_sol_der
     number = ielem(n, iconsidered)%iorder
-    allocate (basis_temp(number_of_dog, dimensiona))
+    allocate(basis_temp(number_of_dog, dimensiona))
     if (br2_yn .ne. 1) then
       do i_dof = 1, number_of_dog
         if (dimensiona .eq. 2) then
@@ -106,7 +106,7 @@ module dg_functions
       end do
     end do
     icompwrt = 0
-    deallocate (basis_temp)
+    deallocate(basis_temp)
   end function dg_sol_der
 
   function br2_local_lift(n, n_qp, facex, iconsidered, wequa2d)
@@ -135,7 +135,7 @@ module dg_functions
     l = facex
     number_of_dog = ielem(n, i)%idegfree
     number = ielem(n, iconsidered)%iorder
-    allocate (basis_temp(1:number_of_dog))
+    allocate(basis_temp(1:number_of_dog))
     if (dimensiona .eq. 3) then
       angle1 = ielem(n, i)%faceanglex(l)
       angle2 = ielem(n, i)%faceangley(l)
@@ -171,11 +171,11 @@ module dg_functions
       rightv(nof_variables) = rightv(nof_variables)/rightv(1)
 
       do i_dim = 1, dimensiona
-        br2_local_lift(1:nof_variables, i_dim) = br2_local_lift(1:nof_variables, i_dim) + nnn(i_dim)*(rightv - leftv)*weights_temp(pointx) 
+        br2_local_lift(1:nof_variables, i_dim) = br2_local_lift(1:nof_variables, i_dim) + nnn(i_dim)*(rightv - leftv)*weights_temp(pointx)
       end do
     end do
-    br2_local_lift = oo2*br2_local_lift*ielem(n, iconsidered)%surf(facex)/ielem(n, iconsidered)%totvolume 
-    deallocate (basis_temp)
+    br2_local_lift = oo2*br2_local_lift*ielem(n, iconsidered)%surf(facex)/ielem(n, iconsidered)%totvolume
+    deallocate(basis_temp)
   end function br2_local_lift
 
   function dg_surf_flux(n, iconsidered, facex, pointx, weights_temp, rhllcflux)
@@ -341,7 +341,7 @@ module dg_functions
     integer::number, number_of_dog
     real, dimension(1:nof_variables)::dg_sol2
     real, allocatable, dimension(:)::basis_temp
-    allocate (basis_temp(1:idegfree))
+    allocate(basis_temp(1:idegfree))
     iconsidered = i
     icompwrt = -2
     nqp = ielem(n, iconsidered)%itotalpoints
@@ -366,7 +366,7 @@ module dg_functions
     end do
     dg_vol_integral2(:) = u_c(iconsidered)%valdg(1, :, 1) + dg_vol_integral2(:)
     icompwrt = 0
-    deallocate (basis_temp)
+    deallocate(basis_temp)
   end function dg_vol_integral2
 
   function dg_vol_integral_strong(n, i)
@@ -381,7 +381,7 @@ module dg_functions
       integer::number, number_of_dog
       real, dimension(1:nof_variables)::dg_sol2
       real, allocatable, dimension(:)::basis_temp
-      allocate (basis_temp(1:idegfree))
+      allocate(basis_temp(1:idegfree))
       iconsidered = i
       icompwrt = -2
       do j = 1, nof_variables
@@ -411,7 +411,7 @@ module dg_functions
       end do
       dg_vol_integral_strong(:) = u_c(iconsidered)%valdg(1, :, 1) + dg_vol_integral_strong(:)
       icompwrt = 0
-      deallocate (basis_temp)
+      deallocate(basis_temp)
   end function dg_vol_integral_strong
 
   function dg_vol_integral_weak(n, i)
@@ -426,7 +426,7 @@ module dg_functions
     integer::number, number_of_dog
     real, dimension(1:nof_variables)::dg_sol2
     real, allocatable, dimension(:)::basis_temp
-    allocate (basis_temp(1:idegfree))
+    allocate(basis_temp(1:idegfree))
     iconsidered = i
     icompwrt = -2
     do j = 1, nof_variables
@@ -674,10 +674,10 @@ subroutine get_left_right_states(n,b_code,iconsidered,facex,pointx,leftv,rightv,
       cleft(1:nof_variables) = ilocal_recon3(i)%uleft(1:nof_variables, l, ngp)        !left mean flow state
       cright(1:nof_variables) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleft(1:nof_variables, ielem(n, i)%ineighn(l), ngp) !right mean flow state
     end if
-    lcvgrad(1, 1:3) = ilocal_recon3(i)%uleftv(1:3, 2, l, ngp); lcvgrad(2, 1:3) = ilocal_recon3(i)%uleftv(1:3, 3, l, ngp); 
-    lcvgrad(3, 1:3) = ilocal_recon3(i)%uleftv(1:3, 4, l, ngp); lcvgrad(4, 1:3) = ilocal_recon3(i)%uleftv(1:3, 1, l, ngp); 
-    rcvgrad(1, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 2, ielem(n, i)%ineighn(l), ngp); rcvgrad(2, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 3, ielem(n, i)%ineighn(l), ngp); 
-    rcvgrad(3, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 4, ielem(n, i)%ineighn(l), ngp); rcvgrad(4, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 1, ielem(n, i)%ineighn(l), ngp); 
+    lcvgrad(1, 1:3) = ilocal_recon3(i)%uleftv(1:3, 2, l, ngp); lcvgrad(2, 1:3) = ilocal_recon3(i)%uleftv(1:3, 3, l, ngp);
+    lcvgrad(3, 1:3) = ilocal_recon3(i)%uleftv(1:3, 4, l, ngp); lcvgrad(4, 1:3) = ilocal_recon3(i)%uleftv(1:3, 1, l, ngp);
+    rcvgrad(1, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 2, ielem(n, i)%ineighn(l), ngp); rcvgrad(2, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 3, ielem(n, i)%ineighn(l), ngp);
+    rcvgrad(3, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 4, ielem(n, i)%ineighn(l), ngp); rcvgrad(4, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 1, ielem(n, i)%ineighn(l), ngp);
     if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
       if (icoupleturb .eq. 1) then
         cturbl(1:turbulenceequations + passivescalar) = ilocal_recon3(i)%uleftturb(1:turbulenceequations + passivescalar, l, ngp) !left additional equations flow state
@@ -721,16 +721,16 @@ subroutine get_left_right_states(n,b_code,iconsidered,facex,pointx,leftv,rightv,
     if (dg .eq. 1) then
       cleft(1:nof_variables) = ilocal_recon3(i)%uleft_dg(1:nof_variables, l, ngp)
       cright(1:nof_variables) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleft_dg(1:nof_variables, ielem(n, i)%ineighn(l), ngp)
-      lcvgrad(1, 1:2) = ilocal_recon3(i)%uleftv(1:2, 2, l, ngp); lcvgrad(2, 1:2) = ilocal_recon3(i)%uleftv(1:2, 3, l, ngp); 
+      lcvgrad(1, 1:2) = ilocal_recon3(i)%uleftv(1:2, 2, l, ngp); lcvgrad(2, 1:2) = ilocal_recon3(i)%uleftv(1:2, 3, l, ngp);
       lcvgrad(3, 1:2) = ilocal_recon3(i)%uleftv(1:2, 1, l, ngp)
-      rcvgrad(1, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 2, ielem(n, i)%ineighn(l), ngp); rcvgrad(2, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 3, ielem(n, i)%ineighn(l), ngp); 
+      rcvgrad(1, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 2, ielem(n, i)%ineighn(l), ngp); rcvgrad(2, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 3, ielem(n, i)%ineighn(l), ngp);
       rcvgrad(3, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 1, ielem(n, i)%ineighn(l), ngp)
     else !fv
       cleft(1:nof_variables) = ilocal_recon3(i)%uleft(1:nof_variables, l, ngp)        !left mean flow state
-      lcvgrad(1, 1:2) = ilocal_recon3(i)%uleftv(1:2, 2, l, ngp); lcvgrad(2, 1:2) = ilocal_recon3(i)%uleftv(1:2, 3, l, ngp); 
+      lcvgrad(1, 1:2) = ilocal_recon3(i)%uleftv(1:2, 2, l, ngp); lcvgrad(2, 1:2) = ilocal_recon3(i)%uleftv(1:2, 3, l, ngp);
       lcvgrad(3, 1:2) = ilocal_recon3(i)%uleftv(1:2, 1, l, ngp)
       cright(1:nof_variables) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleft(1:nof_variables, ielem(n, i)%ineighn(l), ngp) !right mean flow state
-      rcvgrad(1, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 2, ielem(n, i)%ineighn(l), ngp); rcvgrad(2, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 3, ielem(n, i)%ineighn(l), ngp); 
+      rcvgrad(1, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 2, ielem(n, i)%ineighn(l), ngp); rcvgrad(2, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 3, ielem(n, i)%ineighn(l), ngp);
       rcvgrad(3, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 1, ielem(n, i)%ineighn(l), ngp)
     end if
     if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
@@ -775,8 +775,8 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
     else
       cleft(1:nof_variables) = ilocal_recon3(i)%uleft(1:nof_variables, l, ngp)
     end if
-    lcvgrad(1, 1:3) = ilocal_recon3(i)%uleftv(1:3, 2, l, ngp); lcvgrad(2, 1:3) = ilocal_recon3(i)%uleftv(1:3, 3, l, ngp); 
-    lcvgrad(3, 1:3) = ilocal_recon3(i)%uleftv(1:3, 4, l, ngp); lcvgrad(4, 1:3) = ilocal_recon3(i)%uleftv(1:3, 1, l, ngp); 
+    lcvgrad(1, 1:3) = ilocal_recon3(i)%uleftv(1:3, 2, l, ngp); lcvgrad(2, 1:3) = ilocal_recon3(i)%uleftv(1:3, 3, l, ngp);
+    lcvgrad(3, 1:3) = ilocal_recon3(i)%uleftv(1:3, 4, l, ngp); lcvgrad(4, 1:3) = ilocal_recon3(i)%uleftv(1:3, 1, l, ngp);
     if (ilocal_recon3(i)%mrf .eq. 1) then
       srf_speed(2:4) = ilocal_recon3(i)%rotvel(l, ngp, 1:3)
       call rotatef(n, srf_speedrot, srf_speed, angle1, angle2)
@@ -791,16 +791,16 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
         lcvgrad_t(nvar, 1:3) = ilocal_recon3(i)%uleftturbv(1:3, nvar, l, ngp)
       end do
     end if
-    if (ielem(n, i)%ineighb(l) .eq. n) then        
-      if (ielem(n, i)%ibounds(l) .gt. 0) then      
+    if (ielem(n, i)%ineighb(l) .eq. n) then
+      if (ielem(n, i)%ibounds(l) .gt. 0) then
         if ((ibound(n, ielem(n, i)%ibounds(l))%icode .eq. 5) .or. (ibound(n, ielem(n, i)%ibounds(l))%icode .eq. 50)) then
           if (dg .eq. 1) then
             cright(1:nof_variables) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleft_dg(1:nof_variables, ielem(n, i)%ineighn(l), ngp)
           else
             cright(1:nof_variables) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleft(1:nof_variables, ielem(n, i)%ineighn(l), ngp)
           end if
-          rcvgrad(1, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 2, l, ngp); rcvgrad(2, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 3, l, ngp); 
-          rcvgrad(3, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 4, l, ngp); rcvgrad(4, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 1, l, ngp); 
+          rcvgrad(1, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 2, l, ngp); rcvgrad(2, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 3, l, ngp);
+          rcvgrad(3, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 4, l, ngp); rcvgrad(4, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 1, l, ngp);
           if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
             if (icoupleturb .eq. 1) then
               cturbr(1:turbulenceequations + passivescalar) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturb &(1:turbulenceequations + passivescalar, ielem(n, i)%ineighn(l), ngp)!right additional equations flow state
@@ -855,8 +855,8 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
         else
           cright(1:nof_variables) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleft(1:nof_variables, ielem(n, i)%ineighn(l), ngp)
         end if
-        rcvgrad(1, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 2, ielem(n, i)%ineighn(l), ngp); rcvgrad(2, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 3, ielem(n, i)%ineighn(l), ngp); 
-        rcvgrad(3, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 4, ielem(n, i)%ineighn(l), ngp); rcvgrad(4, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 1, ielem(n, i)%ineighn(l), ngp); 
+        rcvgrad(1, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 2, ielem(n, i)%ineighn(l), ngp); rcvgrad(2, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 3, ielem(n, i)%ineighn(l), ngp);
+        rcvgrad(3, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 4, ielem(n, i)%ineighn(l), ngp); rcvgrad(4, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:3, 1, ielem(n, i)%ineighn(l), ngp);
         if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
           if (icoupleturb .eq. 1) then
             cturbr(1:turbulenceequations + passivescalar) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturb &(1:turbulenceequations + passivescalar, ielem(n, i)%ineighn(l), ngp)!right additional equations flow state
@@ -975,7 +975,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
     else
       cleft(1:nof_variables) = ilocal_recon3(i)%uleft(1:nof_variables, l, ngp)
     end if
-    lcvgrad(1, 1:2) = ilocal_recon3(i)%uleftv(1:2, 2, l, ngp); lcvgrad(2, 1:2) = ilocal_recon3(i)%uleftv(1:2, 3, l, ngp); 
+    lcvgrad(1, 1:2) = ilocal_recon3(i)%uleftv(1:2, 2, l, ngp); lcvgrad(2, 1:2) = ilocal_recon3(i)%uleftv(1:2, 3, l, ngp);
     lcvgrad(3, 1:2) = ilocal_recon3(i)%uleftv(1:2, 1, l, ngp)
     if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
       if (icoupleturb .eq. 1) then
@@ -995,8 +995,8 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
           else
             cright(1:nof_variables) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleft(1:nof_variables, ielem(n, i)%ineighn(l), ngp)
           end if
-          rcvgrad(1, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 2, l, ngp); rcvgrad(2, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 3, l, ngp); 
-          rcvgrad(3, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 1, l, ngp); 
+          rcvgrad(1, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 2, l, ngp); rcvgrad(2, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 3, l, ngp);
+          rcvgrad(3, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 1, l, ngp);
           if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
             if (icoupleturb .eq. 1) then
               cturbr(1:turbulenceequations + passivescalar) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturb &(1:turbulenceequations + passivescalar, ielem(n, i)%ineighn(l), ngp)!right additional equations flow state
@@ -1030,8 +1030,8 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
         else
           cright(1:nof_variables) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleft(1:nof_variables, ielem(n, i)%ineighn(l), ngp)
         end if
-        rcvgrad(1, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 2, ielem(n, i)%ineighn(l), ngp); rcvgrad(2, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 3, ielem(n, i)%ineighn(l), ngp); 
-        rcvgrad(3, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 1, ielem(n, i)%ineighn(l), ngp); 
+        rcvgrad(1, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 2, ielem(n, i)%ineighn(l), ngp); rcvgrad(2, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 3, ielem(n, i)%ineighn(l), ngp);
+        rcvgrad(3, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftv(1:2, 1, ielem(n, i)%ineighn(l), ngp);
         if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
           if (icoupleturb .eq. 1) then
             cturbr(1:turbulenceequations + passivescalar) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturb &(1:turbulenceequations + passivescalar, ielem(n, i)%ineighn(l), ngp)!right additional equations flow state
@@ -1360,43 +1360,43 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
     integer::i, k, i_qp, n_qp, i_face, nnd, iqp, idummy, loopc
     real, dimension(1:idegfree + 1)::tempint
     real::tempf, tempx
-    allocate (qp_array(xmpielrank(n))); !allocates for 2d
+    allocate(qp_array(xmpielrank(n))); !allocates for 2d
     do i = 1, xmpielrank(n)
       select case (ielem(n, i)%ishape)
       case (1) !hexa
-        allocate (qp_array(i)%x(qp_tetra*6))
-        allocate (qp_array(i)%y(qp_tetra*6))
-        allocate (qp_array(i)%z(qp_tetra*6))
-        allocate (qp_array(i)%qp_weight(qp_tetra*6))
+        allocate(qp_array(i)%x(qp_tetra*6))
+        allocate(qp_array(i)%y(qp_tetra*6))
+        allocate(qp_array(i)%z(qp_tetra*6))
+        allocate(qp_array(i)%qp_weight(qp_tetra*6))
       case (2) !tetra
-        allocate (qp_array(i)%x(qp_tetra))
-        allocate (qp_array(i)%y(qp_tetra))
-        allocate (qp_array(i)%z(qp_tetra))
-        allocate (qp_array(i)%qp_weight(qp_tetra))
+        allocate(qp_array(i)%x(qp_tetra))
+        allocate(qp_array(i)%y(qp_tetra))
+        allocate(qp_array(i)%z(qp_tetra))
+        allocate(qp_array(i)%qp_weight(qp_tetra))
       case (3) !pyramid
-        allocate (qp_array(i)%x(qp_tetra*2))
-        allocate (qp_array(i)%y(qp_tetra*2))
-        allocate (qp_array(i)%z(qp_tetra*2))
-        allocate (qp_array(i)%qp_weight(qp_tetra*2))
+        allocate(qp_array(i)%x(qp_tetra*2))
+        allocate(qp_array(i)%y(qp_tetra*2))
+        allocate(qp_array(i)%z(qp_tetra*2))
+        allocate(qp_array(i)%qp_weight(qp_tetra*2))
       case (4) !prism
-        allocate (qp_array(i)%x(qp_tetra*3))
-        allocate (qp_array(i)%y(qp_tetra*3))
-        allocate (qp_array(i)%z(qp_tetra*3))
-        allocate (qp_array(i)%qp_weight(qp_tetra*3))
+        allocate(qp_array(i)%x(qp_tetra*3))
+        allocate(qp_array(i)%y(qp_tetra*3))
+        allocate(qp_array(i)%z(qp_tetra*3))
+        allocate(qp_array(i)%qp_weight(qp_tetra*3))
       case (5) !quad
-        allocate (qp_array(i)%x(qp_triangle*2))
-        allocate (qp_array(i)%y(qp_triangle*2))
-        allocate (qp_array(i)%qp_weight(qp_triangle*2))
+        allocate(qp_array(i)%x(qp_triangle*2))
+        allocate(qp_array(i)%y(qp_triangle*2))
+        allocate(qp_array(i)%qp_weight(qp_triangle*2))
       case (6) !tetra
-        allocate (qp_array(i)%x(qp_triangle))
-        allocate (qp_array(i)%y(qp_triangle))
-        allocate (qp_array(i)%qp_weight(qp_triangle))
+        allocate(qp_array(i)%x(qp_triangle))
+        allocate(qp_array(i)%y(qp_triangle))
+        allocate(qp_array(i)%qp_weight(qp_triangle))
       end select
       if (dg .eq. 1) then
-        allocate (ilocal_recon3(i)%uleft_dg(nof_variables, ielem(n, i)%ifca, numberofpoints2))
+        allocate(ilocal_recon3(i)%uleft_dg(nof_variables, ielem(n, i)%ifca, numberofpoints2))
         if ((itestcase .eq. 4) .or. ((governingequations .eq. -1) .and. (br2_yn .eq. 1))) then !ns
-          allocate (ilocal_recon3(i)%br2_aux_var(nof_variables, dimensiona, ielem(n, i)%ifca, numberofpoints2))
-          allocate (ilocal_recon3(i)%br2_local_lift(nof_variables, dimensiona, ielem(n, i)%ifca))
+          allocate(ilocal_recon3(i)%br2_aux_var(nof_variables, dimensiona, ielem(n, i)%ifca, numberofpoints2))
+          allocate(ilocal_recon3(i)%br2_local_lift(nof_variables, dimensiona, ielem(n, i)%ifca))
           ilocal_recon3(i)%br2_aux_var = zero
           ilocal_recon3(i)%br2_local_lift = zero
         end if
@@ -1514,7 +1514,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
     real, allocatable, dimension(:, :)::totalmm, invmm
     real, allocatable, dimension(:)::basis_vector
     kmaxe = xmpielrank(n)
-    allocate (totalmm(1:num_dg_dofs, 1:num_dg_dofs), invmm(1:num_dg_dofs, 1:num_dg_dofs), basis_vector(1:idegfree))
+    allocate(totalmm(1:num_dg_dofs, 1:num_dg_dofs), invmm(1:num_dg_dofs, 1:num_dg_dofs), basis_vector(1:idegfree))
     !$omp do
     do i_elem = 1, kmaxe
       totalmm(:, :) = zero
@@ -1527,11 +1527,11 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
         do j_dof = 1, num_dg_dofs
           integ_mm = zero
           do i_qp = 1, n_qp
-            ixx = i_elem; 
-            x1 = qp_array(i_elem)%x(i_qp); 
+            ixx = i_elem;
+            x1 = qp_array(i_elem)%x(i_qp);
             y1 = qp_array(i_elem)%y(i_qp)
             if (dimensiona .eq. 3) then
-              z1 = qp_array(i_elem)%z(i_qp); 
+              z1 = qp_array(i_elem)%z(i_qp);
             end if
             kron = 1.0d0
             if (i_dof .ne. j_dof) then
@@ -1563,7 +1563,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
       icompwrt = 0
     end do
 !$omp end do
-    deallocate (totalmm, invmm, basis_vector)
+    deallocate(totalmm, invmm, basis_vector)
   end subroutine build_mass_matrix
   subroutine compmassinv(totalmm, invmm)
 !calculate the inverse of the input matrix with gauss-jordan elimination
@@ -1573,7 +1573,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
     real, allocatable, dimension(:, :)::a, b
     real, allocatable, dimension(:, :), intent(in)::totalmm
     real, allocatable, dimension(:, :), intent(inout)::invmm
-    allocate (a(1:num_dg_dofs, 1:num_dg_dofs), b(1:num_dg_dofs, 1:num_dg_dofs))
+    allocate(a(1:num_dg_dofs, 1:num_dg_dofs), b(1:num_dg_dofs, 1:num_dg_dofs))
     num_dofs = num_dg_dofs
     a(:, :) = totalmm(:, :)
     b(:, :) = zero
@@ -1628,6 +1628,6 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
       end do
     end do
     invmm(:, :) = b(:, :)
-    deallocate (a, b)
+    deallocate(a, b)
   end subroutine compmassinv
 end module dg_functions

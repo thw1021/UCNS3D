@@ -182,9 +182,9 @@ contains
     real::tempxx
     i = iconsidered
 
-    allocate (matrix_1(number_of_nei - 1, nof_variables, ielem(n, iconsidered)%admis))
-    allocate (matrix_2(number_of_dog, nof_variables, ielem(n, iconsidered)%admis))
-    allocate (sol_m(number_of_dog, nof_variables, ielem(n, iconsidered)%admis))
+    allocate(matrix_1(number_of_nei - 1, nof_variables, ielem(n, iconsidered)%admis))
+    allocate(matrix_2(number_of_dog, nof_variables, ielem(n, iconsidered)%admis))
+    allocate(sol_m(number_of_dog, nof_variables, ielem(n, iconsidered)%admis))
 
     imax = number_of_nei - 1
 
@@ -200,7 +200,7 @@ contains
 
     if (ilocal_recon3(i)%local .eq. 1) then
 
-      do ll = 1, ielem(n, i)%admis; 
+      do ll = 1, ielem(n, i)%admis;
         if ((ees .ne. 5) .or. (ll .eq. 1)) then
           do iq = 1, imax
             sols2(1:nof_variables, ll) = u_c(ilocal_recon3(i)%ihexl(ll, iq + 1))%val(1, 1:nof_variables)
@@ -239,7 +239,7 @@ contains
           end do
         end if
       end do
-      do ll = 1, ielem(n, i)%admis; 
+      do ll = 1, ielem(n, i)%admis;
         if ((ees .ne. 5) .or. (ll .eq. 1)) then
 
 !          call dgemm('n','n',ielem(n,i)%idegfree,nof_variables,imax,&
@@ -256,7 +256,7 @@ contains
         end if
       end do
 
-      do ll = 1, ielem(n, i)%admis; 
+      do ll = 1, ielem(n, i)%admis;
         if ((ees .ne. 5) .or. (ll .eq. 1)) then
           ilocal_recon5(iconsidered)%gradients(ll, 1:number_of_dog, 1:nof_variables) = sol_m(1:number_of_dog, 1:nof_variables, ll)
         else
@@ -266,7 +266,7 @@ contains
 
     else
 
-      do ll = 1, ielem(n, i)%admis; 
+      do ll = 1, ielem(n, i)%admis;
         if ((ees .ne. 5) .or. (ll .eq. 1)) then
           do iq = 1, imax
             if (ilocal_recon3(i)%ihexb(ll, iq + 1) .eq. n) then
@@ -315,7 +315,7 @@ contains
         end if
       end do
 
-      do ll = 1, ielem(n, i)%admis; 
+      do ll = 1, ielem(n, i)%admis;
         if ((ees .ne. 5) .or. (ll .eq. 1)) then
 !          call dgemm('n','n',ielem(n,i)%idegfree,nof_variables,imax,&
 !          alpha,ilocal_recon3(i)%invmat_stencilt(1:ielem(n,i)%idegfree,1:imax,ll),&
@@ -332,7 +332,7 @@ contains
         end if
       end do
 
-      do ll = 1, ielem(n, i)%admis; 
+      do ll = 1, ielem(n, i)%admis;
         if ((ees .ne. 5) .or. (ll .eq. 1)) then
           ilocal_recon5(iconsidered)%gradients(ll, 1:number_of_dog, 1:nof_variables) = sol_m(1:number_of_dog, 1:nof_variables, ll)
         else
@@ -341,8 +341,8 @@ contains
       end do
 
     end if
-    deallocate (matrix_1, matrix_2)
-    deallocate (sol_m)
+    deallocate(matrix_1, matrix_2)
+    deallocate(sol_m)
 
   end subroutine compute_gradients_mean_lsq
 
@@ -359,14 +359,14 @@ contains
     real::mp_pinfl, gammal
     real, dimension(1:nof_variables)::leftv
 
-    allocate (matrix_1(number_of_nei - 1, nof_variables))
-    allocate (matrix_2(nof_variables, number_of_dog))
-    allocate (sol_m(number_of_dog, nof_variables))
+    allocate(matrix_1(number_of_nei - 1, nof_variables))
+    allocate(matrix_2(nof_variables, number_of_dog))
+    allocate(sol_m(number_of_dog, nof_variables))
 
     imax = number_of_nei - 1
 
     i = iconsidered
-    sols1 = zero; 
+    sols1 = zero;
     sols2 = zero
 
     if (dimensiona .eq. 3) then
@@ -487,8 +487,8 @@ contains
 
     end if
 
-    deallocate (matrix_1, matrix_2)
-    deallocate (sol_m)
+    deallocate(matrix_1, matrix_2)
+    deallocate(sol_m)
 
   end subroutine compute_gradients_inner_mean_lsq_viscous
 
@@ -567,19 +567,19 @@ contains
     integer::i, var2, ll, iq, il, ih
     integer::imax
 
-    allocate (matrix_1(number_of_nei - 1, turbulenceequations + passivescalar))
-    allocate (matrix_2(turbulenceequations + passivescalar, number_of_dog))
-    allocate (sol_m(number_of_dog, turbulenceequations + passivescalar))
+    allocate(matrix_1(number_of_nei - 1, turbulenceequations + passivescalar))
+    allocate(matrix_2(turbulenceequations + passivescalar, number_of_dog))
+    allocate(sol_m(number_of_dog, turbulenceequations + passivescalar))
 
     imax = number_of_nei - 1
     i = iconsidered
-    sols1 = zero; 
+    sols1 = zero;
     sols2 = zero
 
     sols1(1:turbulenceequations + passivescalar) = u_ct(ilocal_recon3(i)%ihexl(1, 1))%val(1, 1:turbulenceequations + passivescalar)
     if (ilocal_recon3(i)%local .eq. 1) then
 
-      do ll = 1, ielem(n, i)%admis; 
+      do ll = 1, ielem(n, i)%admis;
         matrix_1 = zero; matrix_2 = zero
         if ((ees .ne. 5) .or. (ll .eq. 1)) then
         do iq = 1, imax
@@ -616,7 +616,7 @@ contains
       end do
 
     else
-      do ll = 1, ielem(n, i)%admis; 
+      do ll = 1, ielem(n, i)%admis;
         matrix_1 = zero; matrix_2 = zero
         if ((ees .ne. 5) .or. (ll .eq. 1)) then
           do iq = 1, imax
@@ -659,9 +659,9 @@ contains
       end do
     end if
 
-    deallocate (matrix_1)
-    deallocate (matrix_2)
-    deallocate (sol_m)
+    deallocate(matrix_1)
+    deallocate(matrix_2)
+    deallocate(sol_m)
 
   end subroutine compute_gradients_turb_lsq
 
@@ -676,14 +676,14 @@ contains
     real, allocatable, dimension(:, :)::sol_m
     integer::i, var2, iq, lq, ll, imax, ideg
 
-    allocate (matrix_1(number_of_nei - 1, turbulenceequations + passivescalar))
-    allocate (matrix_2(turbulenceequations + passivescalar, number_of_dog))
-    allocate (sol_m(number_of_dog, turbulenceequations + passivescalar))
+    allocate(matrix_1(number_of_nei - 1, turbulenceequations + passivescalar))
+    allocate(matrix_2(turbulenceequations + passivescalar, number_of_dog))
+    allocate(sol_m(number_of_dog, turbulenceequations + passivescalar))
 
     imax = number_of_nei
 
     i = iconsidered
-    sols1 = zero; 
+    sols1 = zero;
     sols2 = zero
     ideg = ielem(n, i)%idegfree
     ll = 1
@@ -737,8 +737,8 @@ contains
       end do
     end if
 
-    deallocate (matrix_1, matrix_2)
-    deallocate (sol_m)
+    deallocate(matrix_1, matrix_2)
+    deallocate(sol_m)
 
   end subroutine compute_gradients_turb_lsq_viscous
 
@@ -833,9 +833,9 @@ contains
     real::mp_pinfl, gammal
     real, dimension(1:nof_variables)::leftv
 
-    allocate (matrix_1(nof_variables, number_of_nei - 1))
-    allocate (matrix_2(nof_variables, number_of_dog))
-    allocate (sol_m(number_of_dog, nof_variables))
+    allocate(matrix_1(nof_variables, number_of_nei - 1))
+    allocate(matrix_2(nof_variables, number_of_dog))
+    allocate(sol_m(number_of_dog, nof_variables))
 
     imax = number_of_nei - 1
 
@@ -843,14 +843,14 @@ contains
 
       ll = 1
       i = iconsidered
-      sols1 = zero; 
+      sols1 = zero;
       sols2 = zero
 
       ll = 1
       k0 = ilocal_recon3(i)%k0
       g0 = ilocal_recon3(i)%g0
 
-      matrix_1 = zero; matrix_2 = zero; sol_m = zero; 
+      matrix_1 = zero; matrix_2 = zero; sol_m = zero;
       leftv(1:nof_variables) = u_c(ilocal_recon3(i)%ihexl(1, 1))%val(1, 1:nof_variables)
       call cons2prim(n, leftv, mp_pinfl, gammal)
 
@@ -948,14 +948,14 @@ contains
     else        !2d
 
       i = iconsidered
-      sols1 = zero; 
+      sols1 = zero;
       sols2 = zero
       ll = 1
 
       k0 = ilocal_recon3(i)%k0
       g0 = ilocal_recon3(i)%g0
 
-      matrix_1 = zero; matrix_2 = zero; sol_m = zero; 
+      matrix_1 = zero; matrix_2 = zero; sol_m = zero;
       leftv(1:nof_variables) = u_c(ilocal_recon3(i)%ihexl(1, 1))%val(1, 1:nof_variables)
       call cons2prim(n, leftv, mp_pinfl, gammal)
 
@@ -1050,8 +1050,8 @@ contains
 
     end if
 
-    deallocate (matrix_1, matrix_2)
-    deallocate (sol_m)
+    deallocate(matrix_1, matrix_2)
+    deallocate(sol_m)
 
   end subroutine compute_gradients_wall_mean_lsq_viscous
 
@@ -1183,7 +1183,7 @@ contains
               !not periodic ones in my cpu
               call coordinates_face_inner2dx(n, iconsidered, facex, vext, nodes_list)
               cords = cordinates2(n, nodes_list, n_node)
-              pox(1) = cords(1); poy(1) = cords(2); 
+              pox(1) = cords(1); poy(1) = cords(2);
               leftv(1:nof_variables) = u_c(i)%val(1, 1:nof_variables)
               cturbl(1:turbulenceequations + passivescalar) = u_ct(i)%val(1, 1:turbulenceequations + passivescalar)
               b_code = ibound(n, ielem(n, i)%ibounds(j))%icode
@@ -1251,19 +1251,19 @@ contains
     real::attt
     integer::ll
 
-    allocate (matrix_1(1:turbulenceequations + passivescalar, number_of_nei - 1))
-    allocate (matrix_2(number_of_dog, 1:turbulenceequations + passivescalar))
-    allocate (sol_m(number_of_dog, 1:turbulenceequations + passivescalar))
+    allocate(matrix_1(1:turbulenceequations + passivescalar, number_of_nei - 1))
+    allocate(matrix_2(number_of_dog, 1:turbulenceequations + passivescalar))
+    allocate(sol_m(number_of_dog, 1:turbulenceequations + passivescalar))
 
     ll = 1
 
     i = iconsidered
-    sols1 = zero; 
+    sols1 = zero;
     sols2 = zero
 
     k0 = ilocal_recon3(i)%k0
 
-    matrix_1 = zero; matrix_2 = zero; sol_m = zero; 
+    matrix_1 = zero; matrix_2 = zero; sol_m = zero;
   sols1(1:turbulenceequations + passivescalar) = u_ct(ilocal_recon3(i)%ihexl(1, 1))%val(1, 1:turbulenceequations + passivescalar)/ &
                                                  u_c(ilocal_recon3(i)%ihexl(1, 1))%val(1, 1)
 
@@ -1318,8 +1318,8 @@ contains
 
     end do
 
-    deallocate (matrix_1, matrix_2)
-    deallocate (sol_m)
+    deallocate(matrix_1, matrix_2)
+    deallocate(sol_m)
 
   end subroutine compute_gradients_wall_turb_lsq_viscous
 

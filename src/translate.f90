@@ -127,9 +127,9 @@ contains
             ! print*,interray(i)
           ! enddo
           imaxnglobal = interray(3) ! set global maximum number of nodes
-          allocate (x(imaxnglobal)); allocate (y(imaxnglobal))
+          allocate(x(imaxnglobal)); allocate(y(imaxnglobal))
           ! print*,'max number nodes:',imaxnglobal
-          if (dimen .eq. 3) allocate (z(imaxnglobal))
+          if (dimen .eq. 3) allocate(z(imaxnglobal))
         end if
 
         if (interray(1) .ne. 0) then
@@ -174,11 +174,11 @@ contains
               if (binio .eq. 1) write (10) i, x(i), y(i), z(i)
             end do
             close (10)
-            deallocate (x, y)
-            if (dimen .eq. 3) deallocate (z)
+            deallocate(x, y)
+            if (dimen .eq. 3) deallocate(z)
           end select
         end if
-        deallocate (interray)
+        deallocate(interray)
         ! print*,'max number nodes:',imaxnglobal
         ! if (dimen.eq.3) allocate(z(imaxnglobal))
       end if
@@ -191,8 +191,8 @@ contains
         call string2int(gchar2, interray, intsize)
         if (interray(1) .eq. 0) then
           imaxeglobal = interray(3) ! set global maximum number of elements
-          allocate (iele(imaxeglobal))
-          allocate (ishape(imaxeglobal))
+          allocate(iele(imaxeglobal))
+          allocate(ishape(imaxeglobal))
           ! print*,'max number cells:',imaxeglobal
           iele(1:imaxeglobal)%iecounter = 0
         end if
@@ -205,27 +205,27 @@ contains
               select case (iele(i)%ishape)
                 case (1)
                   iele(i)%iface = 3
-                  allocate (iele(i)%faces(1:3, 1:2))
+                  allocate(iele(i)%faces(1:3, 1:2))
                   ! allocate(iele(i)%nd(1:44))
                 case (3)
                   iele(i)%iface = 4
-                  allocate (iele(i)%faces(1:4, 1:2))
+                  allocate(iele(i)%faces(1:4, 1:2))
                   ! allocate(iele(i)%nd(4))
                 case (2)
                   iele(i)%iface = 4
-                  allocate (iele(i)%faces(1:4, 1:3))
+                  allocate(iele(i)%faces(1:4, 1:3))
                   ! allocate(iele(i)%nd(8))
                 case (4)
                   iele(i)%iface = 6
-                  allocate (iele(i)%faces(1:6, 1:4))
+                  allocate(iele(i)%faces(1:6, 1:4))
                   ! allocate(iele(i)%nd(8))
                 case (5)
                   iele(i)%iface = 5
-                  allocate (iele(i)%faces(1:5, 1:4))
+                  allocate(iele(i)%faces(1:5, 1:4))
                   ! allocate(iele(i)%nd(8))
                 case (6)
                   iele(i)%iface = 5
-                  allocate (iele(i)%faces(1:5, 1:4))
+                  allocate(iele(i)%faces(1:5, 1:4))
                   ! allocate(iele(i)%nd(8))
               end select
               iele(i)%faces(:, :) = 0
@@ -252,28 +252,28 @@ contains
               select case (iele(i)%ishape)
                 case (1)
                   iele(i)%iface = 3
-                  allocate (iele(i)%faces(3, 2))
+                  allocate(iele(i)%faces(3, 2))
                 case (3)
                   iele(i)%iface = 4
-                  allocate (iele(i)%faces(4, 2))
+                  allocate(iele(i)%faces(4, 2))
                 case (2)
                   iele(i)%iface = 4
-                  allocate (iele(i)%faces(4, 3))
+                  allocate(iele(i)%faces(4, 3))
                 case (4)
                   iele(i)%iface = 6
-                  allocate (iele(i)%faces(6, 4))
+                  allocate(iele(i)%faces(6, 4))
                 case (5)
                   iele(i)%iface = 5
-                  allocate (iele(i)%faces(5, 4))
+                  allocate(iele(i)%faces(5, 4))
                 case (6)
                   iele(i)%iface = 5
-                  allocate (iele(i)%faces(5, 4))
+                  allocate(iele(i)%faces(5, 4))
               end select
               iele(i)%faces(:, :) = 0
             end do
           end if
         end if
-        deallocate (interray)
+        deallocate(interray)
       end if
 
       if (dumc .eq. "(13") then
@@ -283,10 +283,10 @@ contains
         call string2int(gchar2, interray, intsize)
         index1 = interray(1); imin = interray(2); imax = interray(3); bctypdum = interray(4)
         if (index1 .ne. 0) eltype = interray(5)
-        deallocate (interray)
+        deallocate(interray)
         if (index1 .eq. 0) then
           imaxfglobal = imax ! set global maximum number of faces
-          allocate (ifac(imaxfglobal))
+          allocate(ifac(imaxfglobal))
         end if
         if (index1 .ne. 0) then
           read (82, "(a1)", advance='no', iostat=ios) dumc
@@ -304,7 +304,7 @@ contains
                   if (eltype .eq. 0) then
                     ifac(i)%ishb = 2
                     ifac(i)%ifacbtype = bctypdum
-                    allocate (ifac(i)%ifa(2, 2))
+                    allocate(ifac(i)%ifa(2, 2))
                     ifac(i)%ifa(1, 1) = interray(2)
                     ifac(i)%ifa(1, 2) = interray(3)
                     ifac(i)%ifa(2, 1) = interray(4)
@@ -312,7 +312,7 @@ contains
                   else
                     ifac(i)%ishb = 2
                     ifac(i)%ifacbtype = bctypdum
-                    allocate (ifac(i)%ifa(2, 2))
+                    allocate(ifac(i)%ifa(2, 2))
                     ifac(i)%ifa(1, 1) = interray(1)
                     ifac(i)%ifa(1, 2) = interray(2)
                     ifac(i)%ifa(2, 1) = interray(3)
@@ -324,14 +324,14 @@ contains
                     ifac(i)%ishb = interray(1)
                     select case (interray(1))
                       case (3) ! triangles
-                        allocate (ifac(i)%ifa(2, 3))
+                        allocate(ifac(i)%ifa(2, 3))
                         ifac(i)%ifa(1, 1) = interray(2)
                         ifac(i)%ifa(1, 2) = interray(3)
                         ifac(i)%ifa(1, 3) = interray(4)
                         ifac(i)%ifa(2, 1) = interray(5)
                         ifac(i)%ifa(2, 2) = interray(6)
                       case (4)! quads
-                        allocate (ifac(i)%ifa(2, 4))
+                        allocate(ifac(i)%ifa(2, 4))
                         ifac(i)%ifa(1, 1) = interray(2)
                         ifac(i)%ifa(1, 2) = interray(3)
                         ifac(i)%ifa(1, 3) = interray(4)
@@ -343,14 +343,14 @@ contains
                     ifac(i)%ishb = eltype
                     select case (eltype)
                       case (3)! triangles
-                        allocate (ifac(i)%ifa(2, 3))
+                        allocate(ifac(i)%ifa(2, 3))
                         ifac(i)%ifa(1, 1) = interray(1)
                         ifac(i)%ifa(1, 2) = interray(2)
                         ifac(i)%ifa(1, 3) = interray(3)
                         ifac(i)%ifa(2, 1) = interray(4)
                         ifac(i)%ifa(2, 2) = interray(5)
                       case (4)! quads
-                        allocate (ifac(i)%ifa(2, 4))
+                        allocate(ifac(i)%ifa(2, 4))
                         ifac(i)%ifa(1, 1) = interray(1)
                         ifac(i)%ifa(1, 2) = interray(2)
                         ifac(i)%ifa(1, 3) = interray(3)
@@ -360,7 +360,7 @@ contains
                     end select ! quad or triangles faces (3d)
                 end if
               end select ! dimensions
-              deallocate (interray)
+              deallocate(interray)
             end do
           else
             backspace (82, iostat=ios)
@@ -374,7 +374,7 @@ contains
                   if (eltype .eq. 0) then
                     ifac(i)%ishb = 2
                     ifac(i)%ifacbtype = bctypdum
-                    allocate (ifac(i)%ifa(2, 2))
+                    allocate(ifac(i)%ifa(2, 2))
                     ifac(i)%ifa(1, 1) = interray(2)
                     ifac(i)%ifa(1, 2) = interray(3)
                     ifac(i)%ifa(2, 1) = interray(4)
@@ -382,7 +382,7 @@ contains
                   else
                     ifac(i)%ishb = 2
                     ifac(i)%ifacbtype = bctypdum
-                    allocate (ifac(i)%ifa(2, 2))
+                    allocate(ifac(i)%ifa(2, 2))
                     ifac(i)%ifa(1, 1) = interray(1)
                     ifac(i)%ifa(1, 2) = interray(2)
                     ifac(i)%ifa(2, 1) = interray(3)
@@ -394,14 +394,14 @@ contains
                   ifac(i)%ishb = interray(1)
                   select case (interray(1))
                     case (3)! triangles
-                      allocate (ifac(i)%ifa(2, 3))
+                      allocate(ifac(i)%ifa(2, 3))
                       ifac(i)%ifa(1, 1) = interray(2)
                       ifac(i)%ifa(1, 2) = interray(3)
                       ifac(i)%ifa(1, 3) = interray(4)
                       ifac(i)%ifa(2, 1) = interray(5)
                       ifac(i)%ifa(2, 2) = interray(6)
                     case (4)! quads
-                      allocate (ifac(i)%ifa(2, 4))
+                      allocate(ifac(i)%ifa(2, 4))
                       ifac(i)%ifa(1, 1) = interray(2)
                       ifac(i)%ifa(1, 2) = interray(3)
                       ifac(i)%ifa(1, 3) = interray(4)
@@ -413,7 +413,7 @@ contains
                   select case (eltype)
                     case (3)! triangles
                       ifac(i)%ishb = eltype
-                      allocate (ifac(i)%ifa(2, 3))
+                      allocate(ifac(i)%ifa(2, 3))
                       ifac(i)%ifa(1, 1) = interray(1)
                       ifac(i)%ifa(1, 2) = interray(2)
                       ifac(i)%ifa(1, 3) = interray(3)
@@ -421,7 +421,7 @@ contains
                       ifac(i)%ifa(2, 2) = interray(5)
                     case (4)! quads
                       ifac(i)%ishb = eltype
-                      allocate (ifac(i)%ifa(2, 4))
+                      allocate(ifac(i)%ifa(2, 4))
                       ifac(i)%ifa(1, 1) = interray(1)
                       ifac(i)%ifa(1, 2) = interray(2)
                       ifac(i)%ifa(1, 3) = interray(3)
@@ -431,7 +431,7 @@ contains
                   end select ! quad or triangles faces (3d)
                 end if
               end select ! dimensions
-              deallocate (interray)
+              deallocate(interray)
             end do
           end if ! brac
         end if! index1
@@ -832,9 +832,9 @@ contains
       end if
     end do
     close (10)
-    deallocate (ifac)
-    deallocate (ishape)
-    deallocate (iele)
+    deallocate(ifac)
+    deallocate(ishape)
+    deallocate(iele)
   end subroutine drive
 
   subroutine hex_to_i4(s, i4)
@@ -923,7 +923,7 @@ contains
         counto = counto + 1
       end if
     end do
-    allocate (spaces(0:counto + 1))
+    allocate(spaces(0:counto + 1))
     spaces(:) = 0
     counto = 0
     spaces(1) = 0
@@ -935,7 +935,7 @@ contains
     end do
     spaces(counto + 1) = il + 1
     intsizee = counto + 1
-    allocate (interray(intsizee))
+    allocate(interray(intsizee))
     interray = 0
     do i = 0, counto
       if (i .eq. 1) then
@@ -945,7 +945,7 @@ contains
       call hex_to_i4(char1, outint)
       interray(i + 1) = outint
     end do
-    deallocate (spaces)
+    deallocate(spaces)
   end subroutine
 
   subroutine removebrac(ch1, ch2)
@@ -976,7 +976,7 @@ contains
     open (180, file="grid.ugrid", form='unformatted', status='old', access='stream', convert="big_endian")
     read (180) afnnodesg, afntface, afnqface, afntet, afnpyr, afnprz, afnhex
     print *, afnnodesg, afntface, afnqface, afntet, afnpyr, afnprz, afnhex
-    allocate (x(afnnodesg), y(afnnodesg), z(afnnodesg))
+    allocate(x(afnnodesg), y(afnnodesg), z(afnnodesg))
     allocate(if2nt(3,afntface),if2nq(4,afnqface),ifacetag(afntface+afnqface),ic2nt(4,afntet),ic2np(5,afnpyr),ic2nz(6,afnprz),ic2nh(8,afnhex))
     imaxeu = afntet + afnpyr + afnprz + afnhex
     imaxbu = afntface + afnqface
@@ -1036,7 +1036,7 @@ contains
     close (180)
     open (120, file="grid.mapbc", status='old', form='formatted')
     read (120, *) nbound
-    allocate (ibid(nbound), ibx(nbound), ibxx(nbound))
+    allocate(ibid(nbound), ibx(nbound), ibxx(nbound))
     do i = 1, nbound
       read (120, *) ibid(i), ibx(i)
     end do
@@ -1110,7 +1110,7 @@ contains
     end do
     close (10)
 
-    deallocate (ibid, ibx, ibxx, x, y, z, if2nt, if2nq, ifacetag, ic2nt, ic2np, ic2nz, ic2nh)
+    deallocate(ibid, ibx, ibxx, x, y, z, if2nt, if2nq, ifacetag, ic2nt, ic2np, ic2nz, ic2nh)
   end subroutine
 
 end module translate

@@ -713,11 +713,11 @@ contains
     real, allocatable, dimension(:, :, :)::impdiag, impofft
     real, allocatable, dimension(:, :, :, :)::impoff
 
-    allocate (impdiag(1, 1:nof_variables, 1:nof_variables))
-    allocate (impoff(1, 6, 1:nof_variables, 1:nof_variables))
+    allocate(impdiag(1, 1:nof_variables, 1:nof_variables))
+    allocate(impoff(1, 6, 1:nof_variables, 1:nof_variables))
     if ((itestcase .eq. 4) .and. ((turbulence .gt. 0) .or. (passivescalar .gt. 0))) then
-      allocate (impofft(1, 6, turbulenceequations + passivescalar))
-      allocate (impdiagt(1, turbulenceequations + passivescalar))
+      allocate(impofft(1, 6, turbulenceequations + passivescalar))
+      allocate(impdiagt(1, turbulenceequations + passivescalar))
     end if
 
     sweeps = 4
@@ -1232,7 +1232,7 @@ contains
 
     end if
 
-    deallocate (impdiag, impoff, impofft, impdiagt)
+    deallocate(impdiag, impoff, impofft, impdiagt)
 
   end subroutine relaxation_lm
 
@@ -1855,11 +1855,11 @@ contains
     real, allocatable, dimension(:, :, :)::impdiag, impofft
     real, allocatable, dimension(:, :, :, :)::impoff
 
-    allocate (impdiag(1, 1:nof_variables, 1:nof_variables))
-    allocate (impoff(1, 4, 1:nof_variables, 1:nof_variables))
+    allocate(impdiag(1, 1:nof_variables, 1:nof_variables))
+    allocate(impoff(1, 4, 1:nof_variables, 1:nof_variables))
     if ((itestcase .eq. 4) .and. ((turbulence .gt. 0) .or. (passivescalar .gt. 0))) then
-      allocate (impofft(1, 4, turbulenceequations + passivescalar))
-      allocate (impdiagt(1, turbulenceequations + passivescalar))
+      allocate(impofft(1, 4, turbulenceequations + passivescalar))
+      allocate(impdiagt(1, turbulenceequations + passivescalar))
     end if
 
     sweeps = 4
@@ -2365,7 +2365,7 @@ contains
 
     end if
 
-    deallocate (impdiag, impoff, impofft, impdiagt)
+    deallocate(impdiag, impoff, impofft, impdiagt)
 
   end subroutine relaxation_lm2d
 
@@ -2539,7 +2539,7 @@ contains
       angle2 = ielem(n, i)%faceangley(l)
       nx = angle1
       ny = angle2
-      facex = l; 
+      facex = l;
       call deltafx(iconsidered, facex, deltaf, velnormal)
 
 	  b1_imp(1:nof_variables)=b1_imp(1:nof_variables)+(0.5d0*(deltaf(1:nof_variables)-velnormal*du1(1:nof_variables))*ielem(n,i)%surf(l))
@@ -2611,7 +2611,7 @@ contains
           end if
         else                                !cond4
           !not periodic ones in my cpu
-          facex = l; 
+          facex = l;
           if (dimensiona .eq. 2) then
             call coordinates_face_inner2dx(n, iconsidered, facex, vext, nodes_list)
 
@@ -2628,7 +2628,7 @@ contains
             end if
 
             cords(1:3) = zero
-            cords(1:3) = cordinates3(n, nodes_list, n_node); pox(1) = cords(1); poy(1) = cords(2); poz(1) = cords(3); 
+            cords(1:3) = cordinates3(n, nodes_list, n_node); pox(1) = cords(1); poy(1) = cords(2); poz(1) = cords(3);
           end if
 
           leftv(1:nof_variables) = impdu(i, 1:nof_variables)!u_c(iconsidered)%val(1,1:nof_variables)
@@ -2746,7 +2746,7 @@ contains
       angle2 = ielem(n, i)%faceangley(l)
       nx = angle1
       ny = angle2
-      facex = l; 
+      facex = l;
       call deltafx(iconsidered, facex, deltaf, velnormal)
 
       if (b_code .gt. 0) then

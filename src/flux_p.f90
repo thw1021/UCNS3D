@@ -89,10 +89,10 @@ contains
             if (dg .eq. 1) then
               cleft = ilocal_recon3(i)%uleft_dg(1:nof_variables, l, ngp)
               cright = ilocal_recon3(ielem(n, i)%ineigh(l))%uleft_dg(1:nof_variables, ielem(n, i)%ineighn(l), ngp)
-            else 
+            else
               cleft(1) = ilocal_recon3(i)%uleft(1, l, ngp)
               cright(1) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleft(1, ielem(n, i)%ineighn(l), ngp)
-            end if            
+            end if
             call exact_riemann_solver(n, cleft, cright, normalvect, hllcflux)
             if (dg .eq. 1) then
               rhllcflux(1) = hllcflux(1)
@@ -100,12 +100,12 @@ contains
             else
               godflux2 = godflux2 + (hllcflux(1)*(weights_temp(ngp)*ielem(n, i)%surf(l)))
             end if
-            
+
           end do
             rhs(i)%val(1) = rhs(i)%val(1) + godflux2
         end do
       end if
-      
+
       if (ielem(n, i)%interior .eq. 1) then
         rhs(i)%val(1) = zero
         do l = 1, ielem(n, i)%ifca
@@ -188,7 +188,7 @@ contains
     end do
     !$omp end do
     if (dg .eq. 1) then
-      deallocate (dg_rhs, dg_rhs_vol_integ, dg_rhs_surf_integ)
+      deallocate(dg_rhs, dg_rhs_vol_integ, dg_rhs_surf_integ)
     end if
 
   end subroutine calculate_fluxeshi
@@ -245,7 +245,7 @@ contains
           godflux2 = zero
           nx = ielem(n, i)%faceanglex(l)
           ny = ielem(n, i)%faceangley(l)
-          facex = l         
+          facex = l
           normalvect = (nx*lamxl) + (ny*lamyl)
           iqp = qp_line_n
           neighbor_index = ielem(n, i)%ineigh(l)
@@ -344,7 +344,7 @@ contains
     !$omp end do
 
     if (dg .eq. 1) then
-      deallocate (dg_rhs, dg_rhs_vol_integ, dg_rhs_surf_integ)
+      deallocate(dg_rhs, dg_rhs_vol_integ, dg_rhs_surf_integ)
     end if
 
   end subroutine calculate_fluxeshi2d
@@ -438,7 +438,7 @@ contains
           if ((lmach .eq. 1)) then    !application of the low mach number correction
             leftv(1:nof_variables) = cleft_rot(1:nof_variables); rightv(1:nof_variables) = cright_rot(1:nof_variables)
             call lmacht(n, leftv, rightv)
-            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables); 
+            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables);
           end if
 
           select case (iriemann)
@@ -448,7 +448,7 @@ contains
             if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
                rhllcflux(nof_variables+1:nof_variables+turbulenceequations+passivescalar)=hllcflux(nof_variables+1:nof_variables+turbulenceequations+passivescalar)
             end if
-            
+
           case (9)                        !hll
             call hll_riemann_solver(n, cleft_rot, cright_rot, hllcflux, mp_source1, srf_speedrot)
             call rotateb(n, rhllcflux, hllcflux, angle1, angle2)
@@ -462,7 +462,7 @@ contains
             if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
                rhllcflux(nof_variables+1:nof_variables+turbulenceequations+passivescalar)=hllcflux(nof_variables+1:nof_variables+turbulenceequations+passivescalar)
             end if
-          
+
           case (3)                        !roe
             call rotateb(n, cleft, cleft_rot, angle1, angle2)
             call rotateb(n, cright, cright_rot, angle1, angle2)
@@ -488,7 +488,7 @@ contains
           else
             godflux2(1:nof_variables) = godflux2(1:nof_variables) + (rhllcflux(1:nof_variables)*(weights_temp(ngp)*ielem(n, i)%surf(l)))
           end if
-          
+
           if (multispecies .eq. 1) then
             mp_source2 = mp_source2 + mp_source1*(weights_temp(ngp)*ielem(n, i)%surf(l))
           end if
@@ -516,7 +516,7 @@ contains
             godflux2(nof_variables + 1:nof_variables + turbulenceequations + passivescalar)
         end if
       end do
-      
+
       if (multispecies .eq. 1) then
         rhs(i)%val(8) = rhs(i)%val(8) - (u_c(i)%val(1, 8)*mp_source3)
       end if
@@ -580,7 +580,7 @@ contains
           if ((lmach .eq. 1)) then    !application of the low mach number correction
             leftv(1:nof_variables) = cleft_rot(1:nof_variables); rightv(1:nof_variables) = cright_rot(1:nof_variables)
             call lmacht(n, leftv, rightv)
-            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables); 
+            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables);
           end if
 
           if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
@@ -689,7 +689,7 @@ contains
     end do
 
     if (dg .eq. 1) then
-      deallocate (dg_rhs, dg_rhs_vol_integ, dg_rhs_surf_integ)
+      deallocate(dg_rhs, dg_rhs_vol_integ, dg_rhs_surf_integ)
     end if
 
   end subroutine calculate_fluxeshi_convective
@@ -769,7 +769,7 @@ contains
           if ((lmach .eq. 1)) then    !application of the low mach number correction
             leftv(1:nof_variables) = cleft_rot(1:nof_variables); rightv(1:nof_variables) = cright_rot(1:nof_variables)
             call lmacht2d(n, leftv, rightv)
-            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables); 
+            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables);
           end if
 
           select case (iriemann)
@@ -793,7 +793,7 @@ contains
             if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
               rhllcflux(nof_variables+1:nof_variables+turbulenceequations+passivescalar)=hllcflux(nof_variables+1:nof_variables+turbulenceequations+passivescalar)
             end if
-            
+
           case (3)                        !roe
             call rotateb2d(n, cleft, cleft_rot, angle1, angle2)
             call rotateb2d(n, cright, cright_rot, angle1, angle2)
@@ -887,7 +887,7 @@ contains
           if ((lmach .eq. 1)) then    !application of the low mach number correction
             leftv(1:nof_variables) = cleft_rot(1:nof_variables); rightv(1:nof_variables) = cright_rot(1:nof_variables)
             call lmacht2d(n, leftv, rightv)
-            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables); 
+            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables);
           end if
 
           if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
@@ -922,7 +922,7 @@ contains
             call rotateb2d(n, cright, cright_rot, angle1, angle2)
             call roe_riemann_solver2d(n, cleft, cright, hllcflux, mp_source1, srf_speedrot, nx, ny)
             rhllcflux = hllcflux
-            
+
           case (4)                        !roe
             if ((b_code .le. 0)) then
               call rotateb2d(n, cleft, cleft_rot, angle1, angle2)
@@ -989,7 +989,7 @@ contains
     end do
     !$omp end do
     if (dg .eq. 1) then
-      deallocate (dg_rhs, dg_rhs_vol_integ, dg_rhs_surf_integ)
+      deallocate(dg_rhs, dg_rhs_vol_integ, dg_rhs_surf_integ)
     end if
 
   end subroutine calculate_fluxeshi_convective2d
@@ -1090,7 +1090,7 @@ contains
             call rotatef(n, cleft_rot, cleft, angle1, angle2)        !rotate wrt to normalvector of face and solve 1d riemann problem
             leftv(1:nof_variables) = cleft_rot(1:nof_variables); rightv(1:nof_variables) = cright_rot(1:nof_variables)
             call lmacht(n, leftv, rightv)
-            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables); 
+            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables);
             call rotateb(n, cleft, cleft_rot, angle1, angle2)
             call rotateb(n, cright, cright_rot, angle1, angle2)
           end if
@@ -1117,8 +1117,8 @@ contains
             end if
           end if
 
-          taul = zero; tau = zero; taur = zero; q = zero; ux = zero; uy = zero; uz = zero; vx = zero; vy = zero; vz = zero; wx = zero; wy = zero; wz = zero; 
-          fxv = zero; fyv = zero; fzv = zero; rho12 = zero; 
+          taul = zero; tau = zero; taur = zero; q = zero; ux = zero; uy = zero; uz = zero; vx = zero; vy = zero; vz = zero; wx = zero; wy = zero; wz = zero;
+          fxv = zero; fyv = zero; fzv = zero; rho12 = zero;
           u12 = zero; v12 = zero; w12 = zero
 
           vdamp = (4.0/3.0)!*(( (viscl(1))+(viscl(2)))))
@@ -1138,9 +1138,9 @@ contains
 
           !left state derivatives
           ! determine taul!!
-          ux = lcvgrad(1, 1); uy = lcvgrad(1, 2); uz = lcvgrad(1, 3); 
-          vx = lcvgrad(2, 1); vy = lcvgrad(2, 2); vz = lcvgrad(2, 3); 
-          wx = lcvgrad(3, 1); wy = lcvgrad(3, 2); wz = lcvgrad(3, 3); 
+          ux = lcvgrad(1, 1); uy = lcvgrad(1, 2); uz = lcvgrad(1, 3);
+          vx = lcvgrad(2, 1); vy = lcvgrad(2, 2); vz = lcvgrad(2, 3);
+          wx = lcvgrad(3, 1); wy = lcvgrad(3, 2); wz = lcvgrad(3, 3);
           ! tau_xx
           taul(1, 1) = (4.0d0/3.0d0)*ux - (2.0d0/3.0d0)*vy - (2.0d0/3.0d0)*wz
           ! tau_yy
@@ -1283,7 +1283,7 @@ contains
             call rotatef(n, cleft_rot, cleft, angle1, angle2)        !rotate wrt to normalvector of face and solve 1d riemann problem
             leftv(1:nof_variables) = cleft_rot(1:nof_variables); rightv(1:nof_variables) = cright_rot(1:nof_variables)
             call lmacht(n, leftv, rightv)
-            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables); 
+            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables);
             call rotateb(n, cleft, cleft_rot, angle1, angle2)
             call rotateb(n, cright, cright_rot, angle1, angle2)
           end if
@@ -1310,8 +1310,8 @@ contains
             end if
           end if
 
-          taul = zero; tau = zero; taur = zero; q = zero; ux = zero; uy = zero; uz = zero; vx = zero; vy = zero; vz = zero; wx = zero; wy = zero; wz = zero; 
-          fxv = zero; fyv = zero; fzv = zero; rho12 = zero; 
+          taul = zero; tau = zero; taur = zero; q = zero; ux = zero; uy = zero; uz = zero; vx = zero; vy = zero; vz = zero; wx = zero; wy = zero; wz = zero;
+          fxv = zero; fyv = zero; fzv = zero; rho12 = zero;
           u12 = zero; v12 = zero; w12 = zero
 
           if ((b_code .lt. 5) .and. (b_code .gt. 0)) then
@@ -1335,9 +1335,9 @@ contains
 
           !left state derivatives
           ! determine taul!!
-          ux = lcvgrad(1, 1); uy = lcvgrad(1, 2); uz = lcvgrad(1, 3); 
-          vx = lcvgrad(2, 1); vy = lcvgrad(2, 2); vz = lcvgrad(2, 3); 
-          wx = lcvgrad(3, 1); wy = lcvgrad(3, 2); wz = lcvgrad(3, 3); 
+          ux = lcvgrad(1, 1); uy = lcvgrad(1, 2); uz = lcvgrad(1, 3);
+          vx = lcvgrad(2, 1); vy = lcvgrad(2, 2); vz = lcvgrad(2, 3);
+          wx = lcvgrad(3, 1); wy = lcvgrad(3, 2); wz = lcvgrad(3, 3);
           ! tau_xx
           taul(1, 1) = (4.0d0/3.0d0)*ux - (2.0d0/3.0d0)*vy - (2.0d0/3.0d0)*wz
           ! tau_yy
@@ -1432,7 +1432,7 @@ contains
     !$omp end do
 
     if (dg .eq. 1) then
-      deallocate (dg_rhs, dg_rhs_vol_integ, dg_rhs_surf_integ)
+      deallocate(dg_rhs, dg_rhs_vol_integ, dg_rhs_surf_integ)
     end if
 
   end subroutine calculate_fluxeshi_diffusive
@@ -1518,7 +1518,7 @@ contains
             call rotatef2d(n, cleft_rot, cleft, angle1, angle2)        !rotate wrt to normalvector of face and solve 1d riemann problem
             leftv(1:nof_variables) = cleft_rot(1:nof_variables); rightv(1:nof_variables) = cright_rot(1:nof_variables)
             call lmacht2d(n, leftv, rightv)
-            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables); 
+            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables);
             call rotateb2d(n, cleft, cleft_rot, angle1, angle2)
             call rotateb2d(n, cright, cright_rot, angle1, angle2)
           end if
@@ -1544,8 +1544,8 @@ contains
             end if
           end if
 
-          taul = zero; tau = zero; taur = zero; q = zero; ux = zero; uy = zero; uz = zero; vx = zero; vy = zero; vz = zero; wx = zero; wy = zero; wz = zero; 
-          fxv = zero; fyv = zero; fzv = zero; rho12 = zero; 
+          taul = zero; tau = zero; taur = zero; q = zero; ux = zero; uy = zero; uz = zero; vx = zero; vy = zero; vz = zero; wx = zero; wy = zero; wz = zero;
+          fxv = zero; fyv = zero; fzv = zero; rho12 = zero;
           u12 = zero; v12 = zero; w12 = zero
 
           vdamp = (4.0/3.0)!*(( (viscl(1))+(viscl(2)))))
@@ -1672,7 +1672,7 @@ contains
             call rotatef2d(n, cleft_rot, cleft, angle1, angle2)        !rotate wrt to normalvector of face and solve 1d riemann problem
             leftv(1:nof_variables) = cleft_rot(1:nof_variables); rightv(1:nof_variables) = cright_rot(1:nof_variables)
             call lmacht2d(n, leftv, rightv)
-            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables); 
+            cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables);
             call rotateb2d(n, cleft, cleft_rot, angle1, angle2)
             call rotateb2d(n, cright, cright_rot, angle1, angle2)
           end if
@@ -1703,8 +1703,8 @@ contains
             end if
           end if
 
-          taul = zero; tau = zero; taur = zero; q = zero; ux = zero; uy = zero; uz = zero; vx = zero; vy = zero; vz = zero; wx = zero; wy = zero; wz = zero; 
-          fxv = zero; fyv = zero; fzv = zero; rho12 = zero; 
+          taul = zero; tau = zero; taur = zero; q = zero; ux = zero; uy = zero; uz = zero; vx = zero; vy = zero; vz = zero; wx = zero; wy = zero; wz = zero;
+          fxv = zero; fyv = zero; fzv = zero; rho12 = zero;
           u12 = zero; v12 = zero; w12 = zero
 
           if ((b_code .lt. 5) .and. (b_code .gt. 0)) then
@@ -1810,7 +1810,7 @@ contains
     end do
     !$omp end do
     if (dg .eq. 1) then
-      deallocate (dg_rhs, dg_rhs_vol_integ, dg_rhs_surf_integ)
+      deallocate(dg_rhs, dg_rhs_vol_integ, dg_rhs_surf_integ)
     end if
 
   end subroutine calculate_fluxeshi_diffusive2d
@@ -1910,7 +1910,7 @@ cturbl(1:turbulenceequations + passivescalar) = ilocal_recon3(i)%uleftturb(1:tur
             if ((lmach .eq. 1)) then    !application of the low mach number correction
               leftv(1:nof_variables) = cleft_rot(1:nof_variables); rightv(1:nof_variables) = cright_rot(1:nof_variables)
               call lmacht(n, leftv, rightv)
-              cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables); 
+              cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables);
             end if
 
             select case (iriemann)
@@ -2164,7 +2164,7 @@ cturbl(1:turbulenceequations + passivescalar) = ilocal_recon3(i)%uleftturb(1:tur
             if ((lmach .eq. 1)) then    !application of the low mach number correction
               leftv(1:nof_variables) = cleft_rot(1:nof_variables); rightv(1:nof_variables) = cright_rot(1:nof_variables)
               call lmacht(n, leftv, rightv)
-              cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables); 
+              cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables);
             end if
             if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
               cleft_rot(nof_variables + 1:nof_variables + turbulenceequations + passivescalar) = cturbl(1:turbulenceequations + passivescalar)
@@ -2179,7 +2179,7 @@ cturbl(1:turbulenceequations + passivescalar) = ilocal_recon3(i)%uleftturb(1:tur
               if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
               rhllcflux(nof_variables+1:nof_variables+turbulenceequations+passivescalar)=hllcflux(nof_variables+1:nof_variables+turbulenceequations+passivescalar)
               end if
-              
+
             case (2)                        !rusanov
               call rusanov_riemann_solver(n, iconsidered, facex, cleft_rot, cright_rot, hllcflux, mp_source1, srf_speedrot)
               call rotateb(n, rhllcflux, hllcflux, angle1, angle2)
@@ -2199,7 +2199,7 @@ cturbl(1:turbulenceequations + passivescalar) = ilocal_recon3(i)%uleftturb(1:tur
               if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
               rhllcflux(nof_variables+1:nof_variables+turbulenceequations+passivescalar)=hllcflux(nof_variables+1:nof_variables+turbulenceequations+passivescalar)
               end if
-              
+
             case (4)                        !roe
               call rotateb(n, cleft, cleft_rot, angle1, angle2)
               call rotateb(n, cright, cright_rot, angle1, angle2)
@@ -2354,7 +2354,7 @@ cturbl(1:turbulenceequations + passivescalar) = ilocal_recon3(i)%uleftturb(1:tur
             if ((lmach .eq. 1)) then    !application of the low mach number correction
               leftv(1:nof_variables) = cleft_rot(1:nof_variables); rightv(1:nof_variables) = cright_rot(1:nof_variables)
               call lmacht2d(n, leftv, rightv)
-              cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables); 
+              cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables);
             end if
 
             select case (iriemann)
@@ -2372,7 +2372,7 @@ cturbl(1:turbulenceequations + passivescalar) = ilocal_recon3(i)%uleftturb(1:tur
               if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
               rhllcflux(nof_variables+1:nof_variables+turbulenceequations+passivescalar)=hllcflux(nof_variables+1:nof_variables+turbulenceequations+passivescalar)
               end if
-              
+
             case (3)                        !roe
               call rotateb2d(n, cleft, cleft_rot, angle1, angle2)
               call rotateb2d(n, cright, cright_rot, angle1, angle2)
@@ -2591,7 +2591,7 @@ cturbl(1:turbulenceequations + passivescalar) = ilocal_recon3(i)%uleftturb(1:tur
             if ((lmach .eq. 1)) then    !application of the low mach number correction
               leftv(1:nof_variables) = cleft_rot(1:nof_variables); rightv(1:nof_variables) = cright_rot(1:nof_variables)
               call lmacht2d(n, leftv, rightv)
-              cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables); 
+              cleft_rot(1:nof_variables) = leftv(1:nof_variables); cright_rot(1:nof_variables) = rightv(1:nof_variables);
             end if
             if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
               cleft_rot(nof_variables + 1:nof_variables + turbulenceequations + passivescalar) = cturbl(1:turbulenceequations + passivescalar)

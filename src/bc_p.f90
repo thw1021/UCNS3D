@@ -20,8 +20,8 @@ contains
     integer::ioy, ibid, ib1, ib2, ib3, ib4, ibx1, itl, ibgw, ibgw2, ibleed, ibdum
     integer, dimension(4)::ib_n
     integer::nb1, nb2, nb3, nb4
-    kmaxe = xmpielrank(n)
 
+    kmaxe = xmpielrank(n)
     kkk = 0
     totiw = 0
     ibgw = 0
@@ -50,7 +50,7 @@ contains
         end do
       end if
       if (itl .gt. 0) then
-        allocate (ibound(n:n, itl))
+        allocate(ibound(n:n, itl))
         ibound(n:n, :)%inum = 0
       end if
       close (10)
@@ -77,11 +77,11 @@ contains
             ibound(n, itl)%ibid = ibid
             if (ib_n(3) .eq. ib_n(4)) then
               ibound(n, itl)%ishape = 6
-              allocate (ibound(n, itl)%ibl(1:3))
+              allocate(ibound(n, itl)%ibl(1:3))
               ibound(n, itl)%ibl(1:3) = ib_n(1:3)
             else
               ibound(n, itl)%ishape = 5
-              allocate (ibound(n, itl)%ibl(1:4))
+              allocate(ibound(n, itl)%ibl(1:4))
               ibound(n, itl)%ibl(1:4) = ib_n(1:4)
             end if
           end if
@@ -102,11 +102,11 @@ contains
             ibound(n, itl)%ibid = ibid
             if (ib_n(3) .eq. ib_n(4)) then
               ibound(n, itl)%ishape = 6
-              allocate (ibound(n, itl)%ibl(1:3))
+              allocate(ibound(n, itl)%ibl(1:3))
               ibound(n, itl)%ibl(1:3) = ib_n(1:3)
             else
               ibound(n, itl)%ishape = 5
-              allocate (ibound(n, itl)%ibl(1:4))
+              allocate(ibound(n, itl)%ibl(1:4))
               ibound(n, itl)%ibl(1:4) = ib_n(1:4)
             end if
           end if
@@ -117,8 +117,8 @@ contains
       itl = 0
       do ji = 1, n_boundaries
         if ((ibound(n, ji)%icode .eq. 5) .or. (ibound(n, ji)%icode .eq. 50)) then
-          allocate (ibound(n, ji)%localn(2))
-          allocate (ibound(n, ji)%cpun(2))
+          allocate(ibound(n, ji)%localn(2))
+          allocate(ibound(n, ji)%cpun(2))
           itl = itl + 1
           ibound(n, ji)%localn = 0
           ibound(n, ji)%cpun = 0
@@ -126,7 +126,7 @@ contains
       end do
       do i = 1, kmaxe
         if (ielem(n, i)%interior .eq. 1) then
-          allocate (ielem(n, i)%ibounds(ielem(n, i)%ifca))
+          allocate(ielem(n, i)%ibounds(ielem(n, i)%ifca))
           ielem(n, i)%ibounds = 0
           ielem(n, i)%nofbc = 0
         end if
@@ -219,7 +219,7 @@ contains
       end if
 
       if (itl .gt. 0) then
-        allocate (ibound(n:n, itl))
+        allocate(ibound(n:n, itl))
         ibound(n:n, :)%inum = 0
       end if
 
@@ -255,12 +255,13 @@ contains
           if ((inoder(ib_n(1))%itor .gt. 0) .and. (inoder(ib_n(2))%itor .gt. 0)) then
             itl = itl + 1
             if ((ibx1 .eq. 4) .or. (ibx1 .eq. 99)) then
-              ibound(n, itl)%inum = ibgw; totiw = totiw + 1
+              ibound(n, itl)%inum = ibgw
+              totiw = totiw + 1
             end if
             ibound(n, itl)%icode = ibx1
             ibound(n, itl)%ibid = ibid
             ibound(n, itl)%ishape = 7
-            allocate (ibound(n, itl)%ibl(1:2))
+            allocate(ibound(n, itl)%ibl(1:2))
             ibound(n, itl)%ibl(1:2) = ib_n(1:2)
           end if
         end do
@@ -273,7 +274,7 @@ contains
               if ((inoder(ib_n(1))%itor .gt. 0) .and. (inoder(ib_n(2))%itor .gt. 0)) then
                 ! now check if this is in a bleed zone
                 do ibleed = 1, bleed_number
-                  if (((inoder(ib_n(1))%cord(1).ge.bleed_start(ibleed,1)).and.(inoder(ib_n(1))%cord(1).le.bleed_end(ibleed,1))).and.((inoder(ib_n(2))%cord(1).ge.bleed_start(ibleed,1)).and.(inoder(ib_n(2))%cord(1).le.bleed_end(ibleed,1))).and.((inoder(ib_n(1))%cord(2).ge.bleed_start(ibleed,2)).and.(inoder(ib_n(1))%cord(2).le.bleed_end(ibleed,2))).and.((inoder(ib_n(2))%cord(2).ge.bleed_start(ibleed,2)).and.(inoder(ib_n(2))%cord(2).le.bleed_end(ibleed,2))))then
+                  if (((inoder(ib_n(1))%cord(1).ge.bleed_start(ibleed,1)).and.(inoder(ib_n(1))%cord(1).le.bleed_end(ibleed,1))).and.((inoder(ib_n(2))%cord(1).ge.bleed_start(ibleed,1)).and.(inoder(ib_n(2))%cord(1).le.bleed_end(ibleed,1))).and.((inoder(ib_n(1))%cord(2).ge.bleed_start(ibleed,2)).and.(inoder(ib_n(1))%cord(2).le.bleed_end(ibleed,2))).and.((inoder(ib_n(2))%cord(2).ge.bleed_start(ibleed,2)).and.(inoder(ib_n(2))%cord(2).le.bleed_end(ibleed,2)))) then
                     ibdum = 99
                   end if
                 end do
@@ -292,7 +293,7 @@ contains
             ibound(n, itl)%icode = ibx1
             ibound(n, itl)%ibid = ibid
             ibound(n, itl)%ishape = 7
-            allocate (ibound(n, itl)%ibl(1:2))
+            allocate(ibound(n, itl)%ibl(1:2))
             ibound(n, itl)%ibl(1:2) = ib_n(1:2)
           end if
         end do
@@ -301,8 +302,8 @@ contains
       n_boundaries = itl
       do ji = 1, n_boundaries
         if ((ibound(n, ji)%icode .eq. 5) .or. (ibound(n, ji)%icode .eq. 50)) then
-          allocate (ibound(n, ji)%localn(2))
-          allocate (ibound(n, ji)%cpun(2))
+          allocate(ibound(n, ji)%localn(2))
+          allocate(ibound(n, ji)%cpun(2))
           ibound(n, ji)%localn = 0
           ibound(n, ji)%cpun = 0
         end if
@@ -310,9 +311,9 @@ contains
 
       do i = 1, kmaxe
         if (ielem(n, i)%interior .eq. 1) then
-          allocate (ielem(n, i)%ibounds(ielem(n, i)%ifca))
+          allocate(ielem(n, i)%ibounds(ielem(n, i)%ifca))
           if (bleed .eq. 1) then
-            allocate (ielem(n, i)%bleedn(ielem(n, i)%ifca))
+            allocate(ielem(n, i)%bleedn(ielem(n, i)%ifca))
             ielem(n, i)%bleedn(:) = 0
           end if
           ielem(n, i)%ibounds = 0
@@ -351,8 +352,8 @@ contains
     totwalls = ibgw
 
     if (totiw .gt. 0) then
-      allocate (ibound_t(totiw))
-      allocate (ibound_t2(totiw))
+      allocate(ibound_t(totiw))
+      allocate(ibound_t2(totiw))
       totiw = 0
       do i = 1, kmaxe
         if (ielem(n, i)%interior .eq. 1) then

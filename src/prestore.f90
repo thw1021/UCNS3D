@@ -584,14 +584,14 @@ contains
       end if!ggs
     end do !for all stencils
 
-    deallocate (lsqm, qff, rff, qtff, invrff)
-    deallocate (vellsqmat)
-    deallocate (lscqm)
-    deallocate (intbs, basefaceval, basefacgval, permutation, permutationg, xder, yder, zder)
-    deallocate (wlsqr)
-    deallocate (stencil)
-    deallocate (invmat)
-    deallocate (stencils)
+    deallocate(lsqm, qff, rff, qtff, invrff)
+    deallocate(vellsqmat)
+    deallocate(lscqm)
+    deallocate(intbs, basefaceval, basefacgval, permutation, permutationg, xder, yder, zder)
+    deallocate(wlsqr)
+    deallocate(stencil)
+    deallocate(invmat)
+    deallocate(stencils)
 
   end subroutine prestore_reconstruction3
 
@@ -627,17 +627,17 @@ contains
         end do
       end if
       if (idum .eq. 1) then
-        allocate (ielem(n, i)%num_of_wall_gqp(1))
+        allocate(ielem(n, i)%num_of_wall_gqp(1))
         ielem(n, i)%num_of_wall_gqp(1) = idum2
         ielem(n, i)%walls = 1
 
         if (fastest .ne. 1) then
-          allocate (ilocal_recon3(i)%velinvlsqmat(ideg - 1, ideg - 1))
-          allocate (ilocal_recon3(i)%wallcoeff(ideg))
-          allocate (ilocal_recon3(i)%vellsq(imax, ideg - 1))
-          allocate (ilocal_recon3(i)%tempsqmat(ideg - 1, ideg - 1))
-          allocate (ilocal_recon3(i)%wallcoefg(ideg))
-          allocate (ilocal_recon3(i)%tempsq(imax, ideg - 1))
+          allocate(ilocal_recon3(i)%velinvlsqmat(ideg - 1, ideg - 1))
+          allocate(ilocal_recon3(i)%wallcoeff(ideg))
+          allocate(ilocal_recon3(i)%vellsq(imax, ideg - 1))
+          allocate(ilocal_recon3(i)%tempsqmat(ideg - 1, ideg - 1))
+          allocate(ilocal_recon3(i)%wallcoefg(ideg))
+          allocate(ilocal_recon3(i)%tempsq(imax, ideg - 1))
 
           ilocal_recon3(i)%velinvlsqmat = zero
           ilocal_recon3(i)%wallcoeff = zero
@@ -681,17 +681,17 @@ contains
     real, allocatable, dimension(:, :, :), intent(inout)::ilon_z           !coordinates of each node in x
 
   allocate(lscqm(1:idegfree,1:idegfree),qff(1:idegfree,1:idegfree),rff(1:idegfree,1:idegfree),qtff(1:idegfree,1:idegfree),invrff(1:idegfree,1:idegfree))
-  allocate (vellsqmat(1:idegfree - 1, 1:idegfree - 1))
-  allocate (lsqm(1:imaxdegfree, 1:idegfree - 1))
+  allocate(vellsqmat(1:idegfree - 1, 1:idegfree - 1))
+  allocate(lsqm(1:imaxdegfree, 1:idegfree - 1))
   allocate(intbs(1:idegfree),basefaceval(1:idegfree),basefacgval(1:idegfree),permutation(1:idegfree),permutationg(1:idegfree),xder(1:idegfree),yder(1:idegfree),zder(1:idegfree))
-  allocate (invmat(1:idegfree, 1:idegfree))
-  allocate (wlsqr(1:20, 1:numneighbours - 1))
-  allocate (stencil(1:numneighbours - 1, 1:idegfree))
-  allocate (stencils(1:20, 1:numneighbours - 1, 1:idegfree))
+  allocate(invmat(1:idegfree, 1:idegfree))
+  allocate(wlsqr(1:20, 1:numneighbours - 1))
+  allocate(stencil(1:numneighbours - 1, 1:idegfree))
+  allocate(stencils(1:20, 1:numneighbours - 1, 1:idegfree))
 
   i = iconsi
 
-  idum = 0; 
+  idum = 0;
   if (ielem(n, i)%interior .eq. 1) then
     do j = 1, ielem(n, i)%ifca
     if (ielem(n, i)%ibounds(j) .gt. 0) then
@@ -713,7 +713,7 @@ contains
 
   if (ees .eq. 5) then
     intbs = zero; jxx = 1; ixx = i; lxx1 = 1
-    number_of_dog = idegfree2; kxx = iorder2; eltype = ielem(n, i)%ishape; 
+    number_of_dog = idegfree2; kxx = iorder2; eltype = ielem(n, i)%ishape;
     icompwrt = 0
     intbs=calintbasis(n,ixx,jxx,kxx,lxx1,number_of_dog,icompwrt,eltype,ilox_ihexg,ilox_ihexl,ilox_ihexb,ilox_ihexn,ilox_ishape,ilox_xxc,ilox_yyc,ilox_zzc,ilox_volume,ilox_periodicflag,ilon_nodcount,ilon_x,ilon_y,ilon_z)
     integ_basis(i)%valuec(1:number_of_dog) = intbs(1:number_of_dog)
@@ -932,7 +932,7 @@ contains
                 cords(1:2) = cordinates2(n, nodes_list, n_node)
                 ay = cords(2)
                 ax = cords(1)
-                vext(1, 1) = ax; vext(1, 2) = ay; 
+                vext(1, 1) = ax; vext(1, 2) = ay;
                 vext(1, 1:2) = matmul(ilocal_recon3(i)%invccjac(1:2, 1:2), vext(1, 1:2) - ilocal_recon3(i)%vext_ref(1:2))
                 ax = vext(1, 1); ay = vext(1, 2)
                 angle1 = ielem(n, i)%faceanglex(j)
@@ -943,11 +943,11 @@ contains
                 nny = (nx*ainvjt(1, 2)) + (ny*ainvjt(2, 2))
                 if (poly .eq. 4) then
                   do iq = 1, ideg
-                    xder(iq) = tl2dx(ax, ay, iq, i); yder(iq) = tl2dy(ax, ay, iq, i); 
+                    xder(iq) = tl2dx(ax, ay, iq, i); yder(iq) = tl2dy(ax, ay, iq, i);
                   end do
                 else
                   do iq = 1, ideg
-                    xder(iq) = df2dx(ax, ay, iq, i); yder(iq) = df2dy(ax, ay, iq, i); 
+                    xder(iq) = df2dx(ax, ay, iq, i); yder(iq) = df2dy(ax, ay, iq, i);
                   end do
                 end if
                 iconsidered = i
@@ -1058,14 +1058,14 @@ contains
       end if!ggs
     end do
 
-    deallocate (lsqm, qff, rff, qtff, invrff)
-    deallocate (vellsqmat)
-    deallocate (lscqm)
-    deallocate (intbs, basefaceval, basefacgval, permutation, permutationg, xder, yder, zder)
-    deallocate (wlsqr)
-    deallocate (stencil)
-    deallocate (invmat)
-    deallocate (stencils)
+    deallocate(lsqm, qff, rff, qtff, invrff)
+    deallocate(vellsqmat)
+    deallocate(lscqm)
+    deallocate(intbs, basefaceval, basefacgval, permutation, permutationg, xder, yder, zder)
+    deallocate(wlsqr)
+    deallocate(stencil)
+    deallocate(invmat)
+    deallocate(stencils)
 
   end subroutine prestore_reconstruction2
 
@@ -1093,7 +1093,7 @@ subroutine indicatormatrix(n,iconsi,ilox_ihexg,ilox_ihexl,ilox_ihexb,ilox_ihexn,
   real, allocatable, dimension(:, :, :), intent(inout)::ilon_y           !coordinates of each node in x
   real, allocatable, dimension(:, :, :), intent(inout)::ilon_z           !coordinates of each node in x
   real, allocatable, dimension(:, :)::weff
-  allocate (weff(1:idegfree, 1:idegfree))
+  allocate(weff(1:idegfree, 1:idegfree))
   i = iconsi
 
   imax = ielem(n, i)%inumneighbours - 1
@@ -1193,7 +1193,7 @@ subroutine indicatormatrix(n,iconsi,ilox_ihexg,ilox_ihexl,ilox_ihexb,ilox_ihexn,
     ilocal_recon3(i)%indicator(1:ideg, 1:ideg) = ilocal_recon3(i)%indicator(1:ideg, 1:ideg) + weff(1:ideg, 1:ideg)
   end do
   end if
-  deallocate (weff)
+  deallocate(weff)
   end subroutine indicatormatrix
 
 subroutine indicatormatrix2(n,iconsi,ilox_ihexg,ilox_ihexl,ilox_ihexb,ilox_ihexn,ilox_ishape,ilox_xxc,ilox_yyc,ilox_zzc,ilox_volume,ilox_periodicflag,ilon_nodcount,ilon_x,ilon_y,ilon_z)
@@ -1220,7 +1220,7 @@ subroutine indicatormatrix2(n,iconsi,ilox_ihexg,ilox_ihexl,ilox_ihexb,ilox_ihexn
   real, allocatable, dimension(:, :, :), intent(inout)::ilon_y           !coordinates of each node in x
   real, allocatable, dimension(:, :, :), intent(inout)::ilon_z           !coordinates of each node in x
   real, allocatable, dimension(:, :)::weff
-  allocate (weff(1:idegfree, 1:idegfree))
+  allocate(weff(1:idegfree, 1:idegfree))
   i = iconsi
 
   imax = numneighbours2 - 1
@@ -1320,7 +1320,7 @@ subroutine indicatormatrix2(n,iconsi,ilox_ihexg,ilox_ihexl,ilox_ihexb,ilox_ihexn
     ilocal_recon3(i)%indicatorc(1:ideg, 1:ideg) = ilocal_recon3(i)%indicatorc(1:ideg, 1:ideg) + weff(1:ideg, 1:ideg)
   end do
   end if
-  deallocate (weff)
+  deallocate(weff)
   end subroutine indicatormatrix2
 
   subroutine wenotet(n, weff, inumo, inump, voltemp, qpoints, wequa3d, ideg, iconsidered)
@@ -3058,7 +3058,7 @@ subroutine indicatormatrix2(n,iconsi,ilox_ihexg,ilox_ihexl,ilox_ihexb,ilox_ihexn
         compbasel = s1
       end if
     case (6)
-      jx = 3; 
+      jx = 3;
       do k = 1, jx
         nodes_list(k, 1) = ilon_x(lxx1, jxx, k)
         nodes_list(k, 2) = ilon_y(lxx1, jxx, k)

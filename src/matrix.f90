@@ -92,10 +92,10 @@ contains
     end do
     qff(1:ideg, 1:ideg) = identity(1:ideg, 1:ideg)
     rff(1:ideg, 1:ideg) = lscqm(1:ideg, 1:ideg)
-    allocate (pqr(1:ideg, 1:ideg), vqr(1:ideg)); pqr = 0.0d0; vqr = 0.0d0
+    allocate(pqr(1:ideg, 1:ideg), vqr(1:ideg)); pqr = 0.0d0; vqr = 0.0d0
     do l = 1, ideg
       pdim = ideg - l + 1
-      allocate (vqr1(1:pdim), xqr(1:pdim))
+      allocate(vqr1(1:pdim), xqr(1:pdim))
       xqr = rff(l:ideg, l)
       call house(xqr, vqr1, pdim)
       vqr(1:ideg) = 0.0d0
@@ -103,9 +103,9 @@ contains
       call computehousematrix(pqr, vqr, ideg)
       rff(1:ideg, 1:ideg) = matmul(pqr(1:ideg, 1:ideg), rff(1:ideg, 1:ideg))
       qff(1:ideg, 1:ideg) = matmul(qff(1:ideg, 1:ideg), pqr(1:ideg, 1:ideg))
-      deallocate (vqr1, xqr)
+      deallocate(vqr1, xqr)
     end do
-    deallocate (pqr, vqr)
+    deallocate(pqr, vqr)
   end subroutine
   subroutine qrdecomposition_dg(lscqm_dg, qff_dg, rff_dg, ideg)
     implicit none
@@ -127,10 +127,10 @@ contains
     end do
     qff_dg(1:ideg, 1:ideg) = identity(1:ideg, 1:ideg)
     rff_dg(1:ideg, 1:ideg) = lscqm_dg(1:ideg, 1:ideg)
-    allocate (pqr(1:ideg, 1:ideg), vqr(1:ideg)); pqr = 0.0d0; vqr = 0.0d0
+    allocate(pqr(1:ideg, 1:ideg), vqr(1:ideg)); pqr = 0.0d0; vqr = 0.0d0
     do l = 1, ideg
       pdim = ideg - l + 1
-      allocate (vqr1(1:pdim), xqr(1:pdim))
+      allocate(vqr1(1:pdim), xqr(1:pdim))
       xqr = rff_dg(l:ideg, l)
       call house(xqr, vqr1, pdim)
       vqr(1:ideg) = 0.0d0
@@ -138,9 +138,9 @@ contains
       call computehousematrix(pqr, vqr, ideg)
       rff_dg(1:ideg, 1:ideg) = matmul(pqr(1:ideg, 1:ideg), rff_dg(1:ideg, 1:ideg))
       qff_dg(1:ideg, 1:ideg) = matmul(qff_dg(1:ideg, 1:ideg), pqr(1:ideg, 1:ideg))
-      deallocate (vqr1, xqr)
+      deallocate(vqr1, xqr)
     end do
-    deallocate (pqr, vqr)
+    deallocate(pqr, vqr)
   end subroutine
 
 end module

@@ -42,7 +42,7 @@ contains
       read (16, *) per_rot, angle_per, v_ref
       read (16, *)
       read (16, *) nrotors
-      allocate (point1_gl(nrotors, 3), point2_gl(nrotors, 3), radius_gl(nrotors), mrf_rot_gl(nrotors))
+      allocate(point1_gl(nrotors, 3), point2_gl(nrotors, 3), radius_gl(nrotors), mrf_rot_gl(nrotors))
       do inv1 = 1, nrotors
         read (16, *) point1_gl(inv1, 1), point1_gl(inv1, 2), point1_gl(inv1, 3)
         read (16, *) point2_gl(inv1, 1), point2_gl(inv1, 2), point2_gl(inv1, 3)
@@ -88,7 +88,7 @@ contains
       read (14, *)
       read (14, *)
       read (14, *) nof_species
-      allocate (gamma_in(1:nof_species), mp_a_in(1:nof_species), mp_r_in(1:nof_species), mp_pinf(1:nof_species))
+      allocate(gamma_in(1:nof_species), mp_a_in(1:nof_species), mp_r_in(1:nof_species), mp_pinf(1:nof_species))
       read (14, *) gamma_in(1:nof_species)
       read (14, *) mp_a_in(1:nof_species)
       read (14, *) mp_r_in(1:nof_species)
@@ -896,12 +896,12 @@ contains
     !$omp master
     if (nprobes .gt. 0) then
       if (dimensiona .eq. 3) then
-        allocate (probec(1:nprobes, 1:3))
+        allocate(probec(1:nprobes, 1:3))
         do inv = 1, nprobes
           read (15, *) probec(inv, 1), probec(inv, 2), probec(inv, 3)
         end do
       else
-        allocate (probec(1:nprobes, 1:2))
+        allocate(probec(1:nprobes, 1:2))
         do inv = 1, nprobes
           read (15, *) probec(inv, 1), probec(inv, 2)
         end do

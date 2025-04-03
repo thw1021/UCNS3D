@@ -80,20 +80,20 @@ contains
     real, dimension(1)::deta
     integer::kk, ii
 
-    vvxi(1) = -1.0d0; vveta(1) = -1.0d0; 
-    vvxi(2) = 1.0d0; vveta(2) = -1.0d0; 
-    vvxi(3) = 1.0d0; vveta(3) = 1.0d0; 
-    vvxi(4) = -1.0d0; vveta(4) = 1.0d0; 
+    vvxi(1) = -1.0d0; vveta(1) = -1.0d0;
+    vvxi(2) = 1.0d0; vveta(2) = -1.0d0;
+    vvxi(3) = 1.0d0; vveta(3) = 1.0d0;
+    vvxi(4) = -1.0d0; vveta(4) = 1.0d0;
     vvnallx(:) = 0.0d0; vvnally(:) = 0.0
 
     do kk = 1, qp_quad
       r = qpoints(1, kk)
       s = qpoints(2, kk)
       do ii = 1, 4
-        vvnxi(1) = -(0.25d0)*(1.0d0 - s); vvneta(1) = -(0.25d0)*(1.d0 - r); 
-        vvnxi(2) = (0.25d0)*(1.0d0 - s); vvneta(2) = -(0.25d0)*(1.d0 + r); 
-        vvnxi(3) = (0.25d0)*(1.0d0 + s); vvneta(3) = (0.25d0)*(1.d0 + r); 
-        vvnxi(4) = -(0.25d0)*(1.0d0 + s); vvneta(4) = (0.25d0)*(1.d0 - r); 
+        vvnxi(1) = -(0.25d0)*(1.0d0 - s); vvneta(1) = -(0.25d0)*(1.d0 - r);
+        vvnxi(2) = (0.25d0)*(1.0d0 - s); vvneta(2) = -(0.25d0)*(1.d0 + r);
+        vvnxi(3) = (0.25d0)*(1.0d0 + s); vvneta(3) = (0.25d0)*(1.d0 + r);
+        vvnxi(4) = -(0.25d0)*(1.0d0 + s); vvneta(4) = (0.25d0)*(1.d0 - r);
         vvnallx(ii) = vvnallx(ii) + (vvnxi(ii)*wequa3d(kk))
         vvnally(ii) = vvnally(ii) + (vvneta(ii)*wequa3d(kk))
       end do
@@ -296,9 +296,9 @@ contains
         end do
       end if
       if (kk2 .eq. 3) then
-        xc1 = vext(1, 1); xc2 = vext(2, 1); xc3 = vext(3, 1); 
-        yc1 = vext(1, 2); yc2 = vext(2, 2); yc3 = vext(3, 2); 
-        zc1 = vext(1, 3); zc2 = vext(2, 3); zc3 = vext(3, 3); 
+        xc1 = vext(1, 1); xc2 = vext(2, 1); xc3 = vext(3, 1);
+        yc1 = vext(1, 2); yc2 = vext(2, 2); yc3 = vext(3, 2);
+        zc1 = vext(1, 3); zc2 = vext(2, 3); zc3 = vext(3, 3);
         delxya = (xc1 - xc2)*(yc1 + yc2); delyza = (yc1 - yc2)*(zc1 + zc2); delzxa = (zc1 - zc2)*(xc1 + xc2)
         delxyb = (xc2 - xc3)*(yc2 + yc3); delyzb = (yc2 - yc3)*(zc2 + zc3); delzxb = (zc2 - zc3)*(xc2 + xc3)
         delxyc = (xc3 - xc1)*(yc3 + yc1); delyzc = (yc3 - yc1)*(zc3 + zc1); delzxc = (zc3 - zc1)*(xc3 + xc1)
@@ -533,14 +533,14 @@ contains
       tx = qpoints(3, kk)
 
       do ii = 1, 8
-        vvnxi(1) = -(1.0d0/8.0d0)*(1.0 - s)*(1.0d0 - tx); vvneta(1) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - tx); vvnzeta(1) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - s); 
-        vvnxi(2) = (1.0d0/8.0d0)*(1.0 - s)*(1.0d0 - tx); vvneta(2) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - tx); vvnzeta(2) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - s); 
-        vvnxi(3) = (1.0d0/8.0d0)*(1.0 + s)*(1.0d0 - tx); vvneta(3) = (1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - tx); vvnzeta(3) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 + s); 
-        vvnxi(4) = -(1.0d0/8.0d0)*(1.0 + s)*(1.0d0 - tx); vvneta(4) = (1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - tx); vvnzeta(4) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 + s); 
-        vvnxi(5) = -(1.0d0/8.0d0)*(1.0 - s)*(1.0d0 + tx); vvneta(5) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 + tx); vvnzeta(5) = (1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - s); 
-        vvnxi(6) = (1.0d0/8.0d0)*(1.0 - s)*(1.0d0 + tx); vvneta(6) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 + tx); vvnzeta(6) = (1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - s); 
-        vvnxi(7) = (1.0d0/8.0d0)*(1.0 + s)*(1.0d0 + tx); vvneta(7) = (1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 + tx); vvnzeta(7) = (1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 + s); 
-        vvnxi(8) = -(1.0d0/8.0d0)*(1.0 + s)*(1.0d0 + tx); vvneta(8) = (1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 + tx); vvnzeta(8) = (1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 + s); 
+        vvnxi(1) = -(1.0d0/8.0d0)*(1.0 - s)*(1.0d0 - tx); vvneta(1) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - tx); vvnzeta(1) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - s);
+        vvnxi(2) = (1.0d0/8.0d0)*(1.0 - s)*(1.0d0 - tx); vvneta(2) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - tx); vvnzeta(2) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - s);
+        vvnxi(3) = (1.0d0/8.0d0)*(1.0 + s)*(1.0d0 - tx); vvneta(3) = (1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - tx); vvnzeta(3) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 + s);
+        vvnxi(4) = -(1.0d0/8.0d0)*(1.0 + s)*(1.0d0 - tx); vvneta(4) = (1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - tx); vvnzeta(4) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 + s);
+        vvnxi(5) = -(1.0d0/8.0d0)*(1.0 - s)*(1.0d0 + tx); vvneta(5) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 + tx); vvnzeta(5) = (1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - s);
+        vvnxi(6) = (1.0d0/8.0d0)*(1.0 - s)*(1.0d0 + tx); vvneta(6) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 + tx); vvnzeta(6) = (1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - s);
+        vvnxi(7) = (1.0d0/8.0d0)*(1.0 + s)*(1.0d0 + tx); vvneta(7) = (1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 + tx); vvnzeta(7) = (1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 + s);
+        vvnxi(8) = -(1.0d0/8.0d0)*(1.0 + s)*(1.0d0 + tx); vvneta(8) = (1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 + tx); vvnzeta(8) = (1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 + s);
         vvnallx(ii) = vvnallx(ii) + (vvnxi(ii)*wequa3d(kk))
         vvnally(ii) = vvnally(ii) + (vvneta(ii)*wequa3d(kk))
         vvnallz(ii) = vvnallz(ii) + (vvnzeta(ii)*wequa3d(kk))
@@ -569,9 +569,9 @@ contains
 
 ! vol=vol*8.0d0
 
-    vva1(1, 1) = (vva(2, 2)*vva(3, 3)) - (vva(2, 3)*vva(3, 2)); vva1(1, 2) = ((vva(1, 3)*vva(3, 2)) - (vva(3, 3)*vva(1, 2))); vva1(1, 3) = (vva(1, 2)*vva(2, 3)) - (vva(2, 2)*vva(1, 3)); 
-    vva1(2, 1) = ((vva(2, 3)*vva(3, 1)) - (vva(3, 3)*vva(2, 1))); vva1(2, 2) = ((vva(1, 1)*vva(3, 3)) - (vva(3, 1)*vva(1, 3))); vva1(2, 3) = ((vva(1, 3)*vva(2, 1)) - (vva(2, 3)*vva(1, 1))); 
-    vva1(3, 1) = (vva(2, 1)*vva(3, 2)) - (vva(3, 1)*vva(2, 2)); vva1(3, 2) = ((vva(1, 2)*vva(3, 1)) - (vva(3, 2)*vva(1, 1))); vva1(3, 3) = (vva(1, 1)*vva(2, 2)) - (vva(2, 1)*vva(1, 2)); 
+    vva1(1, 1) = (vva(2, 2)*vva(3, 3)) - (vva(2, 3)*vva(3, 2)); vva1(1, 2) = ((vva(1, 3)*vva(3, 2)) - (vva(3, 3)*vva(1, 2))); vva1(1, 3) = (vva(1, 2)*vva(2, 3)) - (vva(2, 2)*vva(1, 3));
+    vva1(2, 1) = ((vva(2, 3)*vva(3, 1)) - (vva(3, 3)*vva(2, 1))); vva1(2, 2) = ((vva(1, 1)*vva(3, 3)) - (vva(3, 1)*vva(1, 3))); vva1(2, 3) = ((vva(1, 3)*vva(2, 1)) - (vva(2, 3)*vva(1, 1)));
+    vva1(3, 1) = (vva(2, 1)*vva(3, 2)) - (vva(3, 1)*vva(2, 2)); vva1(3, 2) = ((vva(1, 2)*vva(3, 1)) - (vva(3, 2)*vva(1, 1))); vva1(3, 3) = (vva(1, 1)*vva(2, 2)) - (vva(2, 1)*vva(1, 2));
     deta(1) = (vva(1, 1)*vva1(1, 1)) + (vva(1, 2)*vva1(2, 1)) + (vva(1, 3)*vva1(3, 1))
 
     vol = deta(1)*8.0d0
@@ -613,11 +613,11 @@ contains
       tx = qpoints(3, kk)
 
       do ii = 1, 5
-        vvnxi(1) = -(1.0d0/8.0d0)*(1.0 - s)*(1.0d0 - tx); vvneta(1) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - tx); vvnzeta(1) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - s); 
-        vvnxi(2) = (1.0d0/8.0d0)*(1.0 - s)*(1.0d0 - tx); vvneta(2) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - tx); vvnzeta(2) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - s); 
-        vvnxi(3) = (1.0d0/8.0d0)*(1.0 + s)*(1.0d0 - tx); vvneta(3) = (1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - tx); vvnzeta(3) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 + s); 
-        vvnxi(4) = -(1.0d0/8.0d0)*(1.0 + s)*(1.0d0 - tx); vvneta(4) = (1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - tx); vvnzeta(4) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 + s); 
-        vvnxi(5) = 0.0d0; vvneta(5) = 0.0d0; vvnzeta(5) = 0.5d0; 
+        vvnxi(1) = -(1.0d0/8.0d0)*(1.0 - s)*(1.0d0 - tx); vvneta(1) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - tx); vvnzeta(1) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - s);
+        vvnxi(2) = (1.0d0/8.0d0)*(1.0 - s)*(1.0d0 - tx); vvneta(2) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - tx); vvnzeta(2) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - s);
+        vvnxi(3) = (1.0d0/8.0d0)*(1.0 + s)*(1.0d0 - tx); vvneta(3) = (1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 - tx); vvnzeta(3) = -(1.0d0/8.0d0)*(1.0d0 + r)*(1.0d0 + s);
+        vvnxi(4) = -(1.0d0/8.0d0)*(1.0 + s)*(1.0d0 - tx); vvneta(4) = (1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 - tx); vvnzeta(4) = -(1.0d0/8.0d0)*(1.0d0 - r)*(1.0d0 + s);
+        vvnxi(5) = 0.0d0; vvneta(5) = 0.0d0; vvnzeta(5) = 0.5d0;
         vvnallx(ii) = vvnallx(ii) + (vvnxi(ii)*wequa3d(kk))
         vvnally(ii) = vvnally(ii) + (vvneta(ii)*wequa3d(kk))
         vvnallz(ii) = vvnallz(ii) + (vvnzeta(ii)*wequa3d(kk))
@@ -638,9 +638,9 @@ contains
       vva(3, 1) = vva(3, 1) + vvnzeta(ii)*vext(ii, 1); vva(3, 2) = vva(3, 2) + vvnzeta(ii)*vext(ii, 2); vva(3, 3) = vva(3, 3) + vvnzeta(ii)*vext(ii, 3)
     end do
 
-    vva1(1, 1) = (vva(2, 2)*vva(3, 3)) - (vva(2, 3)*vva(3, 2)); vva1(1, 2) = ((vva(1, 3)*vva(3, 2)) - (vva(3, 3)*vva(1, 2))); vva1(1, 3) = (vva(1, 2)*vva(2, 3)) - (vva(2, 2)*vva(1, 3)); 
-    vva1(2, 1) = ((vva(2, 3)*vva(3, 1)) - (vva(3, 3)*vva(2, 1))); vva1(2, 2) = ((vva(1, 1)*vva(3, 3)) - (vva(3, 1)*vva(1, 3))); vva1(2, 3) = ((vva(1, 3)*vva(2, 1)) - (vva(2, 3)*vva(1, 1))); 
-    vva1(3, 1) = (vva(2, 1)*vva(3, 2)) - (vva(3, 1)*vva(2, 2)); vva1(3, 2) = ((vva(1, 2)*vva(3, 1)) - (vva(3, 2)*vva(1, 1))); vva1(3, 3) = (vva(1, 1)*vva(2, 2)) - (vva(2, 1)*vva(1, 2)); 
+    vva1(1, 1) = (vva(2, 2)*vva(3, 3)) - (vva(2, 3)*vva(3, 2)); vva1(1, 2) = ((vva(1, 3)*vva(3, 2)) - (vva(3, 3)*vva(1, 2))); vva1(1, 3) = (vva(1, 2)*vva(2, 3)) - (vva(2, 2)*vva(1, 3));
+    vva1(2, 1) = ((vva(2, 3)*vva(3, 1)) - (vva(3, 3)*vva(2, 1))); vva1(2, 2) = ((vva(1, 1)*vva(3, 3)) - (vva(3, 1)*vva(1, 3))); vva1(2, 3) = ((vva(1, 3)*vva(2, 1)) - (vva(2, 3)*vva(1, 1)));
+    vva1(3, 1) = (vva(2, 1)*vva(3, 2)) - (vva(3, 1)*vva(2, 2)); vva1(3, 2) = ((vva(1, 2)*vva(3, 1)) - (vva(3, 2)*vva(1, 1))); vva1(3, 3) = (vva(1, 1)*vva(2, 2)) - (vva(2, 1)*vva(1, 2));
     deta(1) = (vva(1, 1)*vva1(1, 1)) + (vva(1, 2)*vva1(2, 1)) + (vva(1, 3)*vva1(3, 1))
 
     deta(1) = deta(1)
@@ -683,12 +683,12 @@ contains
         s = qpoints(2, kk)
         tx = qpoints(3, kk)
 
-        vvnxi(1) = 0.5d0*(1.0d0 - tx); vvneta(1) = 0.0d0; vvnzeta(1) = -0.5d0*r; 
-        vvnxi(2) = 0.0d0; vvneta(2) = 0.5d0*(1.0d0 - tx); vvnzeta(2) = -0.5d0*s; 
-        vvnxi(3) = -0.5d0*(1.0d0 - tx); vvneta(3) = -0.5d0*(1.0d0 - tx); vvnzeta(3) = -0.5d0*(1.0 - r - s); 
-        vvnxi(4) = 0.5d0*(1.0d0 + tx); vvneta(4) = 0.0d0; vvnzeta(4) = 0.5d0*r; 
-        vvnxi(5) = 0.0d0; vvneta(5) = 0.5d0*(1.0d0 + tx); vvnzeta(5) = 0.5d0*s; 
-        vvnxi(6) = -0.5d0*(1.0d0 + tx); vvneta(6) = -0.5d0*(1.0d0 + tx); vvnzeta(6) = 0.5d0*(1.0 - r - s); 
+        vvnxi(1) = 0.5d0*(1.0d0 - tx); vvneta(1) = 0.0d0; vvnzeta(1) = -0.5d0*r;
+        vvnxi(2) = 0.0d0; vvneta(2) = 0.5d0*(1.0d0 - tx); vvnzeta(2) = -0.5d0*s;
+        vvnxi(3) = -0.5d0*(1.0d0 - tx); vvneta(3) = -0.5d0*(1.0d0 - tx); vvnzeta(3) = -0.5d0*(1.0 - r - s);
+        vvnxi(4) = 0.5d0*(1.0d0 + tx); vvneta(4) = 0.0d0; vvnzeta(4) = 0.5d0*r;
+        vvnxi(5) = 0.0d0; vvneta(5) = 0.5d0*(1.0d0 + tx); vvnzeta(5) = 0.5d0*s;
+        vvnxi(6) = -0.5d0*(1.0d0 + tx); vvneta(6) = -0.5d0*(1.0d0 + tx); vvnzeta(6) = 0.5d0*(1.0 - r - s);
         vvnallx(ii) = vvnallx(ii) + (vvnxi(ii)*wequa3d(kk))
         vvnally(ii) = vvnally(ii) + (vvneta(ii)*wequa3d(kk))
         vvnallz(ii) = vvnallz(ii) + (vvnzeta(ii)*wequa3d(kk))
@@ -712,9 +712,9 @@ contains
       vva(3, 1) = vva(3, 1) + vvnzeta(ii)*vext(ii, 1); vva(3, 2) = vva(3, 2) + vvnzeta(ii)*vext(ii, 2); vva(3, 3) = vva(3, 3) + vvnzeta(ii)*vext(ii, 3)
     end do
 
-    vva1(1, 1) = (vva(2, 2)*vva(3, 3)) - (vva(2, 3)*vva(3, 2)); vva1(1, 2) = ((vva(1, 3)*vva(3, 2)) - (vva(3, 3)*vva(1, 2))); vva1(1, 3) = (vva(1, 2)*vva(2, 3)) - (vva(2, 2)*vva(1, 3)); 
-    vva1(2, 1) = ((vva(2, 3)*vva(3, 1)) - (vva(3, 3)*vva(2, 1))); vva1(2, 2) = ((vva(1, 1)*vva(3, 3)) - (vva(3, 1)*vva(1, 3))); vva1(2, 3) = ((vva(1, 3)*vva(2, 1)) - (vva(2, 3)*vva(1, 1))); 
-    vva1(3, 1) = (vva(2, 1)*vva(3, 2)) - (vva(3, 1)*vva(2, 2)); vva1(3, 2) = ((vva(1, 2)*vva(3, 1)) - (vva(3, 2)*vva(1, 1))); vva1(3, 3) = (vva(1, 1)*vva(2, 2)) - (vva(2, 1)*vva(1, 2)); 
+    vva1(1, 1) = (vva(2, 2)*vva(3, 3)) - (vva(2, 3)*vva(3, 2)); vva1(1, 2) = ((vva(1, 3)*vva(3, 2)) - (vva(3, 3)*vva(1, 2))); vva1(1, 3) = (vva(1, 2)*vva(2, 3)) - (vva(2, 2)*vva(1, 3));
+    vva1(2, 1) = ((vva(2, 3)*vva(3, 1)) - (vva(3, 3)*vva(2, 1))); vva1(2, 2) = ((vva(1, 1)*vva(3, 3)) - (vva(3, 1)*vva(1, 3))); vva1(2, 3) = ((vva(1, 3)*vva(2, 1)) - (vva(2, 3)*vva(1, 1)));
+    vva1(3, 1) = (vva(2, 1)*vva(3, 2)) - (vva(3, 1)*vva(2, 2)); vva1(3, 2) = ((vva(1, 2)*vva(3, 1)) - (vva(3, 2)*vva(1, 1))); vva1(3, 3) = (vva(1, 1)*vva(2, 2)) - (vva(2, 1)*vva(1, 2));
     deta(1) = (vva(1, 1)*vva1(1, 1)) + (vva(1, 2)*vva1(2, 1)) + (vva(1, 3)*vva1(3, 1))
 
     deta(1) = deta(1)
@@ -894,7 +894,7 @@ contains
       call coordinates_face_inner2d(n, i, facex, vext, nodes_list)
 
       vext(2, 1:2) = cordinates2(n, nodes_list, n_node)
-      vext(1, 1) = ielem(n, i)%xxc; vext(1, 2) = ielem(n, i)%yyc; 
+      vext(1, 1) = ielem(n, i)%xxc; vext(1, 2) = ielem(n, i)%yyc;
       dist = distance2(n, vext)
 
       ielem(n, i)%minedge = min(dist, ielem(n, i)%minedge)
@@ -1583,7 +1583,7 @@ contains
     i = iconsidered
 
     call compute_centre3d(i, cords)
-    ielem(n, i)%xxc = cords(1); ielem(n, i)%yyc = cords(2); ielem(n, i)%zzc = cords(3); 
+    ielem(n, i)%xxc = cords(1); ielem(n, i)%yyc = cords(2); ielem(n, i)%zzc = cords(3);
   end subroutine centre3d
 
   subroutine centre2d(iconsidered)
@@ -2283,7 +2283,7 @@ contains
 !                   wequa3d(:)=vvwg(:)
     do kk = 1, qp_quad
       wequa3d(kk) = vvwg(kk)
-      r = vvr1(kk); s = vvr2(kk); 
+      r = vvr1(kk); s = vvr2(kk);
       vvnxi(1) = (0.25d0)*(1.0d0 - r)*(1.0d0 - s)
       vvnxi(2) = (0.25d0)*(1.0d0 + r)*(1.0d0 - s)
       vvnxi(3) = (0.25d0)*(1.0d0 + r)*(1.0d0 + s)
@@ -2469,7 +2469,7 @@ contains
 !                   wequa2d(:)=vvwg(:)
     do kk = 1, qp_quad
       wequa2d(kk) = vvwg(kk)
-      r = vvr1(kk); s = vvr2(kk); 
+      r = vvr1(kk); s = vvr2(kk);
       vvnxi(1) = (0.25d0)*(1.0d0 - r)*(1.0d0 - s)
       vvnxi(2) = (0.25d0)*(1.0d0 + r)*(1.0d0 - s)
       vvnxi(3) = (0.25d0)*(1.0d0 + r)*(1.0d0 + s)
@@ -2658,7 +2658,7 @@ contains
 
     do kk = 1, qp_line
       wequa2d(kk) = vvwg(kk)
-      r = vvr1(kk); 
+      r = vvr1(kk);
       qpoints2d(:, kk) = ((vext(1, 1:2) + vext(2, 1:2))/2.0d0) + (r*(vext(2, 1:2) - vext(1, 1:2))/2.0d0)
 
 !
@@ -3595,7 +3595,7 @@ contains
     real::dumin, dumout, delta
     real, dimension(1:dimensiona)::cords
 
-    allocate (probei(n:n, nprobes))
+    allocate(probei(n:n, nprobes))
 
     probei(n:n, :) = 0
 
