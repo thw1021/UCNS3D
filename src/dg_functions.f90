@@ -686,8 +686,8 @@ subroutine get_left_right_states(n,b_code,iconsidered,facex,pointx,leftv,rightv,
         cturbl(1:turbulenceequations + passivescalar) = u_ct(i)%val(1, 1:turbulenceequations + passivescalar)
         cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
       end if
-    cleft_rot(nof_variables + 1:nof_variables + turbulenceequations + passivescalar) = cturbl(1:turbulenceequations + passivescalar)
-    cright_rot(nof_variables + 1:nof_variables + turbulenceequations + passivescalar) = cturbr(1:turbulenceequations + passivescalar)
+      cleft_rot(nof_variables + 1:nof_variables + turbulenceequations + passivescalar) = cturbl(1:turbulenceequations + passivescalar)
+      cright_rot(nof_variables + 1:nof_variables + turbulenceequations + passivescalar) = cturbr(1:turbulenceequations + passivescalar)
       do nvar = 1, turbulenceequations + passivescalar
         rcvgrad_t(nvar, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturbv(1:3, nvar, ielem(n, i)%ineighn(l), ngp)
         lcvgrad_t(nvar, 1:3) = ilocal_recon3(i)%uleftturbv(1:3, nvar, l, ngp)
@@ -741,8 +741,8 @@ subroutine get_left_right_states(n,b_code,iconsidered,facex,pointx,leftv,rightv,
         cturbl(1:turbulenceequations + passivescalar) = u_ct(i)%val(1, 1:turbulenceequations + passivescalar)
         cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
       end if
-    cleft_rot(nof_variables + 1:nof_variables + turbulenceequations + passivescalar) = cturbl(1:turbulenceequations + passivescalar)
-    cright_rot(nof_variables + 1:nof_variables + turbulenceequations + passivescalar) = cturbr(1:turbulenceequations + passivescalar)
+      cleft_rot(nof_variables + 1:nof_variables + turbulenceequations + passivescalar) = cturbl(1:turbulenceequations + passivescalar)
+      cright_rot(nof_variables + 1:nof_variables + turbulenceequations + passivescalar) = cturbr(1:turbulenceequations + passivescalar)
       do nvar = 1, turbulenceequations + passivescalar
         rcvgrad_t(nvar, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturbv(1:2, nvar, ielem(n, i)%ineighn(l), ngp)
         lcvgrad_t(nvar, 1:2) = ilocal_recon3(i)%uleftturbv(1:2, nvar, l, ngp)
@@ -847,7 +847,6 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
             call rotateb(n, rightv, leftv, angle1, angle2)
             rcvgrad(4, 1:3) = rightv(2:4)
           end if
-
         end if
       else
         if (dg .eq. 1) then
@@ -1001,7 +1000,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
             if (icoupleturb .eq. 1) then
               cturbr(1:turbulenceequations + passivescalar) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturb &(1:turbulenceequations + passivescalar, ielem(n, i)%ineighn(l), ngp)!right additional equations flow state
             else
-           cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
+              cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
             end if
             do nvar = 1, turbulenceequations + passivescalar
               rcvgrad_t(nvar, 1:2) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturbv(1:2, nvar, ielem(n, i)%ineighn(l), ngp)
@@ -1047,9 +1046,9 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
       if (ielem(n, i)%ibounds(l) .gt. 0) then        !check for boundaries
         if (ibound(n, ielem(n, i)%ibounds(l))%icode .eq. 5) then        !periodic in other cpu
           if (dg .eq. 1) then
-        cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol_dg(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
+            cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol_dg(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
           else
-           cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
+            cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
           end if
           ittt = 0
           do iex = 1, nof_variables - 1
@@ -1162,7 +1161,6 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
           else
             cright(1:nof_variables) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleft(1:nof_variables, ielem(n, i)%ineighn(l), ngp)
           end if
-
           if (per_rot .eq. 1) then
             cright(2:4) = rotate_per_1(cright(2:4), ibound(n, ielem(n, i)%ibounds(l))%icode, angle_per)
           end if
@@ -1170,10 +1168,9 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
             if (icoupleturb .eq. 1) then
               cturbr(1:turbulenceequations + passivescalar) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturb &(1:turbulenceequations + passivescalar, ielem(n, i)%ineighn(l), ngp)!right additional equations flow state
             else
-           cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
+              cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
             end if
           end if
-
         else
           call coordinates_face_innerx(n, iconsidered, facex, vext, nodes_list)
           if (ielem(n, iconsidered)%types_faces(facex) .eq. 5) then
@@ -1201,7 +1198,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
           if (icoupleturb .eq. 1) then
             cturbr(1:turbulenceequations + passivescalar) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturb &(1:turbulenceequations + passivescalar, ielem(n, i)%ineighn(l), ngp)!right additional equations flow state
           else
-           cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
+            cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
           end if
         end if
       end if
@@ -1209,9 +1206,9 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
       if (ielem(n, i)%ibounds(l) .gt. 0) then        !check for boundaries
         if ((ibound(n, ielem(n, i)%ibounds(l))%icode .eq. 5) .or. (ibound(n, ielem(n, i)%ibounds(l))%icode .eq. 50)) then
           if (dg .eq. 1) then
-        cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol_dg(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
+            cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol_dg(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
           else
-           cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
+            cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
           end if
           if (per_rot .eq. 1) then
             cright(2:4) = rotate_per_1(cright(2:4), ibound(n, ielem(n, i)%ibounds(l))%icode, angle_per)
@@ -1286,7 +1283,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
             if (icoupleturb .eq. 1) then
               cturbr(1:turbulenceequations + passivescalar) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturb &(1:turbulenceequations + passivescalar, ielem(n, i)%ineighn(l), ngp)!right additional equations flow state
             else
-           cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
+              cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
             end if
           end if
           ikas = 1
@@ -1314,7 +1311,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
           if (icoupleturb .eq. 1) then
             cturbr(1:turbulenceequations + passivescalar) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturb &(1:turbulenceequations + passivescalar, ielem(n, i)%ineighn(l), ngp)!right additional equations flow state
           else
-           cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
+            cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
           end if
         end if
         ikas = 3
@@ -1323,9 +1320,9 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
       if (ielem(n, i)%ibounds(l) .gt. 0) then        !check for boundaries
         if (ibound(n, ielem(n, i)%ibounds(l))%icode .eq. 5) then        !periodic in other cpu
           if (dg .eq. 1) then
-        cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol_dg(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
+            cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol_dg(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
           else
-           cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
+            cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
           end if
           if ((turbulence .eq. 1) .or. (passivescalar .gt. 0)) then
             if (icoupleturb .eq. 1) then
@@ -1337,7 +1334,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
         end if
       else
         if (dg .eq. 1) then
-        cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol_dg(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
+          cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol_dg(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
         else
           cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
         end if
@@ -1354,8 +1351,8 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
   end subroutine get_states_bounds2d
 
   subroutine allocate_dg
-!> @brief
-!> allocates the gaussian quadrature volume points
+    ! @brief
+    ! allocates the gaussian quadrature volume points
     implicit none
     integer::i, k, i_qp, n_qp, i_face, nnd, iqp, idummy, loopc
     real, dimension(1:idegfree + 1)::tempint
@@ -1402,12 +1399,11 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
         end if
       end if
     end do
-
   end subroutine allocate_dg
 
   subroutine prestore_dg1(iconsidered)
-!> @brief
-!> prestores ielem(n,i)%delta_xyz, qp_array, surf_qpoints, mass matrix
+    ! @brief
+    ! prestores ielem(n,i)%delta_xyz, qp_array, surf_qpoints, mass matrix
     implicit none
     integer, intent(in)::iconsidered
     integer::i, k, i_qp, n_qp, i_face, nnd, iqp, idummy, loopc, icompwrt, eltype, elem_dec, ixx, number
@@ -1489,13 +1485,13 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
       end if
       ixx = iconsidered
       if (dg .eq. 1) then
-      if (dimensiona .eq. 2) then
-        number = ielem(n, iconsidered)%iorder
-        tempint(1:idegfree) = tempint(1:idegfree) + (basis_rec2d(n, x1, y1, number, ixx, idegfree, icompwrt)*qp_array(i)%qp_weight(i_qp))
-      else
-        number = ielem(n, iconsidered)%iorder
-        tempint(1:idegfree) = tempint(1:idegfree) + (basis_rec(n, x1, y1, z1, number, ixx, idegfree, icompwrt)*qp_array(i)%qp_weight(i_qp))
-      end if
+        if (dimensiona .eq. 2) then
+          number = ielem(n, iconsidered)%iorder
+          tempint(1:idegfree) = tempint(1:idegfree) + (basis_rec2d(n, x1, y1, number, ixx, idegfree, icompwrt)*qp_array(i)%qp_weight(i_qp))
+        else
+          number = ielem(n, iconsidered)%iorder
+          tempint(1:idegfree) = tempint(1:idegfree) + (basis_rec(n, x1, y1, z1, number, ixx, idegfree, icompwrt)*qp_array(i)%qp_weight(i_qp))
+        end if
       end if
     end do
     if (dg .eq. 1) then
@@ -1503,10 +1499,11 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
     end if
     icompwrt = 0
   end subroutine
+
   subroutine build_mass_matrix(n)
-!> @brief
-!> assembles the mass matrix
-!> requires: globals: ielem, qp_quad, qp_triangle, mass_matrix
+    ! @brief
+    ! assembles the mass matrix
+    ! requires: globals: ielem, qp_quad, qp_triangle, mass_matrix
     implicit none
     integer, intent(in)::n
     integer::i_elem, i_qp, n_qp, i_dof, j_dof, kmaxe, icompwrt, number_of_dog, iconsidered, ixx, number
@@ -1515,7 +1512,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
     real, allocatable, dimension(:)::basis_vector
     kmaxe = xmpielrank(n)
     allocate(totalmm(1:num_dg_dofs, 1:num_dg_dofs), invmm(1:num_dg_dofs, 1:num_dg_dofs), basis_vector(1:idegfree))
-    !$omp do
+
     do i_elem = 1, kmaxe
       totalmm(:, :) = zero
       invmm(:, :) = zero
@@ -1562,11 +1559,11 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
       m_1(i_elem)%val(:, :) = invmm(:, :)
       icompwrt = 0
     end do
-!$omp end do
     deallocate(totalmm, invmm, basis_vector)
   end subroutine build_mass_matrix
+
   subroutine compmassinv(totalmm, invmm)
-!calculate the inverse of the input matrix with gauss-jordan elimination
+    ! calculate the inverse of the input matrix with gauss-jordan elimination
     implicit none
     integer :: i, j, k, l, m, irow, num_dofs
     real:: big, dum

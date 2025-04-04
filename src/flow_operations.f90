@@ -3,15 +3,16 @@ module flow_operations
   use mpiinfo
   use transform
   implicit none
+
 contains
   subroutine mrfswitch(n, iconsidered, facex, pointx, pox, poy)
-    !> @brief
-    !> this subroutine  check if the element is on the rotational/stationary reference frame and update the mrf_origin and srf_velocity srf accordingly
+    ! @brief
+    ! this subroutine  check if the element is on the rotational/stationary reference frame and update the mrf_origin and srf_velocity srf accordingly
     implicit none
     integer, intent(in)::n, iconsidered, facex, pointx
     ! type(local_recon3),allocatable,dimension(:),intent(inout)::ilocal_recon3
-    !output:
-    !ilocal_recon3%mrf_origin; ilocal_recon3%mrf_velocity; ilocal_recon3%rotvel, ilocal_recon3%mrf
+    ! output:
+    ! ilocal_recon3%mrf_origin; ilocal_recon3%mrf_velocity; ilocal_recon3%rotvel, ilocal_recon3%mrf
     real, dimension(3) ::mrf_origin, mrf_velocity, rotvel
     integer:: rotframe_on
     integer::ninv
@@ -100,8 +101,8 @@ contains
   end function
 
   subroutine cons2prim(n, leftv, mp_pinfl, gammal)
-    !> @brief
-    !> this subroutine transforms one vector of conservative variables to primitive variables
+    ! @brief
+    ! this subroutine transforms one vector of conservative variables to primitive variables
     implicit none
     integer, intent(in)::n
     real, dimension(1:nof_variables)::temps
@@ -206,8 +207,8 @@ contains
   end subroutine cons2prim
 
   subroutine cons2prim2(n, leftv, rightv, mp_pinfl, mp_pinfr, gammal, gammar)
-    !> @brief
-    !> this subroutine transforms two vector of conservative variables to primitive variables
+    ! @brief
+    ! this subroutine transforms two vector of conservative variables to primitive variables
     implicit none
     integer, intent(in)::n
     real, dimension(1:nof_variables)::temps
@@ -394,8 +395,8 @@ contains
   end subroutine cons2prim2
 
   subroutine lmacht(n, leftv, rightv)
-  !> @brief
-  !> this subroutine applies the low-mach number correction to two vectors of conserved variables
+  ! @brief
+  ! this subroutine applies the low-mach number correction to two vectors of conserved variables
     implicit none
     integer, intent(in)::n
     real, dimension(1:nof_variables), intent(inout)::leftv
@@ -463,9 +464,10 @@ contains
     rightv(4) = wwr*rhor
     rightv(5) = eer
   end subroutine lmacht
+
   subroutine lmacht2d(n, leftv, rightv)
-    !> @brief
-    !> this subroutine applies the low-mach number correction to two vectors of conserved variables 2d
+    ! @brief
+    ! this subroutine applies the low-mach number correction to two vectors of conserved variables 2d
     implicit none
     integer, intent(in)::n
     real, dimension(1:nof_variables), intent(inout)::leftv
@@ -525,8 +527,8 @@ contains
   end subroutine lmacht2d
 
   subroutine prim2cons(n, leftv)
-    !> @brief
-    ! !> this subroutine transforms one vector of primitive variables to conservative variables
+    ! @brief
+    ! ! this subroutine transforms one vector of primitive variables to conservative variables
     implicit none
     integer, intent(in)::n
     real, dimension(1:nof_variables)::temps
@@ -594,8 +596,8 @@ contains
   end subroutine prim2cons
 
   subroutine prim2cons2(n, leftv, rightv)
-    !> @brief
-    !> this subroutine transforms two vectors of primitive variables to conservative variables
+    ! @brief
+    ! this subroutine transforms two vectors of primitive variables to conservative variables
     implicit none
     integer, intent(in)::n
     real, dimension(1:nof_variables)::temps
@@ -707,8 +709,8 @@ contains
   end subroutine prim2cons2
 
   function inflow(initcond, pox, poy, poz)
-!> @brief
-!> this function applies a prescribed boundary condition to  the inflow in 3d
+! @brief
+! this function applies a prescribed boundary condition to  the inflow in 3d
     implicit none
     real, dimension(1:nof_variables)::inflow
     integer, intent(in)::initcond
@@ -798,8 +800,8 @@ contains
   end function inflow
 
   function vect_function(pox, poy)
-!> @brief
-!> this makes a multipliciation between two vectors
+! @brief
+! this makes a multipliciation between two vectors
     implicit none
     real, dimension(3)::vect_function
     real, dimension(1:dimensiona), intent(in)::pox, poy
@@ -809,8 +811,8 @@ contains
   end function vect_function
 
   function inflow2d(initcond, pox, poy)
-!> @brief
-!> this function applies a prescribed boundary condition to  the inflow in 2d
+! @brief
+! this function applies a prescribed boundary condition to  the inflow in 2d
     implicit none
     real, dimension(1:nof_variables)::inflow2d
     integer, intent(in)::initcond
@@ -881,8 +883,8 @@ contains
   end function inflow2d
 
   function outflow2d(initcond, pox, poy)
-!> @brief
-!> this function applies a prescribed boundary condition to  the outflow in 2d
+! @brief
+! this function applies a prescribed boundary condition to  the outflow in 2d
     implicit none
     real, dimension(1:nof_variables)::outflow2d
     integer, intent(in)::initcond
@@ -928,8 +930,8 @@ contains
   end function outflow2d
 
   function outflow(initcond, pox, poy, poz)
-!> @brief
-!> this function applies a prescribed boundary condition to  the outflow in 3d
+! @brief
+! this function applies a prescribed boundary condition to  the outflow in 3d
     implicit none
     real, dimension(1:nof_variables)::outflow
     integer, intent(in)::initcond
@@ -982,8 +984,8 @@ contains
   end function outflow
 
   function outflow2(initcond, pox, poy, poz)
-!> @brief
-!> this function applies a prescribed boundary condition to  the outflow in 3d
+! @brief
+! this function applies a prescribed boundary condition to  the outflow in 3d
     implicit none
     real, dimension(1:nof_variables)::outflow2
     integer, intent(in)::initcond
@@ -1007,8 +1009,8 @@ contains
     outflow2(5) = e
   end function outflow2
   function bleed2d(iconsidered, facex, pox, poy)
-!> @brief
-!> this function applies a prescribed boundary condition to  the outflow in 3d
+! @brief
+! this function applies a prescribed boundary condition to  the outflow in 3d
     implicit none
     real, dimension(1:nof_variables)::bleed2d
     integer, intent(in)::iconsidered, facex
@@ -1052,8 +1054,8 @@ contains
     bleed2d(1:nof_variables) = rightv(1:nof_variables)
   end function bleed2d
   function bleed3d(iconsidered, facex, pox, poy, poz)
-!> @brief
-!> this function applies a prescribed boundary condition to  the outflow in 3d
+! @brief
+! this function applies a prescribed boundary condition to  the outflow in 3d
     implicit none
     real, dimension(1:nof_variables)::bleed3d
     integer, intent(in)::iconsidered, facex
@@ -1076,8 +1078,8 @@ contains
   end function bleed3d
 
   function pass_inlet(initcond, pox, poy, poz)
-!> @brief
-!> this function applies a prescribed boundary condition to  the inlet for a passive scalar
+! @brief
+! this function applies a prescribed boundary condition to  the inlet for a passive scalar
     implicit none
     real, dimension(1:passivescalar)::pass_inlet
     integer, intent(in)::initcond
@@ -1086,8 +1088,8 @@ contains
   end function pass_inlet
 
   function pass_inlet2d(initcond, pox, poy)
-!> @brief
-!> this function applies a prescribed boundary condition to  the inlet for a passive scalar in 2d
+! @brief
+! this function applies a prescribed boundary condition to  the inlet for a passive scalar in 2d
     implicit none
     real, dimension(1:passivescalar)::pass_inlet2d
     integer, intent(in)::initcond
@@ -1096,8 +1098,8 @@ contains
   end function pass_inlet2d
 
   subroutine shear_x(iconsidered, facex, shear_temp)
-!> @brief
-!> this subroutine computes the shear stresses in x-axis
+! @brief
+! this subroutine computes the shear stresses in x-axis
     implicit none
     integer, intent(in)::iconsidered, facex
     real, intent(inout)::shear_temp
@@ -1141,8 +1143,8 @@ contains
   end subroutine shear_x
 
   subroutine shear_y(iconsidered, facex, shear_temp)
-!> @brief
-!> this subroutine computes the shear stresses in y-axis
+! @brief
+! this subroutine computes the shear stresses in y-axis
     implicit none
     integer, intent(in)::iconsidered, facex
     real, intent(inout)::shear_temp
@@ -1186,8 +1188,8 @@ contains
   end subroutine shear_y
 
   subroutine shear_z(iconsidered, facex, shear_temp)
-!> @brief
-!> this subroutine computes the shear stresses in z-axis
+! @brief
+! this subroutine computes the shear stresses in z-axis
     implicit none
     integer, intent(in)::iconsidered, facex
     real, intent(inout)::shear_temp
@@ -1231,8 +1233,8 @@ contains
   end subroutine shear_z
 
   subroutine shear_x_av(iconsidered, facex, shear_temp)
-!> @brief
-!> this subroutine computes the average shear stresses in x-axis
+! @brief
+! this subroutine computes the average shear stresses in x-axis
     implicit none
     integer, intent(in)::iconsidered, facex
     real, intent(inout)::shear_temp
@@ -1278,8 +1280,8 @@ contains
   end subroutine shear_x_av
 
   subroutine shear_y_av(iconsidered, facex, shear_temp)
-!> @brief
-!> this subroutine computes the average shear stresses in y-axis
+! @brief
+! this subroutine computes the average shear stresses in y-axis
     implicit none
     integer, intent(in)::iconsidered, facex
     real, intent(inout)::shear_temp
@@ -1325,8 +1327,8 @@ contains
   end subroutine shear_y_av
 
   subroutine shear_z_av(iconsidered, facex, shear_temp)
-!> @brief
-!> this subroutine computes the avergage shear stresses in z-axis
+! @brief
+! this subroutine computes the avergage shear stresses in z-axis
     implicit none
     integer, intent(in)::iconsidered, facex
     real, intent(inout)::shear_temp
@@ -1372,8 +1374,8 @@ contains
   end subroutine shear_z_av
 
   subroutine shear_x2d(iconsidered, facex, shear_temp)
-!> @brief
-!> this subroutine computes the shear stresses in x-axis
+! @brief
+! this subroutine computes the shear stresses in x-axis
     implicit none
     integer, intent(in)::iconsidered, facex
     real, intent(inout)::shear_temp
@@ -1391,7 +1393,7 @@ contains
     real, dimension(1:8, 1:dimensiona)::vext
     real, dimension(1:dimensiona, 1:numberofpoints2)::qpoints2d
     real, dimension(1:numberofpoints2)::wequa2d
-    ssx = zero; ssp = zero; ssy = zero; 
+    ssx = zero; ssp = zero; ssy = zero;
     gqi_points = qp_line_n
     call quadratureline(n, igqrules, vext, qpoints2d, wequa2d)
     do im = 1, gqi_points
@@ -1422,8 +1424,8 @@ contains
   end subroutine shear_x2d
 
   subroutine shear_y2d(iconsidered, facex, shear_temp)
-!> @brief
-!> this subroutine computes the shear stresses in y-axis
+! @brief
+! this subroutine computes the shear stresses in y-axis
     implicit none
     integer, intent(in)::iconsidered, facex
     real, intent(inout)::shear_temp
@@ -1441,7 +1443,7 @@ contains
     real, dimension(1:8, 1:dimensiona)::vext
     real, dimension(1:dimensiona, 1:numberofpoints2)::qpoints2d
     real, dimension(1:numberofpoints2)::wequa2d
-    ssx = zero; ssp = zero; ssy = zero; 
+    ssx = zero; ssp = zero; ssy = zero;
     gqi_points = qp_line_n
     call quadratureline(n, igqrules, vext, qpoints2d, wequa2d)
     do im = 1, gqi_points
@@ -1472,8 +1474,8 @@ contains
   end subroutine shear_y2d
 
   subroutine shear_x2d_av(iconsidered, facex, shear_temp)
-!> @brief
-!> this subroutine computes the average shear stresses in x-axis
+! @brief
+! this subroutine computes the average shear stresses in x-axis
     implicit none
     integer, intent(in)::iconsidered, facex
     real, intent(inout)::shear_temp
@@ -1481,8 +1483,8 @@ contains
   end subroutine shear_x2d_av
 
   subroutine shear_y2d_av(iconsidered, facex, shear_temp)
-!> @brief
-!> this subroutine computes the average shear stresses in y-axis
+! @brief
+! this subroutine computes the average shear stresses in y-axis
     implicit none
     integer, intent(in)::iconsidered, facex
     real, intent(inout)::shear_temp
@@ -1490,8 +1492,8 @@ contains
   end subroutine shear_y2d_av
 
   subroutine sutherland(n, leftv, rightv, viscl, laml)
-!> @brief
-!> this subroutine computes the viscosity according to sutherland's law
+! @brief
+! this subroutine computes the viscosity according to sutherland's law
     implicit none
     real, dimension(1:nof_variables), intent(in)::leftv, rightv
     real, dimension(1:4), intent(inout)::viscl, laml
@@ -1508,8 +1510,8 @@ contains
   end subroutine sutherland
 
   subroutine sutherland2d(n, leftv, rightv, viscl, laml)
-!> @brief
-!> this subroutine computes the viscosity according to sutherland's law
+! @brief
+! this subroutine computes the viscosity according to sutherland's law
     implicit none
     real, dimension(1:nof_variables), intent(in)::leftv, rightv
     real, dimension(1:4), intent(inout)::viscl, laml
@@ -1526,8 +1528,8 @@ contains
   end subroutine sutherland2d
 
   subroutine vortexcalc(n)
-!> @brief
-!> this subroutine computes the q-criterion
+! @brief
+! this subroutine computes the q-criterion
     implicit none
     integer, intent(in)::n
     integer::kmaxe, i, ihgt, ihgj
@@ -1555,8 +1557,8 @@ contains
 !$omp end do
   end subroutine vortexcalc
   subroutine enstrophy_calc(n)
-!> @brief
-!> this subroutine computes the q-criterion
+! @brief
+! this subroutine computes the q-criterion
     implicit none
     integer, intent(in)::n
     integer::kmaxe, i, ihgt, ihgj
@@ -1590,9 +1592,9 @@ contains
         call cons2prim(n, leftv, mp_pinfl, gammal)
         rightv(1:nof_variables) = leftv(1:nof_variables)
         call sutherland(n, leftv, rightv, viscl, laml)
-        ux = ilocal_recon3(i)%grads(1, 1); uy = ilocal_recon3(i)%grads(1, 2); uz = ilocal_recon3(i)%grads(1, 3); 
-        vx = ilocal_recon3(i)%grads(2, 1); vy = ilocal_recon3(i)%grads(2, 2); vz = ilocal_recon3(i)%grads(2, 3); 
-        wx = ilocal_recon3(i)%grads(3, 1); wy = ilocal_recon3(i)%grads(3, 2); wz = ilocal_recon3(i)%grads(3, 3); 
+        ux = ilocal_recon3(i)%grads(1, 1); uy = ilocal_recon3(i)%grads(1, 2); uz = ilocal_recon3(i)%grads(1, 3);
+        vx = ilocal_recon3(i)%grads(2, 1); vy = ilocal_recon3(i)%grads(2, 2); vz = ilocal_recon3(i)%grads(2, 3);
+        wx = ilocal_recon3(i)%grads(3, 1); wy = ilocal_recon3(i)%grads(3, 2); wz = ilocal_recon3(i)%grads(3, 3);
         ! tau_xx
         taul(1, 1) = (4.0d0/3.0d0)*ux - (2.0d0/3.0d0)*vy - (2.0d0/3.0d0)*wz
         ! tau_yy
@@ -1612,8 +1614,8 @@ contains
     end do
   end subroutine enstrophy_calc
   subroutine vortexcalc2d(n)
-!> @brief
-!> this subroutine computes the q criterion for 2d
+! @brief
+! this subroutine computes the q criterion for 2d
     implicit none
     integer, intent(in)::n
     integer::kmaxe, i, ihgt, ihgj
@@ -1640,8 +1642,8 @@ contains
   end subroutine vortexcalc2d
 
 subroutine boundarys(n,b_code,iconsidered,facex,leftv,rightv,pox,poy,poz,angle1,angle2,nx,ny,nz,cturbl,cturbr,cright_rot,cleft_rot,srf_speed,srf_speedrot,ibfc)
-!> @brief
-!> this subroutine applies the boundary condition to each bounded cell
+! @brief
+! this subroutine applies the boundary condition to each bounded cell
     implicit none
     integer, intent(in)::n, b_code, iconsidered, facex
     real, dimension(1:nof_variables), intent(inout)::leftv, rightv
@@ -1933,8 +1935,8 @@ subroutine boundarys(n,b_code,iconsidered,facex,leftv,rightv,pox,poy,poz,angle1,
   end subroutine boundarys
 
 subroutine boundarys2d(n,b_code,iconsidered,facex,leftv,rightv,pox,poy,poz,angle1,angle2,nx,ny,nz,cturbl,cturbr,cright_rot,cleft_rot,srf_speed,srf_speedrot,ibfc)
-!> @brief
-!> this subroutine applies the boundary condition to each bounded cell
+! @brief
+! this subroutine applies the boundary condition to each bounded cell
     implicit none
     integer, intent(in)::n, b_code, iconsidered, facex
     integer, intent(inout)::ibfc
@@ -2254,8 +2256,8 @@ subroutine boundarys2d(n,b_code,iconsidered,facex,leftv,rightv,pox,poy,poz,angle
   end subroutine boundarys2d
 
   subroutine compute_eigenvectors(n, rveigl, rveigr, eigvl, eigvr, gamma)
-!> @brief
-!> this subroutine computes the left and right eigenvectors
+! @brief
+! this subroutine computes the left and right eigenvectors
     implicit none
     integer, intent(in)::n
     real, dimension(1:nof_variables), intent(in)::rveigl, rveigr
@@ -2310,8 +2312,8 @@ subroutine boundarys2d(n,b_code,iconsidered,facex,leftv,rightv,pox,poy,poz,angle
   end subroutine compute_eigenvectors
 
   subroutine compute_jacobianse(n, iconsidered, eigvl, rveigl, gamma, angle1, angle2, srf_speedrot, nx, ny, nz)
-!> @brief
-!> this subroutine computes the jacobians for the implicit time stepping
+! @brief
+! this subroutine computes the jacobians for the implicit time stepping
     implicit none
     integer, intent(in)::n, iconsidered
     real, intent(in)::angle1, angle2
@@ -2347,8 +2349,8 @@ subroutine boundarys2d(n,b_code,iconsidered,facex,leftv,rightv,pox,poy,poz,angle
   end subroutine compute_jacobianse
 
   subroutine compute_eigenvectors2d(n, rveigl, rveigr, eigvl, eigvr, gamma)
-!> @brief
-!> this subroutine computes the left and right eigenvectors  in 2d
+! @brief
+! this subroutine computes the left and right eigenvectors  in 2d
     implicit none
     integer, intent(in)::n
     real, dimension(1:nof_variables), intent(in)::rveigl, rveigr
@@ -2389,8 +2391,8 @@ subroutine boundarys2d(n,b_code,iconsidered,facex,leftv,rightv,pox,poy,poz,angle
   end subroutine compute_eigenvectors2d
 
   subroutine compute_jacobianse2d(n, eigvl, rveigl, gamma, angle1, angle2, nx, ny, nz)
-    !> @brief
-!> this subroutine computes the jacobians for the implicit time stepping in 2d
+    ! @brief
+! this subroutine computes the jacobians for the implicit time stepping in 2d
     implicit none
     integer, intent(in)::n
     real, intent(in)::angle1, angle2, nx, ny, nz
@@ -2416,8 +2418,8 @@ subroutine boundarys2d(n,b_code,iconsidered,facex,leftv,rightv,pox,poy,poz,angle
   end subroutine compute_jacobianse2d
 
   subroutine eddyvisco(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
-!> @brief
-!> this subroutine computes the tubulent eddy viscosity for turbulence models
+! @brief
+! this subroutine computes the tubulent eddy viscosity for turbulence models
     implicit none
     real, dimension(1:2), intent(inout)::turbmv
     real, dimension(1:nof_variables), intent(in)::leftv, rightv
@@ -2544,8 +2546,8 @@ subroutine boundarys2d(n,b_code,iconsidered,facex,leftv,rightv,pox,poy,poz,angle
   end subroutine eddyvisco
 
   subroutine eddyvisco2d(n, viscl, laml, turbmv, etvm, eddyfl, eddyfr, leftv, rightv)
-!> @brief
-!> this subroutine computes the tubulent eddy viscosity for turbulence models
+! @brief
+! this subroutine computes the tubulent eddy viscosity for turbulence models
     implicit none
     real, dimension(1:2), intent(inout)::turbmv
     real, dimension(1:nof_variables), intent(in)::leftv, rightv

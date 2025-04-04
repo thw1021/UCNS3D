@@ -13,207 +13,124 @@ contains
     s = 0.0d0
 
     selectcase (nderivative)
-    case (1)
-
-      s = 1.0d0
-
-    case (4)
-
-      s = 2.0d0*xd1
-    case (5)
-
-      s = yd1
-
-    case (7)
-
-      s = zd1
-
-    case (10)
-
-      s = 3.d0*xd1**2
-    case (11)
-
-      s = 2.d0*xd1*yd1
-    case (12)
-
-      s = yd1**2
-
-    case (14)
-
-      s = 2.d0*xd1*zd1
-    case (15)
-
-      s = yd1*zd1
-
-    case (17)
-
-      s = zd1**2
-
-    case (20)
-
-      s = 4.d0*xd1**3
-    case (21)
-
-      s = 3.d0*xd1**2*yd1
-    case (22)
-
-      s = 2.d0*xd1*yd1**2
-    case (23)
-
-      s = yd1**3
-
-    case (25)
-
-      s = 3.d0*xd1**2*zd1
-    case (26)
-
-      s = 2.d0*xd1*yd1*zd1
-    case (27)
-
-      s = yd1**2*zd1
-
-    case (29)
-
-      s = 2.d0*xd1*zd1**2
-    case (30)
-
-      s = yd1*zd1**2
-
-    case (32)
-
-      s = zd1**3
-
-    case (35)
-
-      s = 5.d0*xd1**4
-    case (36)
-
-      s = 4.d0*xd1**3*yd1
-    case (37)
-
-      s = 3.d0*xd1**2*yd1**2
-    case (38)
-
-      s = 2.d0*xd1*yd1**3
-    case (39)
-
-      s = yd1**4
-
-    case (41)
-
-      s = 4.d0*xd1**3*zd1
-    case (42)
-
-      s = 3.d0*xd1**2*yd1*zd1
-    case (43)
-
-      s = 2.d0*xd1*yd1**2*zd1
-    case (44)
-
-      s = yd1**3*zd1
-
-    case (46)
-
-      s = 3.d0*xd1**2*zd1**2
-    case (47)
-
-      s = 2.d0*xd1*yd1*zd1**2
-    case (48)
-
-      s = yd1**2*zd1**2
-
-    case (50)
-
-      s = 2.d0*xd1*zd1**3
-    case (51)
-
-      s = yd1*zd1**3
-
-    case (53)
-
-      s = zd1**4
-
-    case (56)
-
-      s = 6.d0*xd1**5
-    case (57)
-
-      s = 5.d0*xd1**4*yd1
-    case (58)
-
-      s = 4.d0*xd1**3*yd1**2
-    case (59)
-
-      s = 3.d0*xd1**2*yd1**3
-    case (60)
-
-      s = 2.d0*xd1*yd1**4
-    case (61)
-
-      s = yd1**5
-
-    case (63)
-
-      s = 5.d0*xd1**4*zd1
-    case (64)
-
-      s = 4.d0*xd1**3*yd1*zd1
-    case (65)
-
-      s = 3.d0*xd1**2*yd1**2*zd1
-    case (66)
-
-      s = 2.d0*xd1*yd1**3*zd1
-    case (67)
-
-      s = yd1**4*zd1
-
-    case (69)
-
-      s = 4.d0*xd1**3*zd1**2
-    case (70)
-
-      s = 3.d0*xd1**2*yd1*zd1**2
-    case (71)
-
-      s = 2.d0*xd1*yd1**2*zd1**2
-    case (72)
-
-      s = yd1**3*zd1**2
-
-    case (74)
-
-      s = 3.d0*xd1**2*zd1**3
-    case (75)
-
-      s = 2.d0*xd1*yd1*zd1**3
-    case (76)
-
-      s = yd1**2*zd1**3
-
-    case (78)
-
-      s = 2.d0*xd1*zd1**4
-    case (79)
-
-      s = yd1*zd1**4
-
-    case (81)
-
-      s = zd1**5
-
-    case default
-
-      s = 0.0
-
+      case (1)
+        s = 1.0d0
+      case (4)
+        s = 2.0d0*xd1
+      case (5)
+        s = yd1
+      case (7)
+        s = zd1
+      case (10)
+        s = 3.d0*xd1**2
+      case (11)
+        s = 2.d0*xd1*yd1
+      case (12)
+        s = yd1**2
+      case (14)
+        s = 2.d0*xd1*zd1
+      case (15)
+        s = yd1*zd1
+      case (17)
+        s = zd1**2
+      case (20)
+        s = 4.d0*xd1**3
+      case (21)
+        s = 3.d0*xd1**2*yd1
+      case (22)
+        s = 2.d0*xd1*yd1**2
+      case (23)
+        s = yd1**3
+      case (25)
+        s = 3.d0*xd1**2*zd1
+      case (26)
+        s = 2.d0*xd1*yd1*zd1
+      case (27)
+        s = yd1**2*zd1
+      case (29)
+        s = 2.d0*xd1*zd1**2
+      case (30)
+        s = yd1*zd1**2
+      case (32)
+        s = zd1**3
+      case (35)
+        s = 5.d0*xd1**4
+      case (36)
+        s = 4.d0*xd1**3*yd1
+      case (37)
+        s = 3.d0*xd1**2*yd1**2
+      case (38)
+        s = 2.d0*xd1*yd1**3
+      case (39)
+        s = yd1**4
+      case (41)
+        s = 4.d0*xd1**3*zd1
+      case (42)
+        s = 3.d0*xd1**2*yd1*zd1
+      case (43)
+        s = 2.d0*xd1*yd1**2*zd1
+      case (44)
+        s = yd1**3*zd1
+      case (46)
+        s = 3.d0*xd1**2*zd1**2
+      case (47)
+        s = 2.d0*xd1*yd1*zd1**2
+      case (48)
+        s = yd1**2*zd1**2
+      case (50)
+        s = 2.d0*xd1*zd1**3
+      case (51)
+        s = yd1*zd1**3
+      case (53)
+        s = zd1**4
+      case (56)
+        s = 6.d0*xd1**5
+      case (57)
+        s = 5.d0*xd1**4*yd1
+      case (58)
+        s = 4.d0*xd1**3*yd1**2
+      case (59)
+        s = 3.d0*xd1**2*yd1**3
+      case (60)
+        s = 2.d0*xd1*yd1**4
+      case (61)
+        s = yd1**5
+      case (63)
+        s = 5.d0*xd1**4*zd1
+      case (64)
+        s = 4.d0*xd1**3*yd1*zd1
+      case (65)
+        s = 3.d0*xd1**2*yd1**2*zd1
+      case (66)
+        s = 2.d0*xd1*yd1**3*zd1
+      case (67)
+        s = yd1**4*zd1
+      case (69)
+        s = 4.d0*xd1**3*zd1**2
+      case (70)
+        s = 3.d0*xd1**2*yd1*zd1**2
+      case (71)
+        s = 2.d0*xd1*yd1**2*zd1**2
+      case (72)
+        s = yd1**3*zd1**2
+      case (74)
+        s = 3.d0*xd1**2*zd1**3
+      case (75)
+        s = 2.d0*xd1*yd1*zd1**3
+      case (76)
+        s = yd1**2*zd1**3
+      case (78)
+        s = 2.d0*xd1*zd1**4
+      case (79)
+        s = yd1*zd1**4
+      case (81)
+        s = zd1**5
+      case default
+        s = 0.0
     end select
     dfx = s
   end function dfx
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   real function dfy(xd1, yd1, zd1, nderivative, iconsidered)
     implicit none
     integer, intent(in)::nderivative, iconsidered
@@ -222,207 +139,124 @@ contains
 
     s = 0.0d0
     selectcase (nderivative)
-
-    case (2)
-
-      s = 1d0
-
-    case (5)
-
-      s = xd1
-    case (6)
-
-      s = 2.d0*yd1
-
-    case (8)
-
-      s = zd1
-
-    case (11)
-
-      s = xd1**2
-    case (12)
-
-      s = 2.d0*xd1*yd1
-
-    case (13)
-      s = 3.0d0*yd1**2
-
-    case (15)
-
-      s = xd1*zd1
-    case (16)
-
-      s = 2.d0*yd1*zd1
-
-    case (18)
-
-      s = zd1**2
-
-    case (21)
-
-      s = xd1**3
-    case (22)
-
-      s = 2.d0*xd1**2*yd1
-    case (23)
-
-      s = 3.d0*xd1*yd1**2
-    case (24)
-
-      s = 4.d0*yd1**3
-
-    case (26)
-
-      s = xd1**2*zd1
-    case (27)
-
-      s = 2.d0*xd1*yd1*zd1
-    case (28)
-
-      s = 3.d0*yd1**2*zd1
-
-    case (30)
-
-      s = xd1*zd1**2
-    case (31)
-
-      s = 2.d0*yd1*zd1**2
-
-    case (33)
-
-      s = zd1**3
-
-    case (36)
-
-      s = xd1**4
-    case (37)
-
-      s = 2.d0*xd1**3*yd1
-    case (38)
-
-      s = 3.d0*xd1**2*yd1**2
-    case (39)
-
-      s = 4.d0*xd1*yd1**3
-    case (40)
-
-      s = 5.d0*yd1**4
-
-    case (42)
-
-      s = xd1**3*zd1
-    case (43)
-
-      s = 2.d0*xd1**2*yd1*zd1
-    case (44)
-
-      s = 3.d0*xd1*yd1**2*zd1
-    case (45)
-
-      s = 4.d0*yd1**3*zd1
-
-    case (47)
-
-      s = xd1**2*zd1**2
-    case (48)
-
-      s = 2.d0*xd1*yd1*zd1**2
-    case (49)
-
-      s = 3.d0*yd1**2*zd1**2
-
-    case (51)
-
-      s = xd1*zd1**3
-    case (52)
-
-      s = 2.d0*yd1*zd1**3
-
-    case (54)
-
-      s = zd1**4
-
-    case (57)
-
-      s = xd1**5
-    case (58)
-
-      s = 2.d0*xd1**4*yd1
-    case (59)
-
-      s = 3.d0*xd1**3*yd1**2
-    case (60)
-
-      s = 4.d0*xd1**2*yd1**3
-    case (61)
-
-      s = 5.d0*xd1*yd1**4
-    case (62)
-
-      s = 6.d0*yd1**5
-
-    case (64)
-
-      s = xd1**4*zd1
-    case (65)
-
-      s = 2.d0*xd1**3*yd1*zd1
-    case (66)
-
-      s = 3.d0*xd1**2*yd1**2*zd1
-    case (67)
-
-      s = 4.d0*xd1*yd1**3*zd1
-    case (68)
-
-      s = 5.d0*yd1**4*zd1
-
-    case (70)
-
-      s = xd1**3*zd1**2
-    case (71)
-
-      s = 2.d0*xd1**2*yd1*zd1**2
-    case (72)
-
-      s = 3.d0*xd1*yd1**2*zd1**2
-    case (73)
-
-      s = 4.d0*yd1**3*zd1**2
-
-    case (75)
-
-      s = xd1**2*zd1**3
-    case (76)
-
-      s = 2.d0*xd1*yd1*zd1**3
-    case (77)
-
-      s = 3.d0*yd1**2*zd1**3
-
-    case (79)
-
-      s = xd1*zd1**4
-    case (80)
-
-      s = 2.d0*yd1*zd1**4
-
-    case (82)
-
-      s = zd1**5
-
-    case default
-      s = 0.0d0
-
+      case (2)
+        s = 1d0
+      case (5)
+        s = xd1
+      case (6)
+        s = 2.d0*yd1
+      case (8)
+        s = zd1
+      case (11)
+        s = xd1**2
+      case (12)
+        s = 2.d0*xd1*yd1
+      case (13)
+        s = 3.0d0*yd1**2
+      case (15)
+        s = xd1*zd1
+      case (16)
+        s = 2.d0*yd1*zd1
+      case (18)
+        s = zd1**2
+      case (21)
+        s = xd1**3
+      case (22)
+        s = 2.d0*xd1**2*yd1
+      case (23)
+        s = 3.d0*xd1*yd1**2
+      case (24)
+        s = 4.d0*yd1**3
+      case (26)
+        s = xd1**2*zd1
+      case (27)
+        s = 2.d0*xd1*yd1*zd1
+      case (28)
+        s = 3.d0*yd1**2*zd1
+      case (30)
+        s = xd1*zd1**2
+      case (31)
+        s = 2.d0*yd1*zd1**2
+      case (33)
+        s = zd1**3
+      case (36)
+        s = xd1**4
+      case (37)
+        s = 2.d0*xd1**3*yd1
+      case (38)
+        s = 3.d0*xd1**2*yd1**2
+      case (39)
+        s = 4.d0*xd1*yd1**3
+      case (40)
+        s = 5.d0*yd1**4
+      case (42)
+        s = xd1**3*zd1
+      case (43)
+        s = 2.d0*xd1**2*yd1*zd1
+      case (44)
+        s = 3.d0*xd1*yd1**2*zd1
+      case (45)
+        s = 4.d0*yd1**3*zd1
+      case (47)
+        s = xd1**2*zd1**2
+      case (48)
+        s = 2.d0*xd1*yd1*zd1**2
+      case (49)
+        s = 3.d0*yd1**2*zd1**2
+      case (51)
+        s = xd1*zd1**3
+      case (52)
+        s = 2.d0*yd1*zd1**3
+      case (54)
+        s = zd1**4
+      case (57)
+        s = xd1**5
+      case (58)
+        s = 2.d0*xd1**4*yd1
+      case (59)
+        s = 3.d0*xd1**3*yd1**2
+      case (60)
+        s = 4.d0*xd1**2*yd1**3
+      case (61)
+        s = 5.d0*xd1*yd1**4
+      case (62)
+        s = 6.d0*yd1**5
+      case (64)
+        s = xd1**4*zd1
+      case (65)
+        s = 2.d0*xd1**3*yd1*zd1
+      case (66)
+        s = 3.d0*xd1**2*yd1**2*zd1
+      case (67)
+        s = 4.d0*xd1*yd1**3*zd1
+      case (68)
+        s = 5.d0*yd1**4*zd1
+      case (70)
+        s = xd1**3*zd1**2
+      case (71)
+        s = 2.d0*xd1**2*yd1*zd1**2
+      case (72)
+        s = 3.d0*xd1*yd1**2*zd1**2
+      case (73)
+        s = 4.d0*yd1**3*zd1**2
+      case (75)
+        s = xd1**2*zd1**3
+      case (76)
+        s = 2.d0*xd1*yd1*zd1**3
+      case (77)
+        s = 3.d0*yd1**2*zd1**3
+      case (79)
+        s = xd1*zd1**4
+      case (80)
+        s = 2.d0*yd1*zd1**4
+      case (82)
+        s = zd1**5
+      case default
+        s = 0.0d0
     end select
     dfy = s
   end function dfy
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   real function dfz(xd1, yd1, zd1, nderivative, iconsidered)
     implicit none
     integer, intent(in)::nderivative, iconsidered
@@ -431,188 +265,122 @@ contains
 
     s = 0.0d0
     selectcase (nderivative)
-
-    case (3)
-
-      s = 1
-
-    case (7)
-
-      s = xd1
-    case (8)
-
-      s = yd1
-    case (9)
-
-      s = 2.d0*zd1
-
-    case (14)
-
-      s = xd1**2
-    case (15)
-
-      s = xd1*yd1
-    case (16)
-
-      s = yd1**2
-    case (17)
-
-      s = 2.d0*xd1*zd1
-    case (18)
-
-      s = 2.d0*yd1*zd1
-    case (19)
-
-      s = 3.d0*zd1**2
-
-    case (25)
-
-      s = xd1**3
-    case (26)
-
-      s = xd1**2*yd1
-    case (27)
-
-      s = xd1*yd1**2
-    case (28)
-
-      s = yd1**3
-    case (29)
-
-      s = 2.d0*xd1**2*zd1
-    case (30)
-
-      s = 2.d0*xd1*yd1*zd1
-    case (31)
-
-      s = 2.d0*yd1**2*zd1
-    case (32)
-
-      s = 3.d0*xd1*zd1**2
-    case (33)
-
-      s = 3.d0*yd1*zd1**2
-    case (34)
-
-      s = 4.d0*zd1**3
-
-      s = xd1**4
-    case (42)
-
-      s = xd1**3*yd1
-    case (43)
-
-      s = xd1**2*yd1**2
-    case (44)
-
-      s = xd1*yd1**3
-    case (45)
-
-      s = yd1**4
-    case (46)
-
-      s = 2.d0*xd1**3*zd1
-    case (47)
-
-      s = 2.d0*xd1**2*yd1*zd1
-    case (48)
-
-      s = 2.d0*xd1*yd1**2*zd1
-    case (49)
-
-      s = 2.d0*yd1**3*zd1
-    case (50)
-
-      s = 3.d0*xd1**2*zd1**2
-    case (51)
-
-      s = 3.d0*xd1*yd1*zd1**2
-    case (52)
-
-      s = 3.d0*yd1**2*zd1**2
-    case (53)
-
-      s = 4.d0*xd1*zd1**3
-    case (54)
-
-      s = 4.d0*yd1*zd1**3
-    case (55)
-
-      s = 5.d0*zd1**4
-
-      s = xd1**5
-    case (64)
-
-      s = xd1**4*yd1
-    case (65)
-
-      s = xd1**3*yd1**2
-    case (66)
-
-      s = xd1**2*yd1**3
-    case (67)
-
-      s = xd1*yd1**4
-    case (68)
-
-      s = yd1**5
-    case (69)
-
-      s = 2.d0*xd1**4*zd1
-    case (70)
-
-      s = 2.d0*xd1**3*yd1*zd1
-    case (71)
-
-      s = 2.d0*xd1**2*yd1**2*zd1
-    case (72)
-
-      s = 2.d0*xd1*yd1**3*zd1
-    case (73)
-
-      s = 2.d0*yd1**4*zd1
-    case (74)
-
-      s = 3.d0*xd1**3*zd1**2
-    case (75)
-
-      s = 3.d0*xd1**2*yd1*zd1**2
-    case (76)
-
-      s = 3.d0*xd1*yd1**2*zd1**2
-    case (77)
-
-      s = 3.d0*yd1**3*zd1**2
-    case (78)
-
-      s = 4.d0*xd1**2*zd1**3
-    case (79)
-
-      s = 4.d0*xd1*yd1*zd1**3
-    case (80)
-
-      s = 4.d0*yd1**2*zd1**3
-    case (81)
-
-      s = 5.d0*xd1*zd1**4
-    case (82)
-
-      s = 5.d0*yd1*zd1**4
-    case (83)
-
-      s = 6.d0*zd1**5
-
-    case default
+      case (3)
+        s = 1
+      case (7)
+        s = xd1
+      case (8)
+        s = yd1
+      case (9)
+        s = 2.d0*zd1
+      case (14)
+        s = xd1**2
+      case (15)
+        s = xd1*yd1
+      case (16)
+        s = yd1**2
+      case (17)
+        s = 2.d0*xd1*zd1
+      case (18)
+        s = 2.d0*yd1*zd1
+      case (19)
+        s = 3.d0*zd1**2
+      case (25)
+        s = xd1**3
+      case (26)
+        s = xd1**2*yd1
+      case (27)
+        s = xd1*yd1**2
+      case (28)
+        s = yd1**3
+      case (29)
+        s = 2.d0*xd1**2*zd1
+      case (30)
+        s = 2.d0*xd1*yd1*zd1
+      case (31)
+        s = 2.d0*yd1**2*zd1
+      case (32)
+        s = 3.d0*xd1*zd1**2
+      case (33)
+        s = 3.d0*yd1*zd1**2
+      case (34)
+        s = 4.d0*zd1**3
+        s = xd1**4
+      case (42)
+        s = xd1**3*yd1
+      case (43)
+        s = xd1**2*yd1**2
+      case (44)
+        s = xd1*yd1**3
+      case (45)
+        s = yd1**4
+      case (46)
+        s = 2.d0*xd1**3*zd1
+      case (47)
+        s = 2.d0*xd1**2*yd1*zd1
+      case (48)
+        s = 2.d0*xd1*yd1**2*zd1
+      case (49)
+        s = 2.d0*yd1**3*zd1
+      case (50)
+        s = 3.d0*xd1**2*zd1**2
+      case (51)
+        s = 3.d0*xd1*yd1*zd1**2
+      case (52)
+        s = 3.d0*yd1**2*zd1**2
+      case (53)
+        s = 4.d0*xd1*zd1**3
+      case (54)
+        s = 4.d0*yd1*zd1**3
+      case (55)
+        s = 5.d0*zd1**4
+        s = xd1**5
+      case (64)
+        s = xd1**4*yd1
+      case (65)
+        s = xd1**3*yd1**2
+      case (66)
+        s = xd1**2*yd1**3
+      case (67)
+        s = xd1*yd1**4
+      case (68)
+        s = yd1**5
+      case (69)
+        s = 2.d0*xd1**4*zd1
+      case (70)
+        s = 2.d0*xd1**3*yd1*zd1
+      case (71)
+        s = 2.d0*xd1**2*yd1**2*zd1
+      case (72)
+        s = 2.d0*xd1*yd1**3*zd1
+      case (73)
+        s = 2.d0*yd1**4*zd1
+      case (74)
+        s = 3.d0*xd1**3*zd1**2
+      case (75)
+        s = 3.d0*xd1**2*yd1*zd1**2
+      case (76)
+        s = 3.d0*xd1*yd1**2*zd1**2
+      case (77)
+        s = 3.d0*yd1**3*zd1**2
+      case (78)
+        s = 4.d0*xd1**2*zd1**3
+      case (79)
+        s = 4.d0*xd1*yd1*zd1**3
+      case (80)
+        s = 4.d0*yd1**2*zd1**3
+      case (81)
+        s = 5.d0*xd1*zd1**4
+      case (82)
+        s = 5.d0*yd1*zd1**4
+      case (83)
+        s = 6.d0*zd1**5
+      case default
       s = 0.0d0
-
     end select
     dfz = s
   end function dfz
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   real function dfx2(xd1, yd1, zd1, nderivative, iconsidered)
     implicit none
     integer, intent(in)::nderivative, iconsidered
@@ -621,263 +389,176 @@ contains
 
     s = 0.0d0
     selectcase (nderivative)
-    case (1)
-
-      s = 0.0d0
-    case (2)
-
-      s = 0.0d0
-    case (3)
-
-      s = 0.0d0
-    case (4)
-
-      s = 2
-    case (5)
-
-      s = 0.0d0
-    case (6)
-
-      s = 0.0d0
-    case (7)
-
-      s = 0.0d0
-    case (8)
-
-      s = 0.0d0
-    case (9)
-
-      s = 0.0d0
-    case (10)
-
-      s = 6.d0*xd1
-    case (11)
-
-      s = 2.d0*yd1
-    case (12)
-
-      s = 0.0d0
-    case (13)
-
-      s = 0.0d0
-    case (14)
-
-      s = 2.d0*zd1
-    case (15)
-
-      s = 0.0d0
-    case (16)
-
-      s = 0.0d0
-    case (17)
-
-      s = 0.0d0
-    case (18)
-
-      s = 0.0d0
-    case (19)
-
-      s = 0.0d0
-    case (20)
-
-      s = 12.d0*xd1**2
-    case (21)
-
-      s = 6.d0*xd1*yd1
-    case (22)
-
-      s = 2.d0*yd1**2
-    case (23)
-
-      s = 0.0d0
-    case (24)
-
-      s = 0.0d0
-    case (25)
-
-      s = 6.d0*xd1*zd1
-    case (26)
-
-      s = 2.d0*yd1*zd1
-    case (27)
-
-      s = 0.0d0
-    case (28)
-
-      s = 0.0d0
-    case (29)
-
-      s = 2.d0*zd1**2
-    case (30)
-
-      s = 0.0d0
-    case (31)
-
-      s = 0.0d0
-    case (32)
-
-      s = 0.0d0
-    case (33)
-
-      s = 0.0d0
-    case (34)
-
-      s = 0.0d0
-    case (35)
-
-      s = 20*xd1**3
-    case (36)
-
-      s = 12.d0*xd1**2*yd1
-    case (37)
-
-      s = 6.d0*xd1*yd1**2
-    case (38)
-
-      s = 2.d0*yd1**3
-    case (39)
-
-      s = 0.0d0
-    case (40)
-
-      s = 0.0d0
-    case (41)
-
-      s = 12.d0*xd1**2*zd1
-    case (42)
-
-      s = 6.d0*xd1*yd1*zd1
-    case (43)
-
-      s = 2.d0*yd1**2*zd1
-    case (44)
-
-      s = 0.0d0
-    case (45)
-
-      s = 0.0d0
-    case (46)
-
-      s = 6.d0*xd1*zd1**2
-    case (47)
-
-      s = 2.d0*yd1*zd1**2
-    case (48)
-
-      s = 0.0d0
-    case (49)
-
-      s = 0.0d0
-    case (50)
-
-      s = 2.d0*zd1**3
-    case (51)
-
-      s = 0.0d0
-    case (52)
-
-      s = 0.0d0
-    case (53)
-
-      s = 0.0d0
-    case (54)
-
-      s = 0.0d0
-    case (55)
-
-      s = 0.0d0
-    case (56)
-
-      s = 30*xd1**4
-    case (57)
-
-      s = 20*xd1**3*yd1
-    case (58)
-
-      s = 12.d0*xd1**2*yd1**2
-    case (59)
-
-      s = 6.d0*xd1*yd1**3
-    case (60)
-
-      s = 2.d0*yd1**4
-    case (61)
-
-      s = 0.0d0
-    case (62)
-
-      s = 0.0d0
-    case (63)
-
-      s = 20*xd1**3*zd1
-    case (64)
-
-      s = 12.d0*xd1**2*yd1*zd1
-    case (65)
-
-      s = 6.d0*xd1*yd1**2*zd1
-    case (66)
-
-      s = 2.d0*yd1**3*zd1
-    case (67)
-
-      s = 0.0d0
-    case (68)
-
-      s = 0.0d0
-    case (69)
-
-      s = 12.d0*xd1**2*zd1**2
-    case (70)
-
-      s = 6.d0*xd1*yd1*zd1**2
-    case (71)
-
-      s = 2.d0*yd1**2*zd1**2
-    case (72)
-
-      s = 0.0d0
-    case (73)
-
-      s = 0.0d0
-    case (74)
-
-      s = 6.d0*xd1*zd1**3
-    case (75)
-
-      s = 2.d0*yd1*zd1**3
-    case (76)
-
-      s = 0.0d0
-    case (77)
-
-      s = 0.0d0
-    case (78)
-
-      s = 2.d0*zd1**4
-    case (79)
-
-      s = 0.0d0
-    case (80)
-
-      s = 0.0d0
-    case (81)
-
-      s = 0.0d0
-    case (82)
-
-      s = 0.0d0
-    case (83)
-
-      s = 0.0d0
+      case (1)
+        s = 0.0d0
+      case (2)
+        s = 0.0d0
+      case (3)
+        s = 0.0d0
+      case (4)
+        s = 2
+      case (5)
+        s = 0.0d0
+      case (6)
+        s = 0.0d0
+      case (7)
+        s = 0.0d0
+      case (8)
+        s = 0.0d0
+      case (9)
+        s = 0.0d0
+      case (10)
+        s = 6.d0*xd1
+      case (11)
+        s = 2.d0*yd1
+      case (12)
+        s = 0.0d0
+      case (13)
+        s = 0.0d0
+      case (14)
+        s = 2.d0*zd1
+      case (15)
+        s = 0.0d0
+      case (16)
+        s = 0.0d0
+      case (17)
+        s = 0.0d0
+      case (18)
+        s = 0.0d0
+      case (19)
+        s = 0.0d0
+      case (20)
+        s = 12.d0*xd1**2
+      case (21)
+        s = 6.d0*xd1*yd1
+      case (22)
+        s = 2.d0*yd1**2
+      case (23)
+        s = 0.0d0
+      case (24)
+        s = 0.0d0
+      case (25)
+        s = 6.d0*xd1*zd1
+      case (26)
+        s = 2.d0*yd1*zd1
+      case (27)
+        s = 0.0d0
+      case (28)
+        s = 0.0d0
+      case (29)
+        s = 2.d0*zd1**2
+      case (30)
+        s = 0.0d0
+      case (31)
+        s = 0.0d0
+      case (32)
+        s = 0.0d0
+      case (33)
+        s = 0.0d0
+      case (34)
+        s = 0.0d0
+      case (35)
+        s = 20*xd1**3
+      case (36)
+        s = 12.d0*xd1**2*yd1
+      case (37)
+        s = 6.d0*xd1*yd1**2
+      case (38)
+        s = 2.d0*yd1**3
+      case (39)
+        s = 0.0d0
+      case (40)
+        s = 0.0d0
+      case (41)
+        s = 12.d0*xd1**2*zd1
+      case (42)
+        s = 6.d0*xd1*yd1*zd1
+      case (43)
+        s = 2.d0*yd1**2*zd1
+      case (44)
+        s = 0.0d0
+      case (45)
+        s = 0.0d0
+      case (46)
+        s = 6.d0*xd1*zd1**2
+      case (47)
+        s = 2.d0*yd1*zd1**2
+      case (48)
+        s = 0.0d0
+      case (49)
+        s = 0.0d0
+      case (50)
+        s = 2.d0*zd1**3
+      case (51)
+        s = 0.0d0
+      case (52)
+        s = 0.0d0
+      case (53)
+        s = 0.0d0
+      case (54)
+        s = 0.0d0
+      case (55)
+        s = 0.0d0
+      case (56)
+        s = 30*xd1**4
+      case (57)
+        s = 20*xd1**3*yd1
+      case (58)
+        s = 12.d0*xd1**2*yd1**2
+      case (59)
+        s = 6.d0*xd1*yd1**3
+      case (60)
+        s = 2.d0*yd1**4
+      case (61)
+        s = 0.0d0
+      case (62)
+        s = 0.0d0
+      case (63)
+        s = 20*xd1**3*zd1
+      case (64)
+        s = 12.d0*xd1**2*yd1*zd1
+      case (65)
+        s = 6.d0*xd1*yd1**2*zd1
+      case (66)
+        s = 2.d0*yd1**3*zd1
+      case (67)
+        s = 0.0d0
+      case (68)
+        s = 0.0d0
+      case (69)
+        s = 12.d0*xd1**2*zd1**2
+      case (70)
+        s = 6.d0*xd1*yd1*zd1**2
+      case (71)
+        s = 2.d0*yd1**2*zd1**2
+      case (72)
+        s = 0.0d0
+      case (73)
+        s = 0.0d0
+      case (74)
+        s = 6.d0*xd1*zd1**3
+      case (75)
+        s = 2.d0*yd1*zd1**3
+      case (76)
+        s = 0.0d0
+      case (77)
+        s = 0.0d0
+      case (78)
+        s = 2.d0*zd1**4
+      case (79)
+        s = 0.0d0
+      case (80)
+        s = 0.0d0
+      case (81)
+        s = 0.0d0
+      case (82)
+        s = 0.0d0
+      case (83)
+        s = 0.0d0
     end select
     dfx2 = s
   end function dfx2
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   real function dfy2(xd1, yd1, zd1, nderivative, iconsidered)
     implicit none
     integer, intent(in)::nderivative, iconsidered
@@ -886,266 +567,176 @@ contains
 
     s = 0.0d0
     selectcase (nderivative)
-    case (1)
-
-      s = 0.0d0
-    case (2)
-
-      s = 0.0d0
-    case (3)
-
-      s = 0.0d0
-    case (4)
-
-      s = 0.0d0
-    case (5)
-
-      s = 0.0d0
-    case (6)
-
-      s = 2
-    case (7)
-
-      s = 0.0d0
-    case (8)
-
-      s = 0.0d0
-    case (9)
-
-      s = 0.0d0
-    case (10)
-
-      s = 0.0d0
-    case (11)
-
-      s = 0.0d0
-    case (12)
-
-      s = 2.d0*xd1
-    case (13)
-
-      s = 6.d0*yd1
-    case (14)
-
-      s = 0.0d0
-    case (15)
-
-      s = 0.0d0
-    case (16)
-
-      s = 2.d0*zd1
-    case (17)
-
-      s = 0.0d0
-    case (18)
-
-      s = 0.0d0
-    case (19)
-
-      s = 0.0d0
-    case (20)
-
-      s = 0.0d0
-    case (21)
-
-      s = 0.0d0
-    case (22)
-
-      s = 2.d0*xd1**2
-    case (23)
-
-      s = 6.d0*xd1*yd1
-    case (24)
-
-      s = 12.d0*yd1**2
-    case (25)
-
-      s = 0.0d0
-    case (26)
-
-      s = 0.0d0
-    case (27)
-
-      s = 2.d0*xd1*zd1
-    case (28)
-
-      s = 6.d0*yd1*zd1
-    case (29)
-
-      s = 0.0d0
-    case (30)
-
-      s = 0.0d0
-    case (31)
-
-      s = 2.d0*zd1**2
-    case (32)
-
-      s = 0.0d0
-    case (33)
-
-      s = 0.0d0
-    case (34)
-
-      s = 0.0d0
-    case (35)
-
-      s = 0.0d0
-    case (36)
-
-      s = 0.0d0
-    case (37)
-
-      s = 2.d0*xd1**3
-    case (38)
-
-      s = 6.d0*xd1**2*yd1
-    case (39)
-
-      s = 12.d0*xd1*yd1**2
-    case (40)
-
-      s = 20*yd1**3
-    case (41)
-
-      s = 0.0d0
-    case (42)
-
-      s = 0.0d0
-    case (43)
-
-      s = 2.d0*xd1**2*zd1
-    case (44)
-
-      s = 6.d0*xd1*yd1*zd1
-    case (45)
-
-      s = 12.d0*yd1**2*zd1
-    case (46)
-
-      s = 0.0d0
-    case (47)
-
-      s = 0.0d0
-    case (48)
-
-      s = 2.d0*xd1*zd1**2
-    case (49)
-
-      s = 6.d0*yd1*zd1**2
-    case (50)
-
-      s = 0.0d0
-    case (51)
-
-      s = 0.0d0
-    case (52)
-
-      s = 2.d0*zd1**3
-    case (53)
-
-      s = 0.0d0
-    case (54)
-
-      s = 0.0d0
-    case (55)
-
-      s = 0.0d0
-    case (56)
-
-      s = 0.0d0
-    case (57)
-
-      s = 0.0d0
-    case (58)
-
-      s = 2.d0*xd1**4
-    case (59)
-
-      s = 6.d0*xd1**3*yd1
-    case (60)
-
-      s = 12.d0*xd1**2*yd1**2
-    case (61)
-
-      s = 20*xd1*yd1**3
-    case (62)
-
-      s = 30*yd1**4
-    case (63)
-
-      s = 0.0d0
-    case (64)
-
-      s = 0.0d0
-    case (65)
-
-      s = 2.d0*xd1**3*zd1
-    case (66)
-
-      s = 6.d0*xd1**2*yd1*zd1
-    case (67)
-
-      s = 12.d0*xd1*yd1**2*zd1
-    case (68)
-
-      s = 20*yd1**3*zd1
-    case (69)
-
-      s = 0.0d0
-    case (70)
-
-      s = 0.0d0
-    case (71)
-
-      s = 2.d0*xd1**2*zd1**2
-    case (72)
-
-      s = 6.d0*xd1*yd1*zd1**2
-    case (73)
-
-      s = 12.d0*yd1**2*zd1**2
-    case (74)
-
-      s = 0.0d0
-    case (75)
-
-      s = 0.0d0
-    case (76)
-
-      s = 2.d0*xd1*zd1**3
-    case (77)
-
-      s = 6.d0*yd1*zd1**3
-    case (78)
-
-      s = 0.0d0
-    case (79)
-
-      s = 0.0d0
-    case (80)
-
-      s = 2.d0*zd1**4
-    case (81)
-
-      s = 0.0d0
-    case (82)
-
-      s = 0.0d0
-    case (83)
-
-      s = 0.0d0
+      case (1)
+        s = 0.0d0
+      case (2)
+        s = 0.0d0
+      case (3)
+        s = 0.0d0
+      case (4)
+        s = 0.0d0
+      case (5)
+        s = 0.0d0
+      case (6)
+        s = 2
+      case (7)
+        s = 0.0d0
+      case (8)
+        s = 0.0d0
+      case (9)
+        s = 0.0d0
+      case (10)
+        s = 0.0d0
+      case (11)
+        s = 0.0d0
+      case (12)
+        s = 2.d0*xd1
+      case (13)
+        s = 6.d0*yd1
+      case (14)
+        s = 0.0d0
+      case (15)
+        s = 0.0d0
+      case (16)
+        s = 2.d0*zd1
+      case (17)
+        s = 0.0d0
+      case (18)
+        s = 0.0d0
+      case (19)
+        s = 0.0d0
+      case (20)
+        s = 0.0d0
+      case (21)
+        s = 0.0d0
+      case (22)
+        s = 2.d0*xd1**2
+      case (23)
+        s = 6.d0*xd1*yd1
+      case (24)
+        s = 12.d0*yd1**2
+      case (25)
+        s = 0.0d0
+      case (26)
+        s = 0.0d0
+      case (27)
+        s = 2.d0*xd1*zd1
+      case (28)
+        s = 6.d0*yd1*zd1
+      case (29)
+        s = 0.0d0
+      case (30)
+        s = 0.0d0
+      case (31)
+        s = 2.d0*zd1**2
+      case (32)
+        s = 0.0d0
+      case (33)
+        s = 0.0d0
+      case (34)
+        s = 0.0d0
+      case (35)
+        s = 0.0d0
+      case (36)
+        s = 0.0d0
+      case (37)
+        s = 2.d0*xd1**3
+      case (38)
+        s = 6.d0*xd1**2*yd1
+      case (39)
+        s = 12.d0*xd1*yd1**2
+      case (40)
+        s = 20*yd1**3
+      case (41)
+        s = 0.0d0
+      case (42)
+        s = 0.0d0
+      case (43)
+        s = 2.d0*xd1**2*zd1
+      case (44)
+        s = 6.d0*xd1*yd1*zd1
+      case (45)
+        s = 12.d0*yd1**2*zd1
+      case (46)
+        s = 0.0d0
+      case (47)
+        s = 0.0d0
+      case (48)
+        s = 2.d0*xd1*zd1**2
+      case (49)
+        s = 6.d0*yd1*zd1**2
+      case (50)
+        s = 0.0d0
+      case (51)
+        s = 0.0d0
+      case (52)
+        s = 2.d0*zd1**3
+      case (53)
+        s = 0.0d0
+      case (54)
+        s = 0.0d0
+      case (55)
+        s = 0.0d0
+      case (56)
+        s = 0.0d0
+      case (57)
+        s = 0.0d0
+      case (58)
+        s = 2.d0*xd1**4
+      case (59)
+        s = 6.d0*xd1**3*yd1
+      case (60)
+        s = 12.d0*xd1**2*yd1**2
+      case (61)
+        s = 20*xd1*yd1**3
+      case (62)
+        s = 30*yd1**4
+      case (63)
+        s = 0.0d0
+      case (64)
+        s = 0.0d0
+      case (65)
+        s = 2.d0*xd1**3*zd1
+      case (66)
+        s = 6.d0*xd1**2*yd1*zd1
+      case (67)
+        s = 12.d0*xd1*yd1**2*zd1
+      case (68)
+        s = 20*yd1**3*zd1
+      case (69)
+        s = 0.0d0
+      case (70)
+        s = 0.0d0
+      case (71)
+        s = 2.d0*xd1**2*zd1**2
+      case (72)
+        s = 6.d0*xd1*yd1*zd1**2
+      case (73)
+        s = 12.d0*yd1**2*zd1**2
+      case (74)
+        s = 0.0d0
+      case (75)
+        s = 0.0d0
+      case (76)
+        s = 2.d0*xd1*zd1**3
+      case (77)
+        s = 6.d0*yd1*zd1**3
+      case (78)
+        s = 0.0d0
+      case (79)
+        s = 0.0d0
+      case (80)
+        s = 2.d0*zd1**4
+      case (81)
+        s = 0.0d0
+      case (82)
+        s = 0.0d0
+      case (83)
+        s = 0.0d0
     end select
     dfy2 = s
   end function dfy2
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   real function dfz2(xd1, yd1, zd1, nderivative, iconsidered)
     implicit none
     integer, intent(in)::nderivative, iconsidered
@@ -1154,266 +745,176 @@ contains
 
     s = 0.0d0
     selectcase (nderivative)
-    case (1)
-
-      s = 0.0d0
-    case (2)
-
-      s = 0.0d0
-    case (3)
-
-      s = 0.0d0
-    case (4)
-
-      s = 0.0d0
-    case (5)
-
-      s = 0.0d0
-    case (6)
-
-      s = 0.0d0
-    case (7)
-
-      s = 0.0d0
-    case (8)
-
-      s = 0.0d0
-    case (9)
-
-      s = 2
-    case (10)
-
-      s = 0.0d0
-    case (11)
-
-      s = 0.0d0
-    case (12)
-
-      s = 0.0d0
-    case (13)
-
-      s = 0.0d0
-    case (14)
-
-      s = 0.0d0
-    case (15)
-
-      s = 0.0d0
-    case (16)
-
-      s = 0.0d0
-    case (17)
-
-      s = 2.d0*xd1
-    case (18)
-
-      s = 2.d0*yd1
-    case (19)
-
-      s = 6.d0*zd1
-    case (20)
-
-      s = 0.0d0
-    case (21)
-
-      s = 0.0d0
-    case (22)
-
-      s = 0.0d0
-    case (23)
-
-      s = 0.0d0
-    case (24)
-
-      s = 0.0d0
-    case (25)
-
-      s = 0.0d0
-    case (26)
-
-      s = 0.0d0
-    case (27)
-
-      s = 0.0d0
-    case (28)
-
-      s = 0.0d0
-    case (29)
-
-      s = 2.d0*xd1**2
-    case (30)
-
-      s = 2.d0*xd1*yd1
-    case (31)
-
-      s = 2.d0*yd1**2
-    case (32)
-
-      s = 6.d0*xd1*zd1
-    case (33)
-
-      s = 6.d0*yd1*zd1
-    case (34)
-
-      s = 12.d0*zd1**2
-    case (35)
-
-      s = 0.0d0
-    case (36)
-
-      s = 0.0d0
-    case (37)
-
-      s = 0.0d0
-    case (38)
-
-      s = 0.0d0
-    case (39)
-
-      s = 0.0d0
-    case (40)
-
-      s = 0.0d0
-    case (41)
-
-      s = 0.0d0
-    case (42)
-
-      s = 0.0d0
-    case (43)
-
-      s = 0.0d0
-    case (44)
-
-      s = 0.0d0
-    case (45)
-
-      s = 0.0d0
-    case (46)
-
-      s = 2.d0*xd1**3
-    case (47)
-
-      s = 2.d0*xd1**2*yd1
-    case (48)
-
-      s = 2.d0*xd1*yd1**2
-    case (49)
-
-      s = 2.d0*yd1**3
-    case (50)
-
-      s = 6.d0*xd1**2*zd1
-    case (51)
-
-      s = 6.d0*xd1*yd1*zd1
-    case (52)
-
-      s = 6.d0*yd1**2*zd1
-    case (53)
-
-      s = 12.d0*xd1*zd1**2
-    case (54)
-
-      s = 12.d0*yd1*zd1**2
-    case (55)
-
-      s = 20*zd1**3
-    case (56)
-
-      s = 0.0d0
-    case (57)
-
-      s = 0.0d0
-    case (58)
-
-      s = 0.0d0
-    case (59)
-
-      s = 0.0d0
-    case (60)
-
-      s = 0.0d0
-    case (61)
-
-      s = 0.0d0
-    case (62)
-
-      s = 0.0d0
-    case (63)
-
-      s = 0.0d0
-    case (64)
-
-      s = 0.0d0
-    case (65)
-
-      s = 0.0d0
-    case (66)
-
-      s = 0.0d0
-    case (67)
-
-      s = 0.0d0
-    case (68)
-
-      s = 0.0d0
-    case (69)
-
-      s = 2.d0*xd1**4
-    case (70)
-
-      s = 2.d0*xd1**3*yd1
-    case (71)
-
-      s = 2.d0*xd1**2*yd1**2
-    case (72)
-
-      s = 2.d0*xd1*yd1**3
-    case (73)
-
-      s = 2.d0*yd1**4
-    case (74)
-
-      s = 6.d0*xd1**3*zd1
-    case (75)
-
-      s = 6.d0*xd1**2*yd1*zd1
-    case (76)
-
-      s = 6.d0*xd1*yd1**2*zd1
-    case (77)
-
-      s = 6.d0*yd1**3*zd1
-    case (78)
-
-      s = 12.d0*xd1**2*zd1**2
-    case (79)
-
-      s = 12.d0*xd1*yd1*zd1**2
-    case (80)
-
-      s = 12.d0*yd1**2*zd1**2
-    case (81)
-
-      s = 20*xd1*zd1**3
-    case (82)
-
-      s = 20*yd1*zd1**3
-    case (83)
-
-      s = 30*zd1**4
+      case (1)
+        s = 0.0d0
+      case (2)
+        s = 0.0d0
+      case (3)
+        s = 0.0d0
+      case (4)
+        s = 0.0d0
+      case (5)
+        s = 0.0d0
+      case (6)
+        s = 0.0d0
+      case (7)
+        s = 0.0d0
+      case (8)
+        s = 0.0d0
+      case (9)
+        s = 2
+      case (10)
+        s = 0.0d0
+      case (11)
+        s = 0.0d0
+      case (12)
+        s = 0.0d0
+      case (13)
+        s = 0.0d0
+      case (14)
+        s = 0.0d0
+      case (15)
+        s = 0.0d0
+      case (16)
+        s = 0.0d0
+      case (17)
+        s = 2.d0*xd1
+      case (18)
+        s = 2.d0*yd1
+      case (19)
+        s = 6.d0*zd1
+      case (20)
+        s = 0.0d0
+      case (21)
+        s = 0.0d0
+      case (22)
+        s = 0.0d0
+      case (23)
+        s = 0.0d0
+      case (24)
+        s = 0.0d0
+      case (25)
+        s = 0.0d0
+      case (26)
+        s = 0.0d0
+      case (27)
+        s = 0.0d0
+      case (28)
+        s = 0.0d0
+      case (29)
+        s = 2.d0*xd1**2
+      case (30)
+        s = 2.d0*xd1*yd1
+      case (31)
+        s = 2.d0*yd1**2
+      case (32)
+        s = 6.d0*xd1*zd1
+      case (33)
+        s = 6.d0*yd1*zd1
+      case (34)
+        s = 12.d0*zd1**2
+      case (35)
+        s = 0.0d0
+      case (36)
+        s = 0.0d0
+      case (37)
+        s = 0.0d0
+      case (38)
+        s = 0.0d0
+      case (39)
+        s = 0.0d0
+      case (40)
+        s = 0.0d0
+      case (41)
+        s = 0.0d0
+      case (42)
+        s = 0.0d0
+      case (43)
+        s = 0.0d0
+      case (44)
+        s = 0.0d0
+      case (45)
+        s = 0.0d0
+      case (46)
+        s = 2.d0*xd1**3
+      case (47)
+        s = 2.d0*xd1**2*yd1
+      case (48)
+        s = 2.d0*xd1*yd1**2
+      case (49)
+        s = 2.d0*yd1**3
+      case (50)
+        s = 6.d0*xd1**2*zd1
+      case (51)
+        s = 6.d0*xd1*yd1*zd1
+      case (52)
+        s = 6.d0*yd1**2*zd1
+      case (53)
+        s = 12.d0*xd1*zd1**2
+      case (54)
+        s = 12.d0*yd1*zd1**2
+      case (55)
+        s = 20*zd1**3
+      case (56)
+        s = 0.0d0
+      case (57)
+        s = 0.0d0
+      case (58)
+        s = 0.0d0
+      case (59)
+        s = 0.0d0
+      case (60)
+        s = 0.0d0
+      case (61)
+        s = 0.0d0
+      case (62)
+        s = 0.0d0
+      case (63)
+        s = 0.0d0
+      case (64)
+        s = 0.0d0
+      case (65)
+        s = 0.0d0
+      case (66)
+        s = 0.0d0
+      case (67)
+        s = 0.0d0
+      case (68)
+        s = 0.0d0
+      case (69)
+        s = 2.d0*xd1**4
+      case (70)
+        s = 2.d0*xd1**3*yd1
+      case (71)
+        s = 2.d0*xd1**2*yd1**2
+      case (72)
+        s = 2.d0*xd1*yd1**3
+      case (73)
+        s = 2.d0*yd1**4
+      case (74)
+        s = 6.d0*xd1**3*zd1
+      case (75)
+        s = 6.d0*xd1**2*yd1*zd1
+      case (76)
+        s = 6.d0*xd1*yd1**2*zd1
+      case (77)
+        s = 6.d0*yd1**3*zd1
+      case (78)
+        s = 12.d0*xd1**2*zd1**2
+      case (79)
+        s = 12.d0*xd1*yd1*zd1**2
+      case (80)
+        s = 12.d0*yd1**2*zd1**2
+      case (81)
+        s = 20*xd1*zd1**3
+      case (82)
+        s = 20*yd1*zd1**3
+      case (83)
+        s = 30*zd1**4
     end select
     dfz2 = s
   end function dfz2
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   real function dfxy(xd1, yd1, zd1, nderivative, iconsidered)
     implicit none
     integer, intent(in)::nderivative, iconsidered
@@ -1422,266 +923,177 @@ contains
 
     s = 0.0d0
     selectcase (nderivative)
-    case (1)
-
-      s = 0.0d0
-    case (2)
-
-      s = 0.0d0
-    case (3)
-
-      s = 0.0d0
-    case (4)
-
-      s = 0.0d0
-    case (5)
-
-      s = 1
-    case (6)
-
-      s = 0.0d0
-    case (7)
-
-      s = 0.0d0
-    case (8)
-
-      s = 0.0d0
-    case (9)
-
-      s = 0.0d0
-    case (10)
-
-      s = 0.0d0
-    case (11)
-
-      s = 2.d0*xd1
-    case (12)
-
-      s = 2.d0*yd1
-    case (13)
-
-      s = 0.0d0
-    case (14)
-
-      s = 0.0d0
-    case (15)
-
-      s = zd1
-    case (16)
-
-      s = 0.0d0
-    case (17)
-
-      s = 0.0d0
-    case (18)
-
-      s = 0.0d0
-    case (19)
-
-      s = 0.0d0
-    case (20)
-
-      s = 0.0d0
-    case (21)
-
-      s = 3.d0*xd1**2
-    case (22)
-
-      s = 4.d0*xd1*yd1
-    case (23)
-
-      s = 3.d0*yd1**2
-    case (24)
-
-      s = 0.0d0
-    case (25)
-
-      s = 0.0d0
-    case (26)
-
-      s = 2.d0*xd1*zd1
-    case (27)
-
-      s = 2.d0*yd1*zd1
-    case (28)
-
-      s = 0.0d0
-    case (29)
-
-      s = 0.0d0
-    case (30)
-
-      s = zd1**2
-    case (31)
-
-      s = 0.0d0
-    case (32)
-
-      s = 0.0d0
-    case (33)
-
-      s = 0.0d0
-    case (34)
-
-      s = 0.0d0
-    case (35)
-
-      s = 0.0d0
-    case (36)
-
-      s = 4.d0*xd1**3
-    case (37)
-
-      s = 6.d0*xd1**2*yd1
-    case (38)
-
-      s = 6.d0*xd1*yd1**2
-    case (39)
-
-      s = 4.d0*yd1**3
-    case (40)
-
-      s = 0.0d0
-    case (41)
-
-      s = 0.0d0
-    case (42)
-
-      s = 3.d0*xd1**2*zd1
-    case (43)
-
-      s = 4.d0*xd1*yd1*zd1
-    case (44)
-
-      s = 3.d0*yd1**2*zd1
-    case (45)
-
-      s = 0.0d0
-    case (46)
-
-      s = 0.0d0
-    case (47)
-
-      s = 2.d0*xd1*zd1**2
-    case (48)
-
-      s = 2.d0*yd1*zd1**2
-    case (49)
-
-      s = 0.0d0
-    case (50)
-
-      s = 0.0d0
-    case (51)
-
-      s = zd1**3
-    case (52)
-
-      s = 0.0d0
-    case (53)
-
-      s = 0.0d0
-    case (54)
-
-      s = 0.0d0
-    case (55)
-
-      s = 0.0d0
-    case (56)
-
-      s = 0.0d0
-    case (57)
-
-      s = 5.d0*xd1**4
-    case (58)
-
-      s = 8.d0*xd1**3*yd1
-    case (59)
-
-      s = 9*xd1**2*yd1**2
-    case (60)
-
-      s = 8.d0*xd1*yd1**3
-    case (61)
-
-      s = 5.d0*yd1**4
-    case (62)
-
-      s = 0.0d0
-    case (63)
-
-      s = 0.0d0
-    case (64)
-
-      s = 4.d0*xd1**3*zd1
-    case (65)
-
-      s = 6.d0*xd1**2*yd1*zd1
-    case (66)
-
-      s = 6.d0*xd1*yd1**2*zd1
-    case (67)
-
-      s = 4.d0*yd1**3*zd1
-    case (68)
-
-      s = 0.0d0
-    case (69)
-
-      s = 0.0d0
-    case (70)
-
-      s = 3.d0*xd1**2*zd1**2
-    case (71)
-
-      s = 4.d0*xd1*yd1*zd1**2
-    case (72)
-
-      s = 3.d0*yd1**2*zd1**2
-    case (73)
-
-      s = 0.0d0
-    case (74)
-
-      s = 0.0d0
-    case (75)
-
-      s = 2.d0*xd1*zd1**3
-    case (76)
-
-      s = 2.d0*yd1*zd1**3
-    case (77)
-
-      s = 0.0d0
-    case (78)
-
-      s = 0.0d0
-    case (79)
-
-      s = zd1**4
-    case (80)
-
-      s = 0.0d0
-    case (81)
-
-      s = 0.0d0
-    case (82)
-
-      s = 0.0d0
-    case (83)
+      case (1)
+        s = 0.0d0
+      case (2)
+        s = 0.0d0
+      case (3)
+        s = 0.0d0
+      case (4)
+        s = 0.0d0
+      case (5)
+        s = 1
+      case (6)
+        s = 0.0d0
+      case (7)
+        s = 0.0d0
+      case (8)
+        s = 0.0d0
+      case (9)
+        s = 0.0d0
+      case (10)
+        s = 0.0d0
+      case (11)
+        s = 2.d0*xd1
+      case (12)
+        s = 2.d0*yd1
+      case (13)
+        s = 0.0d0
+      case (14)
+        s = 0.0d0
+      case (15)
+        s = zd1
+      case (16)
+        s = 0.0d0
+      case (17)
+        s = 0.0d0
+      case (18)
+        s = 0.0d0
+      case (19)
+        s = 0.0d0
+      case (20)
+        s = 0.0d0
+      case (21)
+        s = 3.d0*xd1**2
+      case (22)
+        s = 4.d0*xd1*yd1
+      case (23)
+        s = 3.d0*yd1**2
+      case (24)
+        s = 0.0d0
+      case (25)
+        s = 0.0d0
+      case (26)
+        s = 2.d0*xd1*zd1
+      case (27)
+        s = 2.d0*yd1*zd1
+      case (28)
+        s = 0.0d0
+      case (29)
+        s = 0.0d0
+      case (30)
+        s = zd1**2
+      case (31)
+        s = 0.0d0
+      case (32)
+        s = 0.0d0
+      case (33)
+        s = 0.0d0
+      case (34)
+        s = 0.0d0
+      case (35)
+        s = 0.0d0
+      case (36)
+        s = 4.d0*xd1**3
+      case (37)
+        s = 6.d0*xd1**2*yd1
+      case (38)
+        s = 6.d0*xd1*yd1**2
+      case (39)
+        s = 4.d0*yd1**3
+      case (40)
+        s = 0.0d0
+      case (41)
+        s = 0.0d0
+      case (42)
+        s = 3.d0*xd1**2*zd1
+      case (43)
+        s = 4.d0*xd1*yd1*zd1
+      case (44)
+        s = 3.d0*yd1**2*zd1
+      case (45)
+        s = 0.0d0
+      case (46)
+        s = 0.0d0
+      case (47)
+        s = 2.d0*xd1*zd1**2
+      case (48)
+        s = 2.d0*yd1*zd1**2
+      case (49)
+        s = 0.0d0
+      case (50)
+        s = 0.0d0
+      case (51)
+        s = zd1**3
+      case (52)
+        s = 0.0d0
+      case (53)
+        s = 0.0d0
+      case (54)
+        s = 0.0d0
+      case (55)
+        s = 0.0d0
+      case (56)
+        s = 0.0d0
+      case (57)
+        s = 5.d0*xd1**4
+      case (58)
+        s = 8.d0*xd1**3*yd1
+      case (59)
+        s = 9*xd1**2*yd1**2
+      case (60)
+        s = 8.d0*xd1*yd1**3
+      case (61)
+        s = 5.d0*yd1**4
+      case (62)
+        s = 0.0d0
+      case (63)
+        s = 0.0d0
+      case (64)
+        s = 4.d0*xd1**3*zd1
+      case (65)
+        s = 6.d0*xd1**2*yd1*zd1
+      case (66)
+        s = 6.d0*xd1*yd1**2*zd1
+      case (67)
+        s = 4.d0*yd1**3*zd1
+      case (68)
+        s = 0.0d0
+      case (69)
+        s = 0.0d0
+      case (70)
+        s = 3.d0*xd1**2*zd1**2
+      case (71)
+        s = 4.d0*xd1*yd1*zd1**2
+      case (72)
+        s = 3.d0*yd1**2*zd1**2
+      case (73)
+        s = 0.0d0
+      case (74)
+        s = 0.0d0
+      case (75)
+        s = 2.d0*xd1*zd1**3
+      case (76)
+        s = 2.d0*yd1*zd1**3
+      case (77)
+        s = 0.0d0
+      case (78)
+        s = 0.0d0
+      case (79)
+        s = zd1**4
+      case (80)
+        s = 0.0d0
+      case (81)
+        s = 0.0d0
+      case (82)
+        s = 0.0d0
+      case (83)
 
       s = 0.0d0
     end select
     dfxy = s
   end function dfxy
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   real function dfyz(xd1, yd1, zd1, nderivative, iconsidered)
     implicit none
     integer, intent(in)::nderivative, iconsidered
@@ -1690,266 +1102,176 @@ contains
 
     s = 0.0d0
     selectcase (nderivative)
-    case (1)
-
-      s = 0.0d0
-    case (2)
-
-      s = 0.0d0
-    case (3)
-
-      s = 0.0d0
-    case (4)
-
-      s = 0.0d0
-    case (5)
-
-      s = 0.0d0
-    case (6)
-
-      s = 0.0d0
-    case (7)
-
-      s = 0.0d0
-    case (8)
-
-      s = 1
-    case (9)
-
-      s = 0.0d0
-    case (10)
-
-      s = 0.0d0
-    case (11)
-
-      s = 0.0d0
-    case (12)
-
-      s = 0.0d0
-    case (13)
-
-      s = 0.0d0
-    case (14)
-
-      s = 0.0d0
-    case (15)
-
-      s = xd1
-    case (16)
-
-      s = 2.d0*yd1
-    case (17)
-
-      s = 0.0d0
-    case (18)
-
-      s = 2.d0*zd1
-    case (19)
-
-      s = 0.0d0
-    case (20)
-
-      s = 0.0d0
-    case (21)
-
-      s = 0.0d0
-    case (22)
-
-      s = 0.0d0
-    case (23)
-
-      s = 0.0d0
-    case (24)
-
-      s = 0.0d0
-    case (25)
-
-      s = 0.0d0
-    case (26)
-
-      s = xd1**2
-    case (27)
-
-      s = 2.d0*xd1*yd1
-    case (28)
-
-      s = 3.d0*yd1**2
-    case (29)
-
-      s = 0.0d0
-    case (30)
-
-      s = 2.d0*xd1*zd1
-    case (31)
-
-      s = 4.d0*yd1*zd1
-    case (32)
-
-      s = 0.0d0
-    case (33)
-
-      s = 3.d0*zd1**2
-    case (34)
-
-      s = 0.0d0
-    case (35)
-
-      s = 0.0d0
-    case (36)
-
-      s = 0.0d0
-    case (37)
-
-      s = 0.0d0
-    case (38)
-
-      s = 0.0d0
-    case (39)
-
-      s = 0.0d0
-    case (40)
-
-      s = 0.0d0
-    case (41)
-
-      s = 0.0d0
-    case (42)
-
-      s = xd1**3
-    case (43)
-
-      s = 2.d0*xd1**2*yd1
-    case (44)
-
-      s = 3.d0*xd1*yd1**2
-    case (45)
-
-      s = 4.d0*yd1**3
-    case (46)
-
-      s = 0.0d0
-    case (47)
-
-      s = 2.d0*xd1**2*zd1
-    case (48)
-
-      s = 4.d0*xd1*yd1*zd1
-    case (49)
-
-      s = 6.d0*yd1**2*zd1
-    case (50)
-
-      s = 0.0d0
-    case (51)
-
-      s = 3.d0*xd1*zd1**2
-    case (52)
-
-      s = 6.d0*yd1*zd1**2
-    case (53)
-
-      s = 0.0d0
-    case (54)
-
-      s = 4.d0*zd1**3
-    case (55)
-
-      s = 0.0d0
-    case (56)
-
-      s = 0.0d0
-    case (57)
-
-      s = 0.0d0
-    case (58)
-
-      s = 0.0d0
-    case (59)
-
-      s = 0.0d0
-    case (60)
-
-      s = 0.0d0
-    case (61)
-
-      s = 0.0d0
-    case (62)
-
-      s = 0.0d0
-    case (63)
-
-      s = 0.0d0
-    case (64)
-
-      s = xd1**4
-    case (65)
-
-      s = 2.d0*xd1**3*yd1
-    case (66)
-
-      s = 3.d0*xd1**2*yd1**2
-    case (67)
-
-      s = 4.d0*xd1*yd1**3
-    case (68)
-
-      s = 5.d0*yd1**4
-    case (69)
-
-      s = 0.0d0
-    case (70)
-
-      s = 2.d0*xd1**3*zd1
-    case (71)
-
-      s = 4.d0*xd1**2*yd1*zd1
-    case (72)
-
-      s = 6.d0*xd1*yd1**2*zd1
-    case (73)
-
-      s = 8.d0*yd1**3*zd1
-    case (74)
-
-      s = 0.0d0
-    case (75)
-
-      s = 3.d0*xd1**2*zd1**2
-    case (76)
-
-      s = 6.d0*xd1*yd1*zd1**2
-    case (77)
-
-      s = 9*yd1**2*zd1**2
-    case (78)
-
-      s = 0.0d0
-    case (79)
-
-      s = 4.d0*xd1*zd1**3
-    case (80)
-
-      s = 8.d0*yd1*zd1**3
-    case (81)
-
-      s = 0.0d0
-    case (82)
-
-      s = 5.d0*zd1**4
-    case (83)
-
-      s = 0.0d0
+      case (1)
+        s = 0.0d0
+      case (2)
+        s = 0.0d0
+      case (3)
+        s = 0.0d0
+      case (4)
+        s = 0.0d0
+      case (5)
+        s = 0.0d0
+      case (6)
+        s = 0.0d0
+      case (7)
+        s = 0.0d0
+      case (8)
+        s = 1
+      case (9)
+        s = 0.0d0
+      case (10)
+        s = 0.0d0
+      case (11)
+        s = 0.0d0
+      case (12)
+        s = 0.0d0
+      case (13)
+        s = 0.0d0
+      case (14)
+        s = 0.0d0
+      case (15)
+        s = xd1
+      case (16)
+        s = 2.d0*yd1
+      case (17)
+        s = 0.0d0
+      case (18)
+        s = 2.d0*zd1
+      case (19)
+        s = 0.0d0
+      case (20)
+        s = 0.0d0
+      case (21)
+        s = 0.0d0
+      case (22)
+        s = 0.0d0
+      case (23)
+        s = 0.0d0
+      case (24)
+        s = 0.0d0
+      case (25)
+        s = 0.0d0
+      case (26)
+        s = xd1**2
+      case (27)
+        s = 2.d0*xd1*yd1
+      case (28)
+        s = 3.d0*yd1**2
+      case (29)
+        s = 0.0d0
+      case (30)
+        s = 2.d0*xd1*zd1
+      case (31)
+        s = 4.d0*yd1*zd1
+      case (32)
+        s = 0.0d0
+      case (33)
+        s = 3.d0*zd1**2
+      case (34)
+        s = 0.0d0
+      case (35)
+        s = 0.0d0
+      case (36)
+        s = 0.0d0
+      case (37)
+        s = 0.0d0
+      case (38)
+        s = 0.0d0
+      case (39)
+        s = 0.0d0
+      case (40)
+        s = 0.0d0
+      case (41)
+        s = 0.0d0
+      case (42)
+        s = xd1**3
+      case (43)
+        s = 2.d0*xd1**2*yd1
+      case (44)
+        s = 3.d0*xd1*yd1**2
+      case (45)
+        s = 4.d0*yd1**3
+      case (46)
+        s = 0.0d0
+      case (47)
+        s = 2.d0*xd1**2*zd1
+      case (48)
+        s = 4.d0*xd1*yd1*zd1
+      case (49)
+        s = 6.d0*yd1**2*zd1
+      case (50)
+        s = 0.0d0
+      case (51)
+        s = 3.d0*xd1*zd1**2
+      case (52)
+        s = 6.d0*yd1*zd1**2
+      case (53)
+        s = 0.0d0
+      case (54)
+        s = 4.d0*zd1**3
+      case (55)
+        s = 0.0d0
+      case (56)
+        s = 0.0d0
+      case (57)
+        s = 0.0d0
+      case (58)
+        s = 0.0d0
+      case (59)
+        s = 0.0d0
+      case (60)
+        s = 0.0d0
+      case (61)
+        s = 0.0d0
+      case (62)
+        s = 0.0d0
+      case (63)
+        s = 0.0d0
+      case (64)
+        s = xd1**4
+      case (65)
+        s = 2.d0*xd1**3*yd1
+      case (66)
+        s = 3.d0*xd1**2*yd1**2
+      case (67)
+        s = 4.d0*xd1*yd1**3
+      case (68)
+        s = 5.d0*yd1**4
+      case (69)
+        s = 0.0d0
+      case (70)
+        s = 2.d0*xd1**3*zd1
+      case (71)
+        s = 4.d0*xd1**2*yd1*zd1
+      case (72)
+        s = 6.d0*xd1*yd1**2*zd1
+      case (73)
+        s = 8.d0*yd1**3*zd1
+      case (74)
+        s = 0.0d0
+      case (75)
+        s = 3.d0*xd1**2*zd1**2
+      case (76)
+        s = 6.d0*xd1*yd1*zd1**2
+      case (77)
+        s = 9*yd1**2*zd1**2
+      case (78)
+        s = 0.0d0
+      case (79)
+        s = 4.d0*xd1*zd1**3
+      case (80)
+        s = 8.d0*yd1*zd1**3
+      case (81)
+        s = 0.0d0
+      case (82)
+        s = 5.d0*zd1**4
+      case (83)
+        s = 0.0d0
     end select
     dfyz = s
   end function dfyz
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   real function dfxz(xd1, yd1, zd1, nderivative, iconsidered)
     implicit none
     integer, intent(in)::nderivative, iconsidered
