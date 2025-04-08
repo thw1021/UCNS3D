@@ -7,9 +7,9 @@ module dg_functions
   contains
   function dg_sol(n, iconsidered, x1, y1, z1)
     implicit none
-    !> @brief
-    !> this function returns the dg solution at a given point (x_in, y_in)\n
-    !> requires: x_in, y_in: coordinates of the point where the solution is requested, num_variables: number of solution variables, num_dofs: number of basis terms
+    ！ @brief
+    ！ this function returns the dg solution at a given point (x_in, y_in)\n
+    ！ requires: x_in, y_in: coordinates of the point where the solution is requested, num_variables: number of solution variables, num_dofs: number of basis terms
     real, allocatable, dimension(:)::basis_temp
     integer, intent(in)::n, iconsidered
     integer::i_dof, i_var, icompwrt, number_of_dog, number
@@ -25,7 +25,7 @@ module dg_functions
       basis_temp = basis_rec(n, x1, y1, z1, number, iconsidered, number_of_dog, icompwrt)
     end if
     do i_var = 1, nof_variables
-      dg_sol(i_var) = u_c(iconsidered)%valdg(1,i_var,1)+ dot_product(basis_temp(1:number_of_dog),u_c(iconsidered)%valdg(1,i_var,2:number_of_dog+1))
+      dg_sol(i_var) = u_c(iconsidered)%valdg(1,i_var,1) + dot_product(basis_temp(1:number_of_dog),u_c(iconsidered)%valdg(1,i_var,2:number_of_dog+1))
     end do
     icompwrt = 0
     deallocate(basis_temp)
@@ -33,9 +33,9 @@ module dg_functions
 
   function dg_solface(n, facex, pointx, iconsidered, number_of_dog)
     implicit none
-    !> @brief
-    !> this function returns the dg solution at a given surface point (x_in, y_in)\n
-    !> requires: x_in, y_in: coordinates of the point where the solution is requested, num_variables: number of solution variables, num_dofs: number of basis terms
+    ！ @brief
+    ！ this function returns the dg solution at a given surface point (x_in, y_in)\n
+    ！ requires: x_in, y_in: coordinates of the point where the solution is requested, num_variables: number of solution variables, num_dofs: number of basis terms
     real, allocatable, dimension(:)::basis_temp
     integer::i_dof, i_var, icompwrt
     integer, intent(in)::n, facex, pointx, iconsidered, number_of_dog
@@ -64,8 +64,8 @@ module dg_functions
 
   function dg_sol_der(x1, y1, z1, number_of_dog, iconsidered)
     implicit none
-    !> @brief
-    !> this function returns the derivative of the dg solution at a given point (x1, y1, [z1])
+    ！ @brief
+    ！ this function returns the derivative of the dg solution at a given point (x1, y1, [z1])
     integer::i_dof, i_var, i_dim, icompwrt, number
     integer, intent(in)::number_of_dog, iconsidered
     real, intent(in)::x1, y1, z1
@@ -111,7 +111,7 @@ module dg_functions
 
   function br2_local_lift(n, n_qp, facex, iconsidered, wequa2d)
     implicit none
-    !> requires: iconsidered, facex, and weights_dg or wequa2d
+    ！ requires: iconsidered, facex, and weights_dg or wequa2d
     integer, intent(in)::n, n_qp, facex, iconsidered
     real, dimension(1:numberofpoints2), intent(in)::wequa2d
     integer::i, l, ngp, iqp, i_dim, icompwrt, number_of_dog
@@ -179,8 +179,8 @@ module dg_functions
   end function br2_local_lift
 
   function dg_surf_flux(n, iconsidered, facex, pointx, weights_temp, rhllcflux)
-    !> @brief
-    !> calculates the rhs flux term to be integrated in the dg formulation
+    ！ @brief
+    ！ calculates the rhs flux term to be integrated in the dg formulation
     implicit none
     real, dimension(idegfree + 1, nof_variables)::dg_surf_flux
     integer::i, icompwrt
@@ -197,7 +197,7 @@ module dg_functions
     if (dimensiona .eq. 3) then
       z1 = ilocal_recon3(iconsidered)%qpoints(facex, pointx, 3)
     end if
-      number = ielem(n, iconsidered)%iorder
+    number = ielem(n, iconsidered)%iorder
     if (dimensiona .eq. 2) then
       do i = 1, nof_variables
         dg_surf_flux(1, i) = rhllcflux(i)*weights_temp(pointx)*ielem(n, iconsidered)%surf(facex)
@@ -213,8 +213,8 @@ module dg_functions
   end function dg_surf_flux
 
   function dg_surf_fluxv(n, iconsidered, facex, pointx, weights_temp, hllcflux)
-    !> @brief
-    !> calculates the rhs flux term to be integrated in the dg formulation
+    ！ @brief
+    ！ calculates the rhs flux term to be integrated in the dg formulation
     implicit none
     real, dimension(idegfree + 1, 1:nof_variables)::dg_surf_fluxv
     integer::i, icompwrt
@@ -242,11 +242,12 @@ module dg_functions
         dg_surf_fluxv(2:number_of_dog+1,i) = hllcflux(i) * weights_temp(pointx)*ielem(n,iconsidered)%surf(facex)*basis_rec(n,x1,y1,z1,number,iconsidered,number_of_dog,icompwrt)
       end do
     end if
-      icompwrt = 0
+    icompwrt = 0
   end function dg_surf_fluxv
+
   function dg_vol_integral(n, iconsidered)
-    !> @brief
-    !> calculates the volume integral term in the dg rhs for scalar linear advection with speed = 1
+    ！ @brief
+    ！ calculates the volume integral term in the dg rhs for scalar linear advection with speed = 1
     implicit none
     integer, intent(in)::n, iconsidered
     integer::i, nqp, i_qp, icompwrt, number, number_of_dog
@@ -261,6 +262,7 @@ module dg_functions
     number = ielem(n, iconsidered)%iorder
     number_of_dog = ielem(n, iconsidered)%idegfree
     dg_vol_integral(:, :) = 0.0d0
+
     do i = 1, number_of_dog
       do i_qp = 1, nqp
         x1 = qp_array(iconsidered)%x(i_qp)
@@ -329,9 +331,10 @@ module dg_functions
       end do
     end do
   end function dg_vol_integral
+
   function dg_vol_integral2(n, i)
-    !> @brief
-    !> calculates the volume integral term in the dg rhs for scalar linear advection with speed = 1
+    ！ @brief
+    ！ calculates the volume integral term in the dg rhs for scalar linear advection with speed = 1
     implicit none
     integer, intent(in)::n, i
     real, dimension(1:nof_variables)::dg_vol_integral2
@@ -370,53 +373,53 @@ module dg_functions
   end function dg_vol_integral2
 
   function dg_vol_integral_strong(n, i)
-  !> @brief
-  !> calculates the volume integral term in the dg rhs for scalar linear advection with speed = 1
+    ！ @brief
+    ！ calculates the volume integral term in the dg rhs for scalar linear advection with speed = 1
     implicit none
     integer, intent(in)::n, i
     real, dimension(1:nof_variables)::dg_vol_integral_strong
     integer::j, k, nqp, i_qp, i_var, icompwrt, iconsidered
     real::ph, integ
     real::x1, y1, z1
-      integer::number, number_of_dog
-      real, dimension(1:nof_variables)::dg_sol2
-      real, allocatable, dimension(:)::basis_temp
-      allocate(basis_temp(1:idegfree))
-      iconsidered = i
-      icompwrt = -2
-      do j = 1, nof_variables
-        do k = 1, idegfree
-          u_cs(iconsidered)%valdg(1, j, k + 1) = u_c(iconsidered)%valdg(1, j, k + 1)*modal_filter_strong(k)
-        end do
+    integer::number, number_of_dog
+    real, dimension(1:nof_variables)::dg_sol2
+    real, allocatable, dimension(:)::basis_temp
+    allocate(basis_temp(1:idegfree))
+    iconsidered = i
+    icompwrt = -2
+    do j = 1, nof_variables
+      do k = 1, idegfree
+        u_cs(iconsidered)%valdg(1, j, k + 1) = u_c(iconsidered)%valdg(1, j, k + 1)*modal_filter_strong(k)
       end do
-      nqp = ielem(n, iconsidered)%itotalpoints
-      number = ielem(n, iconsidered)%iorder
-      number_of_dog = ielem(n, iconsidered)%idegfree
-      dg_vol_integral_strong(:) = 0.0d0
-      do i_qp = 1, nqp
-        x1 = qp_array(iconsidered)%x(i_qp)
-        y1 = qp_array(iconsidered)%y(i_qp)
-        if (dimensiona .eq. 3) then
-          z1 = qp_array(iconsidered)%z(i_qp)
-        end if
-        if (dimensiona .eq. 2) then
-          basis_temp = basis_rec2d(n, x1, y1, number, iconsidered, number_of_dog, icompwrt)
-        else
-          basis_temp = basis_rec(n, x1, y1, z1, number, iconsidered, number_of_dog, icompwrt)
-        end if
-        do i_var = 1, nof_variables
-          dg_sol2(i_var) = dot_product(basis_temp(1:number_of_dog), u_cs(iconsidered)%valdg(1, i_var, 2:number_of_dog + 1))
-        end do
-      dg_vol_integral_strong = dg_vol_integral_strong + (qp_array(iconsidered)%qp_weight(i_qp)*dg_sol2/ielem(n, iconsidered)%totvolume)
+    end do
+    nqp = ielem(n, iconsidered)%itotalpoints
+    number = ielem(n, iconsidered)%iorder
+    number_of_dog = ielem(n, iconsidered)%idegfree
+    dg_vol_integral_strong(:) = 0.0d0
+    do i_qp = 1, nqp
+      x1 = qp_array(iconsidered)%x(i_qp)
+      y1 = qp_array(iconsidered)%y(i_qp)
+      if (dimensiona .eq. 3) then
+        z1 = qp_array(iconsidered)%z(i_qp)
+      end if
+      if (dimensiona .eq. 2) then
+        basis_temp = basis_rec2d(n, x1, y1, number, iconsidered, number_of_dog, icompwrt)
+      else
+        basis_temp = basis_rec(n, x1, y1, z1, number, iconsidered, number_of_dog, icompwrt)
+      end if
+      do i_var = 1, nof_variables
+        dg_sol2(i_var) = dot_product(basis_temp(1:number_of_dog), u_cs(iconsidered)%valdg(1, i_var, 2:number_of_dog + 1))
       end do
-      dg_vol_integral_strong(:) = u_c(iconsidered)%valdg(1, :, 1) + dg_vol_integral_strong(:)
-      icompwrt = 0
-      deallocate(basis_temp)
+    dg_vol_integral_strong = dg_vol_integral_strong + (qp_array(iconsidered)%qp_weight(i_qp)*dg_sol2/ielem(n, considered)%totvolume)
+    end do
+    dg_vol_integral_strong(:) = u_c(iconsidered)%valdg(1, :, 1) + dg_vol_integral_strong(:)
+    icompwrt = 0
+    deallocate(basis_temp)
   end function dg_vol_integral_strong
 
   function dg_vol_integral_weak(n, i)
-  !> @brief
-  !> calculates the volume integral term in the dg rhs for scalar linear advection with speed = 1
+    ！ @brief
+    ！ calculates the volume integral term in the dg rhs for scalar linear advection with speed = 1
     implicit none
     integer, intent(in)::n, i
     real, dimension(1:nof_variables)::dg_vol_integral_weak
@@ -456,14 +459,13 @@ module dg_functions
     end do
     dg_vol_integral_weak(:) = u_c(iconsidered)%valdg(1, :, 1) + dg_vol_integral_weak(:)
     icompwrt = 0
-
   end function dg_vol_integral_weak
+
   subroutine reconstruct_dg(n)
     implicit none
     integer, intent(in)::n
     integer::i_face, i_elem, i_qp, iqp, icompwrt
     integer::facex, pointx, iconsidered, number_of_dog
-    !$omp do
     do i_elem = 1, xmpielrank(n)
       icompwrt = -2
       do i_face = 1, ielem(n, i_elem)%ifca
@@ -487,8 +489,8 @@ module dg_functions
       end do
       icompwrt = 0
     end do
-  !$omp end do
   end subroutine reconstruct_dg
+
   subroutine reconstruct_br2_dg
     implicit none
     integer::i_face, i_elem, i_qp, iqp, j, k, iconsidered, facex, pointx, number_of_dog, number
@@ -508,7 +510,6 @@ module dg_functions
       call quadratureline(n, igqrules, vext, qpoints2d, wequa2d)
       weights_l(1:qp_line_n) = wequa2d(1:qp_line_n)
     end if
-    !$omp do
     do i_elem = 1, xmpielrank(n)
       iconsidered = i_elem
       do i_face = 1, ielem(n, i_elem)%ifca
@@ -537,10 +538,9 @@ module dg_functions
             if (dimensiona .eq. 3) z1 = ilocal_recon3(iconsidered)%qpoints(facex, pointx, 3)
               leftv_der = dg_sol_der(x1, y1, z1, number_of_dog, iconsidered)
               call dcons2dprim(leftv_der, leftv)
-                ilocal_recon3(iconsidered)%br2_aux_var(:,:,i_face,i_qp) = leftv_der + ilocal_recon3(iconsidered)%br2_local_lift(:,:,i_face) * br2_damping
+              ilocal_recon3(iconsidered)%br2_aux_var(:,:,i_face,i_qp) = leftv_der + ilocal_recon3(iconsidered)%br2_local_lift(:,:,i_face) * br2_damping
               !now copy to other array
-                 ilocal_recon3(iconsidered)%uleftv(1:dims,1,i_face,i_qp)=ilocal_recon3(iconsidered)%br2_aux_var(nof_variables,1:dims,i_face,i_qp)
-
+              ilocal_recon3(iconsidered)%uleftv(1:dims,1,i_face,i_qp)=ilocal_recon3(iconsidered)%br2_aux_var(nof_variables,1:dims,i_face,i_qp)
               do j = 2, nof_variables - 1
                 ilocal_recon3(iconsidered)%uleftv(1:dims, j, i_face, i_qp) = ilocal_recon3(iconsidered)%br2_aux_var(j, 1:dims, i_face, i_qp)
               end do
@@ -549,7 +549,6 @@ module dg_functions
         end do
       end do
     end do
-!$omp end do
   end subroutine reconstruct_br2_dg
 
 subroutine get_left_right_states(n,b_code,iconsidered,facex,pointx,leftv,rightv,pox,poy,poz,angle1,angle2,nx,ny,nz,cturbl,cturbr,cright_rot,cleft_rot,srf_speedrot,cleft,cright)
@@ -566,15 +565,15 @@ subroutine get_left_right_states(n,b_code,iconsidered,facex,pointx,leftv,rightv,
     i = iconsidered
     if (dimensiona .eq. 3) then
       if (ielem(n, i)%interior .eq. 0) then
-            call get_states_interior(n,b_code,iconsidered,facex,pointx,leftv,rightv,pox,poy,poz,angle1,angle2,nx,ny,nz,cturbl,cturbr,cright_rot,cleft_rot,srf_speedrot,cleft,cright)
+        call get_states_interior(n,b_code,iconsidered,facex,pointx,leftv,rightv,pox,poy,poz,angle1,angle2,nx,ny,nz,cturbl,cturbr,cright_rot,cleft_rot,srf_speedrot,cleft,cright)
       else
-            call get_states_bounds(n,b_code,iconsidered,facex,pointx,leftv,rightv,pox,poy,poz,angle1,angle2,nx,ny,nz,cturbl,cturbr,cright_rot,cleft_rot,srf_speedrot,cleft,cright)
+        call get_states_bounds(n,b_code,iconsidered,facex,pointx,leftv,rightv,pox,poy,poz,angle1,angle2,nx,ny,nz,cturbl,cturbr,cright_rot,cleft_rot,srf_speedrot,cleft,cright)
       end if
     else
       if (ielem(n, i)%interior .eq. 0) then
-            call get_states_interior2d(n,b_code,iconsidered,facex,pointx,leftv,rightv,pox,poy,poz,angle1,angle2,nx,ny,nz,cturbl,cturbr,cright_rot,cleft_rot,srf_speedrot,cleft,cright)
+        call get_states_interior2d(n,b_code,iconsidered,facex,pointx,leftv,rightv,pox,poy,poz,angle1,angle2,nx,ny,nz,cturbl,cturbr,cright_rot,cleft_rot,srf_speedrot,cleft,cright)
       else
-            call get_states_bounds2d(n,b_code,iconsidered,facex,pointx,leftv,rightv,pox,poy,poz,angle1,angle2,nx,ny,nz,cturbl,cturbr,cright_rot,cleft_rot,srf_speedrot,cleft,cright)
+        call get_states_bounds2d(n,b_code,iconsidered,facex,pointx,leftv,rightv,pox,poy,poz,angle1,angle2,nx,ny,nz,cturbl,cturbr,cright_rot,cleft_rot,srf_speedrot,cleft,cright)
       end if
     end if
   end subroutine get_left_right_states
@@ -860,7 +859,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
           if (icoupleturb .eq. 1) then
             cturbr(1:turbulenceequations + passivescalar) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturb &(1:turbulenceequations + passivescalar, ielem(n, i)%ineighn(l), ngp)!right additional equations flow state
           else
-           cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
+            cturbr(1:turbulenceequations + passivescalar) = u_ct(ielem(n, i)%ineigh(l))%val(1, 1:turbulenceequations + passivescalar)
           end if
           do nvar = 1, turbulenceequations + passivescalar
             rcvgrad_t(nvar, 1:3) = ilocal_recon3(ielem(n, i)%ineigh(l))%uleftturbv(1:3, nvar, ielem(n, i)%ineighn(l), ngp)
@@ -871,7 +870,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
       if (ielem(n, i)%ibounds(l) .gt. 0) then        !check for boundaries
         if ((ibound(n, ielem(n, i)%ibounds(l))%icode .eq. 5) .or. (ibound(n, ielem(n, i)%ibounds(l))%icode .eq. 50)) then        !periodic in other
           if (dg .eq. 1) then
-        cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol_dg(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
+            cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol_dg(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
           else
             cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
           end if
@@ -900,7 +899,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
           do iex = 1, turbulenceequations + passivescalar
             do nvar = 1, dims
               ittt = ittt + 1
-                rcvgrad_t(iex,nvar)=iexboundhir(ielem(n,i)%ineighn(l))%facesol(ielem(n,i)%q_face(l)%q_mapl(ngp),nof_variables+turbulenceequations+passivescalar+ittt)
+              rcvgrad_t(iex,nvar)=iexboundhir(ielem(n,i)%ineighn(l))%facesol(ielem(n,i)%q_face(l)%q_mapl(ngp),nof_variables+turbulenceequations+passivescalar+ittt)
             end do
           end do
           if (per_rot .eq. 1) then
@@ -913,7 +912,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
         end if
       else
         if (dg .eq. 1) then
-        cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol_dg(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
+          cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol_dg(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
         else
           cright(1:nof_variables) = iexboundhir(ielem(n, i)%ineighn(l))%facesol(ielem(n, i)%q_face(l)%q_mapl(ngp), 1:nof_variables)
         end if
@@ -1288,7 +1287,7 @@ subroutine calculate_bounded_viscous(n,b_code,iconsidered,facex,pointx,leftv,rig
           end if
           ikas = 1
         else
-          !not periodic ones in my cpu
+          ! not periodic ones in my cpu
           call coordinates_face_inner2dx(n, iconsidered, facex, vext, nodes_list)
           n_node = 2
           cords(1:2) = zero

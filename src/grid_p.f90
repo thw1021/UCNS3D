@@ -1,18 +1,15 @@
 module library
-!> @brief
-!> this module includes all the subroutines related to stencils and neighbours establishing
+  ! @brief
+  ! this module includes all the subroutines related to stencils and neighbours establishing
   use mpiinfo
   use declaration
   use io
   use transform
   implicit none
-!**************************developed by panagiotis tsoutsanis & antonis foivos antoniadis**************************!
-!*****************************************************************ucns3d*******************************************!
-contains
 
+contains
   subroutine tolerances
     implicit none
-
     tolsmall = 1.0e-13
     tolbig = 1.0e+13
     oo2 = 1.0d0/2.0d0
@@ -20,7 +17,6 @@ contains
     pi = 4.0d0*atan(1.0d0)
     alpha = 1.0d0
     beta = zero
-
   end subroutine tolerances
 
   function determina(eigvl)
@@ -67,29 +63,24 @@ contains
     do i = 1, nn
       determina = determina*matrix(i, i)
     end do
-
   end function determina
 
-! !---------------------------------------------------------------------------------------------!
   subroutine timers(n, cpux1, cpux2, cpux3, cpux4, cpux5, cpux6, timex1, timex2, timex3, timex4, timex5, timex6)
-!> @brief
-!> this subroutine establishes the timers
+    ! @brief
+    ! this subroutine establishes the timers
     real, allocatable, dimension(:), intent(in)::cpux1, cpux2, cpux3, cpux4, cpux5, cpux6
     real, allocatable, dimension(:), intent(inout)::timex1, timex2, timex3, timex4, timex5, timex6
     integer, intent(in)::n
-
     timex6(1) = cpux6(1) - cpux1(1)
     timex5(1) = cpux6(1) - cpux5(1)
     timex4(1) = cpux4(1) - cpux3(1)
     timex3(1) = cpux3(1) - cpux2(1)
     timex2(1) = cpux2(1) - cpux1(1)
-
   end subroutine timers
 
-! !---------------------------------------------------------------------------------------------!
   subroutine xmpifind(xmpie, xmpin, xmpielrank, xmpinrank, imaxe, imaxn, nproc)
-!> @brief
-!> this subroutine finds the number of elements in each process
+    ! @brief
+    ! this subroutine finds the number of elements in each process
     implicit none
     integer, allocatable, dimension(:), intent(inout)::xmpie
     integer, allocatable, dimension(:), intent(inout)::xmpin
@@ -97,19 +88,17 @@ contains
     integer, allocatable, dimension(:), intent(inout)::xmpinrank
     integer::i, j, k, l, m, itemr
     integer, intent(in)::nproc, imaxe, imaxn
-
     k = 0
     do i = 1, imaxe
       if (xmpie(i) .eq. n) then
         k = k + 1
-
       end if
     end do
     xmpielrank(n) = k
   end subroutine xmpifind
   subroutine globalist(n, xmpie, xmpil, xmpielrank, imaxe, isize, centerr, glneigh, glneighper, ielem)
-!> @brief
-!> this subroutine establishes the connectivity within each process
+    ! @brief
+    ! this subroutine establishes the connectivity within each process
     implicit none
     integer, allocatable, dimension(:), intent(in)::xmpie
     integer, allocatable, dimension(:), intent(inout)::xmpil
@@ -133,23 +122,18 @@ contains
     end if
 
     if (dimensiona .eq. 3) then
-
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
         allocate(centerr(1:imaxe, 1:3))
       end if
       allocate(glneigh(1:imaxe, 1:6))
       allocate(glneighper(1:imaxe, 1:6))
-
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
         centerr(:, :) = -tolbig
       end if
       glneigh(:, :) = 0
       glneighper(:, :) = 0
-
       call mpi_barrier(mpi_comm_world, ierror)
-
       kmaxe = xmpielrank(n)
-
       do k = 1, kmaxe
         if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
           call compute_centre3d(k, cords)
@@ -158,9 +142,7 @@ contains
           centerr(ielem(n, k)%ihexgl, 3) = cords(3)
         end if
         do j = 1, ielem(n, k)%ifca
-
           glneigh(ielem(n, k)%ihexgl, j) = ielem(n, k)%ineighg(j)
-
         end do
       end do
 
@@ -168,16 +150,14 @@ contains
       do k = 1, kmaxe
         do j = 1, ielem(n, k)%ifca
           if (ielem(n, k)%interior .eq. 0) then
-          if ((glneigh(ielem(n, k)%ihexgl, j) .eq. 0)) then
-            kj = kj + 1
-          end if
+            if ((glneigh(ielem(n, k)%ihexgl, j) .eq. 0)) then
+              kj = kj + 1
+            end if
           else
-          if ((glneigh(ielem(n, k)%ihexgl, j) .eq. 0) .and. (ielem(n, k)%ibounds(j) .eq. 0)) then
-            kj = kj + 1
+            if ((glneigh(ielem(n, k)%ihexgl, j) .eq. 0) .and. (ielem(n, k)%ibounds(j) .eq. 0)) then
+              kj = kj + 1
+            end if
           end if
-
-          end if
-
         end do
       end do
       if (n .eq. 0) then
@@ -187,17 +167,13 @@ contains
       end if
 
       icpuid = n
-
       call mpi_barrier(mpi_comm_world, ierror)
-
       allocate(glneightot(2))
       allocate(glneights(1:kmaxe, 1:7))
-
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
         allocate(centerts(1:kmaxe, 1:3))
       end if
       glneights(:, :) = 0
-
       do k = 1, kmaxe
         glneights(k, 1) = ielem(n, k)%ihexgl
         do j = 1, ielem(n, k)%ifca
@@ -207,8 +183,6 @@ contains
           centerts(k, 1:3) = centerr(ielem(n, k)%ihexgl, 1:3)
         end if
       end do
-
-!  !first
 
       do i = 0, isize - 1
         if (i .ne. n) then
@@ -224,15 +198,12 @@ contains
             centertr(:, :) = 0.0
           end if
           tempi = kmaxe
-
           call mpi_sendrecv(glneights(1:tempi, 1:7), tempi*7, mpi_integer, i, icpuid, &
                             glneightr(1:tempt, 1:7), tempt*7, mpi_integer, i, i, mpi_comm_world, status, ierror)
-
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
             call mpi_sendrecv(centerts(1:tempi, 1:3), tempi*3, mpi_double_precision, i, icpuid, &
                               centertr(1:tempt, 1:3), tempt*3, mpi_double_precision, i, i, mpi_comm_world, status, ierror)
           end if
-
           do k = 1, tempt
             do j = 1, 6
               if (glneightr(k, j + 1) .gt. 0) then
@@ -242,25 +213,20 @@ contains
                 end if
               end if
             end do
-
           end do
           deallocate(glneightr)
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
             deallocate(centertr)
           end if
-
         end if
       end do
-
       deallocate(glneightot)
       deallocate(glneights)
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
         deallocate(centerts)
       end if
-
     end if
     if (dimensiona .eq. 2) then
-
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
         allocate(centerr(1:imaxe, 1:2))
       end if
@@ -269,23 +235,17 @@ contains
         centerr(:, :) = -tolbig
       end if
       glneigh(:, :) = 0
-
       call mpi_barrier(mpi_comm_world, ierror)
-
       kmaxe = xmpielrank(n)
       do k = 1, kmaxe
         if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-
           call compute_centre2d(k, cords)
-
           centerr(ielem(n, k)%ihexgl, 1) = cords(1)
           centerr(ielem(n, k)%ihexgl, 2) = cords(2)
-
         end if
         do j = 1, ielem(n, k)%ifca
           glneigh(ielem(n, k)%ihexgl, j) = ielem(n, k)%ineighg(j)
         end do
-
       end do
       kj = 0
       do k = 1, kmaxe
@@ -299,7 +259,6 @@ contains
               kj = kj + 1
             end if
           end if
-
         end do
       end do
       if (n .eq. 0) then
@@ -309,9 +268,7 @@ contains
       end if
 
       icpuid = n
-
       call mpi_barrier(mpi_comm_world, ierror)
-
       allocate(glneightot(2))
       allocate(glneights(1:kmaxe, 1:5))
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
@@ -328,11 +285,8 @@ contains
         end if
       end do
 
-!  !first
-
       do i = 0, isize - 1
         if (i .ne. n) then
-
           tempi = kmaxe
           call mpi_sendrecv(tempi, 1, mpi_integer, i, icpuid, &
                             tempt, 1, mpi_integer, i, i, mpi_comm_world, status, ierror)
@@ -345,7 +299,6 @@ contains
             centertr(:, :) = 0.0
           end if
           tempi = kmaxe
-
           call mpi_sendrecv(glneights(1:tempi, 1:5), tempi*5, mpi_integer, i, icpuid, &
                             glneightr(1:tempt, 1:5), tempt*5, mpi_integer, i, i, mpi_comm_world, status, ierror)
 
@@ -353,7 +306,6 @@ contains
             call mpi_sendrecv(centerts(1:tempi, 1:2), tempi*2, mpi_double_precision, i, icpuid, &
                               centertr(1:tempt, 1:2), tempt*2, mpi_double_precision, i, i, mpi_comm_world, status, ierror)
           end if
-
           do k = 1, tempt
             do j = 1, 4
               if (glneightr(k, j + 1) .gt. 0) then
@@ -363,31 +315,25 @@ contains
                 end if
               end if
             end do
-
           end do
           deallocate(glneightr)
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
             deallocate(centertr)
           end if
-
         end if
       end do
-
       deallocate(glneightot)
       deallocate(glneights)
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
         deallocate(centerts)
       end if
-
     end if
-
     call mpi_barrier(mpi_comm_world, ierror)
-
   end subroutine globalist
 
   subroutine globalist2(n, xmpie, xmpil, xmpielrank, imaxe, isize, centerr, glneigh, glneighper, ielem)
-!> @brief
-!> this subroutine establishes the connectivity with elements from other processes
+    ! @brief
+    ! this subroutine establishes the connectivity with elements from other processes
     implicit none
     integer, allocatable, dimension(:), intent(in)::xmpie
     integer, allocatable, dimension(:), intent(inout)::xmpil
@@ -406,32 +352,26 @@ contains
     real, dimension(1:dimensiona)::cords
 
     call mpi_barrier(mpi_comm_world, ierror)
-
     if (dimensiona .eq. 3) then
-
       kmaxe = xmpielrank(n)
       do k = 1, kmaxe
         if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
-
           call compute_centre3d(k, cords)
-
           centerr(ielem(n, k)%ihexgl, 1) = cords(1)
           centerr(ielem(n, k)%ihexgl, 2) = cords(2)
           centerr(ielem(n, k)%ihexgl, 3) = cords(3)
         end if
         do j = 1, ielem(n, k)%ifca
-
           glneigh(ielem(n, k)%ihexgl, j) = ielem(n, k)%ineighg(j)
           if (ielem(n, k)%interior .eq. 1) then
             if (ielem(n, k)%ibounds(j) .gt. 0) then
-            if (ibound(n, ielem(n, k)%ibounds(j))%icode .eq. 5) then
-              glneighper(ielem(n, k)%ihexgl, j) = 1
-            else if (ibound(n, ielem(n, k)%ibounds(j))%icode .eq. 50) then
-              glneighper(ielem(n, k)%ihexgl, j) = 2
-            end if
+              if (ibound(n, ielem(n, k)%ibounds(j))%icode .eq. 5) then
+                glneighper(ielem(n, k)%ihexgl, j) = 1
+              else if (ibound(n, ielem(n, k)%ibounds(j))%icode .eq. 50) then
+                glneighper(ielem(n, k)%ihexgl, j) = 2
+              end if
             end if
           end if
-
         end do
       end do
 
@@ -457,11 +397,9 @@ contains
 
       icpuid = n
       call mpi_barrier(mpi_comm_world, ierror)
-
       allocate(glneightot(2))
       allocate(glneights(1:kmaxe, 1:7))
       allocate(glneightsper(1:kmaxe, 1:7))
-
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
         allocate(centerts(1:kmaxe, 1:3))
       end if
@@ -488,7 +426,6 @@ contains
           centerts(k, 1:3) = centerr(ielem(n, k)%ihexgl, 1:3)
         end if
       end do
-
       do i = 0, isize - 1
         if (i .ne. n) then
           tempi = kmaxe
@@ -502,18 +439,14 @@ contains
           end if
           glneightr(:, :) = 0
           glneightrper(:, :) = 0
-!
-
           call mpi_sendrecv(glneights(1:tempi, 1:7), tempi*7, mpi_integer, i, icpuid, &
                             glneightr(1:tempt, 1:7), tempt*7, mpi_integer, i, i, mpi_comm_world, status, ierror)
           call mpi_sendrecv(glneightsper(1:tempi, 1:7), tempi*7, mpi_integer, i, icpuid, &
                             glneightrper(1:tempt, 1:7), tempt*7, mpi_integer, i, i, mpi_comm_world, status, ierror)
-
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
             call mpi_sendrecv(centerts(1:tempi, 1:3), tempi*3, mpi_double_precision, i, icpuid, &
                               centertr(1:tempt, 1:3), tempt*3, mpi_double_precision, i, i, mpi_comm_world, status, ierror)
           end if
-
           do k = 1, tempt
             do j = 1, 6
               if (glneightr(k, j + 1) .gt. 0) then
@@ -539,7 +472,6 @@ contains
         deallocate(centerts)
       end if
     else
-
       kmaxe = xmpielrank(n)
       do k = 1, kmaxe
         if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
@@ -547,12 +479,10 @@ contains
           centerr(ielem(n, k)%ihexgl, 1) = cords(1)
           centerr(ielem(n, k)%ihexgl, 2) = cords(2)
         end if
-
         do j = 1, ielem(n, k)%ifca
           glneigh(ielem(n, k)%ihexgl, j) = ielem(n, k)%ineighg(j)
         end do
       end do
-
       kj = 0
       do k = 1, kmaxe
         do j = 1, ielem(n, k)%ifca
@@ -572,10 +502,8 @@ contains
         write (63, *) kj, "number of unknown neighbours after communication"
         close (63)
       end if
-
       icpuid = n
       call mpi_barrier(mpi_comm_world, ierror)
-
       allocate(glneightot(2))
       allocate(glneights(1:kmaxe, 1:5))
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
@@ -591,10 +519,8 @@ contains
           centerts(k, 1:2) = centerr(ielem(n, k)%ihexgl, 1:2)
         end if
       end do
-
       do i = 0, isize - 1
         if (i .ne. n) then
-
           tempi = kmaxe
           call mpi_sendrecv(tempi, 1, mpi_integer, i, icpuid, &
                             tempt, 1, mpi_integer, i, i, mpi_comm_world, status, ierror)
@@ -604,7 +530,6 @@ contains
             centertr(:, :) = 0.0
           end if
           glneightr(:, :) = 0
-!
 
           call mpi_sendrecv(glneights(1:tempi, 1:5), tempi*5, mpi_integer, i, icpuid, &
                             glneightr(1:tempt, 1:5), tempt*5, mpi_integer, i, i, mpi_comm_world, status, ierror)
@@ -613,7 +538,6 @@ contains
             call mpi_sendrecv(centerts(1:tempi, 1:2), tempi*2, mpi_double_precision, i, icpuid, &
                               centertr(1:tempt, 1:2), tempt*2, mpi_double_precision, i, i, mpi_comm_world, status, ierror)
           end if
-
           do k = 1, tempt
             do j = 1, 4
               if (glneightr(k, j + 1) .gt. 0) then
@@ -623,13 +547,11 @@ contains
                 end if
               end if
             end do
-
           end do
           deallocate(glneightr)
           if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
             deallocate(centertr)
           end if
-
         end if
       end do
       deallocate(glneightot)
@@ -637,14 +559,12 @@ contains
       if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
         deallocate(centerts)
       end if
-
     end if
-
   end subroutine globalist2
 
   subroutine globalistx(n, xmpie, xmpil, xmpielrank, imaxe, isize, centerr, glneigh, ielem)
-!> @brief
-!> this subroutine establishes the connectivity within each process without using a global list
+    ! @brief
+    ! this subroutine establishes the connectivity within each process without using a global list
     implicit none
     integer, allocatable, dimension(:), intent(in)::xmpie
     integer, allocatable, dimension(:), intent(inout)::xmpil
@@ -675,18 +595,16 @@ contains
         end if
       end do
     end do
-
     if (n .eq. 0) then
       open (63, file='history.txt', form='formatted', action='write', position='append')
       write (63, *) kj, "=number of unknown neighbours before communication"
       close (63)
     end if
-
   end subroutine globalistx
 
   subroutine globalistx2(n, xmpie, xmpil, xmpielrank, imaxe, isize, centerr, glneigh, ielem)
-!> @brief
-!> this subroutine establishes the connectivity with elements from other processes without a global list
+    ! @brief
+    ! this subroutine establishes the connectivity with elements from other processes without a global list
     implicit none
     integer, allocatable, dimension(:), intent(in)::xmpie
     integer, allocatable, dimension(:), intent(inout)::xmpil
@@ -729,7 +647,6 @@ contains
     end if
 
     allocate(cand(0:isize - 1)); cand = 0                !1 allocate(cand)
-
     do k = 1, kmaxe
       do j = 1, ielem(n, k)%ifca
         if (ielem(n, k)%ineighg(j) .gt. 0) then
@@ -803,9 +720,7 @@ contains
     end do
 
     call mpi_waitall(n_requests, requests, mpi_statuses_ignore, ierror)
-
     call mpi_barrier(mpi_comm_world, ierror)
-
     deallocate(requests)                                                        !33 dallocate(requests)
 
     imax_cpu = 0
@@ -818,9 +733,7 @@ contains
     !imax_cpu=imax_cpu*1.3
 
     call mpi_barrier(mpi_comm_world, ierror)
-
     call mpi_allreduce(imax_cpu, imax_cput, 1, mpi_integer, mpi_max, mpi_comm_world, ierror)
-
     allocate(candxs(1:ifst, 1:imax_cput), candxr(1:ifst, 1:imax_cput))                !4 allocate(candxs,candxr)
     candxs = -1
     candxr = -1
@@ -834,7 +747,6 @@ contains
     end do
 
     call mpi_barrier(mpi_comm_world, ierror)
-
     ifst = 0
     do i = 0, isize - 1
 
@@ -846,9 +758,7 @@ contains
                           imax_cput, mpi_integer, i, &
                           i, mpi_comm_world, status, ierror)
       end if
-
     end do
-
     do i = 1, ifst
       do j = 1, imax_cput
         if ((candxr(i, j) .ge. 0) .and. (candxr(i, j) .ne. n)) then
@@ -881,20 +791,16 @@ contains
 
     if (dimensiona .eq. 3) then
       allocate(cand2s(1:imax_cput, 6))                                                !5 allocate(cand2s,cand2r)
-
       allocate(cand2r(1:ifst2, 1:imax_cput, 1:6))
       allocate(cand2rt(1:imax_cput, 1:6))
       cand2s(:, :) = -100
       cand2r(:, :, :) = -200
-
     else
-
       allocate(cand2s(imax_cput, 4))
       allocate(cand2r(ifst2, imax_cput, 4))
       allocate(cand2rt(1:imax_cput, 1:6))
       cand2s = -100
       cand2r = -200
-
     end if
 
     do i = 1, kmaxe
@@ -910,13 +816,11 @@ contains
           ifst2 = ifst2 + 1
           call mpi_sendrecv(cand2s(1:imax_cput, 1:6), imax_cput*6, mpi_integer, i, n, cand2rt(1:imax_cput, 1:6), &
                             imax_cput*6, mpi_integer, i, i, mpi_comm_world, status, ierror)
-
           do jk = 1, imax_cput
             cand2r(ifst2, jk, 1:6) = cand2rt(jk, 1:6)
           end do
         end if
       end do
-
     else
       ifst2 = 0
       do i = 0, isize - 1
@@ -935,7 +839,6 @@ contains
       end do
     end if
 
-
     if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
 
       if (dimensiona .eq. 3) then
@@ -943,9 +846,7 @@ contains
         allocate(xand2r(ifst2, imax_cput, 3))
         allocate(xand2rt(imax_cput, 3))
         do k = 1, kmaxe
-
           call compute_centre3d(k, cords)
-
           xand2s(k, 1:3) = cords(1:3)
         end do
       else
@@ -959,9 +860,7 @@ contains
       end if
 
       ifst2 = 0
-
       do i = 0, isize - 1
-
         if (cand(i) .gt. 0) then
           ifst2 = ifst2 + 1
           call mpi_sendrecv(xand2s(1:imax_cput, 1:dims) &
@@ -969,17 +868,12 @@ contains
                             n, xand2rt(1:imax_cput, 1:dims), &
                             imax_cput*dims, mpi_double_precision, i, &
                             i, mpi_comm_world, status, ierror)
-
           do jk = 1, imax_cput
             xand2r(ifst2, jk, 1:dims) = xand2rt(jk, 1:dims)
           end do
-
         end if
-
       end do
-
       sumcentral = imax_cput*ifst2
-
       if (n .eq. 0) then
         open (63, file='history.txt', form='formatted', action='write', position='append')
         write (63, *) iselem, "=number of total neighbours needed"
@@ -987,20 +881,15 @@ contains
         write (63, *) sumcentral, "=total number of neighbours per all adjacent cpus"
         close (63)
       end if
-
     end if
     call mpi_barrier(mpi_comm_world, ierror)
-
     !now deallocatewhat is not needed
     deallocate(cands, candr, neix1, candxs, candxr)
-
-!
-
   end subroutine globalistx2
 
   subroutine globaldea
-!> @brief
-!> this subroutine deallocates the memory used for establishing the connectivity
+    ! @brief
+    ! this subroutine deallocates the memory used for establishing the connectivity
     implicit none
     call mpi_barrier(mpi_comm_world, ierror)
     if ((typesten .gt. 1) .or. (icompact .ge. 1)) then
@@ -1010,15 +899,14 @@ contains
     if (lowmem .eq. 0) deallocate(cand2s, cand2r, cand2rt, cand)
     if (lowmem .eq. 1) then
       deallocate(glneigh)
-
       if (dimensiona .eq. 3) deallocate(glneighper)
     end if
     call mpi_barrier(mpi_comm_world, ierror)
   end subroutine globaldea
 
   subroutine xmpilocal
-!> @brief
-!> this subroutine establishes the local numbering of the cells
+    ! @brief
+    ! this subroutine establishes the local numbering of the cells
     implicit none
     integer::i, kmaxe, count_block
     integer, allocatable, dimension(:)::xmpic, bin, val
@@ -1026,59 +914,45 @@ contains
 
     xmpic = 0
     kmaxe = xmpielrank(n)
-
     allocate(val(1:kmaxe))
     allocate(xgo(1:kmaxe))
-
     do i = 1, kmaxe
       xgo(i) = ielem(n, i)%ihexgl
     end do
-
     if (n .eq. 0) then
       allocate(xmpi_re(1:imaxe))
       xmpi_re = zero
     else
       allocate(xmpi_re(1))
-
     end if
 
     do i = 1, kmaxe
       xmpil(ielem(n, i)%ihexgl) = i
     end do
-
     do i = 1, imaxe
       xmpic(xmpie(i)) = xmpic(xmpie(i)) + 1
       xmpil(i) = xmpic(xmpie(i))
     end do
 
     deallocate(xmpic)
-
     allocate(xmpiall(0:isize - 1), offset(0:isize - 1))
-
     xmpiall = 0
-
     xmpiall(n) = kmaxe
-
     call mpi_allgather(kmaxe, 1, mpi_integer, xmpiall, 1, mpi_integer, mpi_comm_world, ierror)
-
     offset(0) = 0
     do i = 1, isize - 1
       offset(i) = offset(i - 1) + xmpiall(i - 1)
     end do
-
     do i = 1, kmaxe
       val(i) = ielem(n, i)%ihexgl
     end do
-
     call mpi_gatherv(val(1:kmaxe), kmaxe, mpi_integer, xmpi_re, xmpiall, offset, mpi_integer, 0, mpi_comm_world, ierror)
-
     deallocate(val)
-
   end subroutine xmpilocal
 
   subroutine count_walls
-!> @brief
-!> this subroutine allocates the appropriate memory for bounded walls indexing for writing files
+    ! @brief
+    ! this subroutine allocates the appropriate memory for bounded walls indexing for writing files
     implicit none
     integer::i, kmaxe, iloop, j
     integer, allocatable, dimension(:)::bin, val
@@ -1097,12 +971,9 @@ contains
     end do
 
     allocate(xmpiwall(0:isize - 1), woffset(0:isize - 1))
-
     xmpiwall = 0
-
     xmpiwall(n) = iloop
     call mpi_allgather(iloop, 1, mpi_integer, xmpiwall, 1, mpi_integer, mpi_comm_world, ierror)
-
     woffset(0) = 0
     do i = 1, isize - 1
       woffset(i) = woffset(i - 1) + xmpiwall(i - 1)
@@ -1113,11 +984,9 @@ contains
       allocate(xmpi_wre(1:totwalls))
     else
       allocate(xmpi_wre(1))
-
     end if
 
     iloop = 0
-
     do i = 1, kmaxe
       if (ielem(n, i)%interior .eq. 1) then
         do j = 1, ielem(n, i)%ifca
@@ -1130,18 +999,14 @@ contains
         end do
       end if
     end do
-
     call mpi_gatherv(val(1:iloop), iloop, mpi_integer, xmpi_wre, xmpiwall, woffset, mpi_integer, 0, mpi_comm_world, ierror)
-
     deallocate(val)
-
   end subroutine count_walls
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine inverf(r, invr, ivgt)
-!> @brief
-!> this subroutine inverts some special matrices
+    ! @brief
+    ! this subroutine inverts some special matrices
     implicit none
     integer, intent(in)::ivgt
     real, intent(in) ::r(1:ivgt - 1, 1:ivgt - 1)
@@ -1161,12 +1026,11 @@ contains
         invr(i, j) = invr(i, j)/r(j, j)
       end do
     end do
-
   end subroutine inverf
 
   subroutine allocatevectors(n, tri, invtri, rotvect, vectco, veigl, veigr, rveigl, rveigr, eigvl, eigvr)
-!> @brief
-!> this subroutine allocates vectors and matrices frequently used
+    ! @brief
+    ! this subroutine allocates vectors and matrices frequently used
     implicit none
     integer, intent(in)::n
     real, allocatable, dimension(:, :), intent(inout)::tri
@@ -1204,8 +1068,8 @@ contains
 
 ! !!!!!!!!!!!!!!!!!!subroutine called initially to allocatememory for stencil!!!!!!!!!!!!!!!!!
   subroutine localstallocation(n, xmpielrank, ilocalstencil, ilocalstencilper, typesten, numneighbours)
-!> @brief
-!> this subroutine memory for stencil allocation for all cells
+    ! @brief
+    ! this subroutine memory for stencil allocation for all cells
     implicit none
     integer, allocatable, dimension(:, :, :, :), intent(inout)::ilocalstencil, ilocalstencilper
     integer, intent(in)::numneighbours
@@ -1229,8 +1093,8 @@ contains
 !!!!!!!!!!!!!!!!!!!kit is initially used for first level!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!neighbours and it is going to be modified!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   subroutine find_shape(n, imaxe, ieshape)
-!> @brief
-!> this subroutine finds the shape of each cell
+    ! @brief
+    ! this subroutine finds the shape of each cell
     implicit none
     integer, intent(inout)::imaxe
     integer, allocatable, dimension(:), intent(inout)::ieshape
@@ -1272,9 +1136,7 @@ contains
             else
               ieshape(j) = 6        !triangle el element
             end if
-
         end do
-
       end if
     else
       if (dimensiona .eq. 3) then
@@ -1308,11 +1170,8 @@ contains
           else
             ieshape(j) = 6        !triangle el element
           end if
-
         end do
-
       end if
-
     end if
 
     kn = 0
@@ -1387,8 +1246,8 @@ contains
   end subroutine find_shape
 
   subroutine fix_offsets_local(n)
-!> @brief
-!> this assigns the offset for the nodes for each cell in my cpu from the global list
+    ! @brief
+    ! this assigns the offset for the nodes for each cell in my cpu from the global list
     integer::i, j, k, l, m, kk, kmaxe
     integer, intent(in)::n
 
@@ -1406,8 +1265,8 @@ contains
 
 ! ---------------------------------------------------------------------------------------------!
   subroutine neighbourss(n, ielem, imaxe, imaxn, xmpie, xmpin, xmpielrank, restart, inoder)
-!> @brief
-!> this subroutine finds the neighbours
+    ! @brief
+    ! this subroutine finds the neighbours
     implicit none
     type(element_number), allocatable, dimension(:, :), intent(inout)::ielem
     type(node_ne), allocatable, dimension(:), intent(inout)::inoder
@@ -1937,8 +1796,8 @@ contains
   end subroutine flag_neigh
   subroutine cons(n, iconr, icons, iperiodicity, xmpielrank, isize, iconrpa, iconrpm, iconspo, xper, &
                   yper, zper, iconrpf, numneighbours, typesten)
-!> @brief
-!> this subroutine establishes the connectivity across different cpus
+    ! @brief
+    ! this subroutine establishes the connectivity across different cpus
     implicit none
     integer, intent(in)::iperiodicity, n, isize, numneighbours, typesten
     real::small, dist, temp_x
@@ -2344,8 +2203,8 @@ contains
 
   subroutine cons2d(n, iconr, icons, iperiodicity, xmpielrank, isize, iconrpa, iconrpm, iconspo, xper, &
                     yper, zper, iconrpf, numneighbours, typesten)
-!> @brief
-!> this subroutine establishes the connectivity across different cpus in 2d
+    ! @brief
+    ! this subroutine establishes the connectivity across different cpus in 2d
     implicit none
     integer, intent(in)::iperiodicity, n, isize, numneighbours, typesten
     real::small, dist
@@ -2739,8 +2598,8 @@ contains
   end subroutine cons2d
 
   subroutine detstenx(n)
-!> @brief
-!> this subroutine builds the large stencils
+    ! @brief
+    ! this subroutine builds the large stencils
     implicit none
     integer, intent(in)::n
     integer::i, k, jjj, kj, j, l, im, io, ir, kmaxe, icpuid, itrue, ic, print_i, kx, kxk, kk, candid, candid2
@@ -3095,8 +2954,8 @@ contains
   end subroutine detstenx
 
   recursive subroutine allsx(stcon, stconc, stcons, stcong, isosa, ifsat, iistart, ix)
-!> @brief
-!> this recursive subroutine builds the large stencils until the prescribed number of elements is reached
+    ! @brief
+    ! this recursive subroutine builds the large stencils until the prescribed number of elements is reached
     implicit none
     integer::i, k, jjj, kj, j, l, im, io, ir, kmaxe, icpuid, itrue, jloop, candid
     integer, dimension(1), intent(inout)::stcon, stconc, stcons, stcong, isosa, iistart, ifsat, ix
@@ -3162,8 +3021,8 @@ contains
   end subroutine allsx
 
   subroutine detsten(n)
-!> @brief
-!> this subroutine builds the large stencils suitable for periodic boundaries
+    ! @brief
+    ! this subroutine builds the large stencils suitable for periodic boundaries
     implicit none
     integer, intent(in)::n
     integer::i, k, jjj, kj, j, l, im, io, ir, kmaxe, icpuid, itrue, ic, print_i, kx, kxk, kk
@@ -3496,8 +3355,8 @@ contains
 !-------------------for debugging only -----------------------------------------!
   end subroutine detsten
   recursive subroutine allsf(stcon, stconc, stcons, stcong, isosa, ifsat, iistart, ix)
-!> @brief
-!> this recursive subroutine builds the large stencils suitable for periodic boundaries
+    ! @brief
+    ! this recursive subroutine builds the large stencils suitable for periodic boundaries
     implicit none
     integer::i, k, jjj, kj, j, l, im, io, ir, kmaxe, icpuid, itrue, jloop, flag_per
     integer, dimension(1), intent(inout)::stcon, stconc, stcons, stcong, isosa, iistart, ifsat, ix
@@ -3631,8 +3490,8 @@ contains
   end subroutine allsf
 
   subroutine check(n, stcon, ix, ifsat)
-!> @brief
-!> this subroutine checks if some candidate elements already belong to the an existing list of neighbours
+    ! @brief
+    ! this subroutine checks if some candidate elements already belong to the an existing list of neighbours
     implicit none
     integer, intent(in)::n
     integer, dimension(1), intent(inout)::stcon, ix, ifsat
@@ -3646,8 +3505,8 @@ contains
   end subroutine check
 
   subroutine check_condition(n, n_node, bc, vg, vext, is_periodic, isatisfied)
-!> @brief
-!> this subroutine checks which candidate cells satisfy the directionality condition for directional stencils
+    ! @brief
+    ! this subroutine checks which candidate cells satisfy the directionality condition for directional stencils
     implicit none
     integer, intent(in)::n, n_node, is_periodic
     integer, intent(inout)::isatisfied
@@ -3852,8 +3711,8 @@ contains
   end subroutine check_condition
 
   subroutine sortstencils(n)
-!> @brief
-!> this subroutine sorts the stencils with respect to their distance from the cell-centre
+    ! @brief
+    ! this subroutine sorts the stencils with respect to their distance from the cell-centre
     implicit none
     integer, intent(in)::n
     real, dimension(iselemt(n))::rdistl
@@ -3896,8 +3755,8 @@ contains
   end subroutine sortstencils
 
   subroutine stenciils_eesx(n)
-!> @brief
-!> this subroutine builds all the directional stencils from the large stencil
+    ! @brief
+    ! this subroutine builds all the directional stencils from the large stencil
     implicit none
     integer, intent(in)::n
     real, dimension(1:dimensiona)::vg, bc
@@ -4156,8 +4015,8 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
   end subroutine stenciils_eesx
 
   subroutine stenciils_ees(n)
-!> @brief
-!> this subroutine builds all the directional stencils from the large stencil (suitable for periodic boundaries)
+    ! @brief
+    ! this subroutine builds all the directional stencils from the large stencil (suitable for periodic boundaries)
     implicit none
     integer, intent(in)::n
     real, dimension(1:dimensiona)::vg, bc
@@ -4410,8 +4269,8 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
   end subroutine stenciils_ees
 
   subroutine stenciilsx(n)
-!> @brief
-!> this subroutine builds all the directional stencils from the large stencil based on various aglorithms
+    ! @brief
+    ! this subroutine builds all the directional stencils from the large stencil based on various aglorithms
     implicit none
     integer, intent(in)::n
     real, dimension(1:dimensiona)::vg, bc
@@ -4640,8 +4499,8 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
   end subroutine stenciilsx
 
   subroutine stenciils(n)
-!> @brief
-!> this subroutine builds all the directional stencils from the large stencil based on various algorithms (suitable for period boundaries)
+    ! @brief
+    ! this subroutine builds all the directional stencils from the large stencil based on various algorithms (suitable for period boundaries)
     implicit none
     integer, intent(in)::n
     real, dimension(1:dimensiona)::vg, bc
@@ -4878,8 +4737,8 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
 ! !!!!!!!!!!!!!!!!!!!!!!required for each stencil!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! !!!!!!!!!!!!!!!!!!!!!for various order of accuracy!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   subroutine determine_size(n, iorder, iselem, iselemt, ioverst, ioverto, ilx, numneighbours, idegfree, imaxdegfree, iextend)
-!> @brief
-!> this subroutine determines the degress of freedom, neighbours and polynomial order for each stencil of each cell
+    ! @brief
+    ! this subroutine determines the degress of freedom, neighbours and polynomial order for each stencil of each cell
     implicit none
     integer, intent(inout)::iorder
     integer, allocatable, dimension(:), intent(inout)::iselemt
@@ -5059,8 +4918,8 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
 !!!!!!!!!!!!!!!!!!!!!!!!order of accuracy methods etc!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine gaussian_points(igqrules, numberofpoints, numberofpoints2)
-!> @brief
-!> this subroutine determines quadrature points required for each spatial order of accuracy and for each cell type
+    ! @brief
+    ! this subroutine determines quadrature points required for each spatial order of accuracy and for each cell type
     implicit none
     integer, intent(inout)::igqrules, numberofpoints, numberofpoints2
     if (dimensiona .eq. 3) then
@@ -5143,8 +5002,8 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine writeout
-!> @brief
-!> this subroutine is solely for debugging purposes
+    ! @brief
+    ! this subroutine is solely for debugging purposes
     integer::ijd, ic2, kmaxe, i
     real, allocatable, dimension(:)::xx, yy, zz
     kmaxe = xmpielrank(n)
@@ -5184,8 +5043,8 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   subroutine stencils(n, ielem, imaxe, xmpie, xmpielrank, ilocalstencil, typesten, numneighbours, restart)
-!> @brief
-!> this subroutine is establishing which of the stencils are admissible and which cells can use the weno algorithms
+    ! @brief
+    ! this subroutine is establishing which of the stencils are admissible and which cells can use the weno algorithms
     implicit none
     type(element_number), allocatable, dimension(:, :), intent(inout)::ielem
     integer, intent(in)::n, imaxe
@@ -5473,8 +5332,8 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
   end subroutine stencils
 
   subroutine stencils3(n)
-    !> @brief
-!> this subroutine is establishing which of the stencils are admissible under different set of rules and which cells can use the weno algorithms
+        ! @brief
+    ! this subroutine is establishing which of the stencils are admissible under different set of rules and which cells can use the weno algorithms
     implicit none
     integer, intent(in)::n
     integer::i, j, ji, k, lm, kmaxn, kk, kmaxe, iaa, kx, l, itrr, itrx, itry
@@ -5500,8 +5359,8 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
   end subroutine stencils3
 
   subroutine adapt_criterion
-!> @brief
-!> this subroutine is establishing a region for which to use a very high-order discretisation and a lower one outside this region
+    ! @brief
+    ! this subroutine is establishing a region for which to use a very high-order discretisation and a lower one outside this region
     implicit none
     integer::kmaxe, i, fc
     real::xmin_ad, xmax_ad
@@ -5547,8 +5406,8 @@ integer::i,j,k,l,m,o,p,kmaxe,icount,icpuid,iatrue,ig,il,ifg,stnsha,itgh,kk,kxk,i
 !---------------------------------------------------------------------------------------------!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   subroutine write_blocks(n, xmpielrank, xmpinrank, xmpie, xmpin, ielem, inode, imaxn, imaxe, ibound, imaxb, xmpinnumber)
-!> @brief
-!> this subroutine is solely for debugging purposes
+    ! @brief
+    ! this subroutine is solely for debugging purposes
     implicit none
     type(element_number), allocatable, dimension(:, :), intent(inout)::ielem
     type(node_number), allocatable, dimension(:, :), intent(inout)::inode
